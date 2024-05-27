@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FloorController;
 use App\Http\Controllers\BlockController;
+use App\Http\Controllers\AmenityController;
+use App\Http\Controllers\CabinTypeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,3 +33,13 @@ Route::get('blocks/',[BlockController::class,'index']);
 Route::post('blocks/saveData',[BlockController::class,'saveBlock']);
 Route::get('blocks/editData/{id}',[BlockController::class,'getData']);
 Route::get('blocks/deleteData/{id}',[BlockController::class,'deleteData']);
+
+Route::get('amenities/',[AmenityController::class,'index']);
+Route::post('amenities/saveData',[AmenityController::class,'saveAmenity']);
+Route::get('amenities/editData/{id}',[AmenityController::class,'getData']);
+Route::get('amenities/deleteData/{id}',[AmenityController::class,'deleteData']);
+
+Route::get('cabintypes/',[CabinTypeController::class,'index']);
+Route::post('cabintypes/saveData',[CabinTypeController::class,'saveCabinType']);
+Route::get('cabintypes/editData/{id}',[CabinTypeController::class,'getData']);
+Route::get('amenities/deleteData/{id}',[CabinTypeController::class,'deleteData']);

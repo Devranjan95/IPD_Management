@@ -8,12 +8,12 @@
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-xl">
                         <div class="modal-content">
-                            <form enctype="multipart/form-data" name="floorform" id="floorform">
-                                <input type="hidden" id="saveurl" value="{{ url('floors/saveData') }}" />
+                            <form enctype="multipart/form-data" name="amenityform" id="amenityform">
+                                <input type="hidden" id="saveurl" value="{{ url('amenities/saveData') }}" />
                                 <input type="hidden" id="recordid" name="recordid" value="" />
                                 <input type="hidden" id="mode" name="mode">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Floors</h1>
+                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Amenities</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         style="color:rgb(250,235,215)" aria-label="Close"></button>
                                 </div>
@@ -22,8 +22,8 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Insert Floor No.</label>
-                                            <input type="text" class="form-control" placeholder="Mention Floor No." id="floorNo" name="floorNo">
+                                            <label for="floor" class="form-label">Amenity Name.</label>
+                                            <input type="text" class="form-control" placeholder="Enter Amenity." id="amenity" name="amenity">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="floor" class="form-label">Status</label>
@@ -52,7 +52,7 @@
                             <div class="col-lg-12">
                                 <div class='row pb-2'>
                                     <div class='col-lg-6'>
-                                        <h3 class="headingcolor">Floors</h3>
+                                        <h3 class="headingcolor">Amenities</h3>
                                     </div>
                                     <div class='col-lg-6 pb-2'>
                                         <button type="button" class="btn btn-rounded btn-fw btn-success" style="float:right"
@@ -68,41 +68,41 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
-                                            <th style="text-align:center">Floor No</th>
+                                            <th>Amenities</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $sl = 1; 
-                                        @endphp
-                                        @foreach($floordata as $floor)
-                                            <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td style="text-align:center">{{$floor->floor_no}}</td>
-                                                <td>
-                                                        @if($floor->status=="Active")
+                                       @php
+                                        $sl = 1; 
+                                       @endphp
+                                       @foreach($amenities as $amenity)
+                                        <tr>
+                                            <td style="text-align:center">{{$sl++}}</td>
+                                            <td>{{$amenity->amenities}}</td>
+                                            <td>
+                                                        @if($amenity->status=="Active")
                                                         <label class="badge badge-success">Active</label>
                                                         @else 
                                                         <label class="badge badge-danger">In Active</label>
                                                         @endif
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group">
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
                                    
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $floor->id }})'
-                                                            title='Edit'><img src='assets/previous/user.svg'
-                                                                style='height:20px; width:20px' /></a>&nbsp&nbsp
-                                                        <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('floors/deleteData') }}/{{ $floor->id }}')"
-                                                            title='Delete'><img src='assets/previous/delete.svg'
-                                                                style='height:23px; width:23px' /></a>
-                                  
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                                    <a href='#' class='editbtn'  onclick='showEdit({{ $amenity->id }})'
+                                                        title='Edit'><img src='assets/previous/user.svg'
+                                                            style='height:20px; width:20px' /></a>&nbsp&nbsp
+                                                    <a href='javascript:void(0)'
+                                                        onclick="deleteData('{{ url('amenities/deleteData') }}/{{ $amenity->id }}')"
+                                                        title='Delete'><img src='assets/previous/delete.svg'
+                                                            style='height:23px; width:23px' /></a>
+                                
+                                                </div>
+                                            </td>
+                                        </tr>
+                                       @endforeach
                                     </tbody>
                                 </table>
                                 </div>
@@ -120,117 +120,18 @@
 
 @endsection
 @section('scripts')
-<!-- <script>
-        $("#floorform").submit(function(event) {
-            event.preventDefault();
-            var formData = new FormData(document.getElementById('floorform'));
-            formData.append("_token", '{{ csrf_token() }}');
-            $.ajax({
-                type: "POST",
-                url: $("#saveurl").val(),
-                data: formData,
-                contentType: false, //MUST
-                processData: false, //MUST
-                dataType: "json",
-                success: function(response) {
-                   
-                if($('#mode').val()=='add'){
-                    if(response.message == "Error!! Sorry Floor already exists"){
-                        $('#error').html(response.message).slideDown();
-                        setTimeout(function() {
-                        $('#error').slideUp();
-                            }, 4000);
-                    }else{
-                        $('#success').html(response.message).slideDown();
-                        document.getElementById('floorform').reset();
-                        setTimeout(function() {
-                            $('#success').slideUp();
-                        }, 2000);
-                    }
-                }
-                
-                
-                if($('#mode').val()=='edit'){
-                    if(response.message == "Error!! Sorry Floor already exists"){
-                        $('#error').html(response.message).slideDown();
-                        setTimeout(function() {
-                        $('#error').slideUp();
-                        }, 4000);
-                    }else{
-                            //location.reload();
-                        $('#success').html(response.message).slideDown();
-                        //document.getElementById('chamberform').reset();
-                        setTimeout(function() {
-                            $('#success').slideUp();
-                        }, 2000);
-                    }
-                }
-                },
-                error: function() {
-                    if (xhr.status === 422) {
-                        alert(1);
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '';
-                        $.each(errors, function(key, value) {
-                            errorMessage += value[0] + '<br>';
-                        });
-                        $('#error').html(errorMessage).slideDown();
-                        setTimeout(function() {
-                            $('#error').slideUp();
-                        }, 4000);
-                    } else {
-                        alert("Error saving data.");
-                    }
-                }
-            });
-        });
-        
-        function showAdd() {
-            document.getElementById("floorform").reset();
-            document.getElementById("mode").value = "add";
-            document.getElementById("recordid").value = "";
-        }
 
-        function showEdit(id) {
-            document.getElementById("floorform").reset();
-            document.getElementById("mode").value = "edit";
-            document.getElementById("recordid").value = id;
-            $.ajax({
-                url: "{{ url('floors/editData') }}/" + id,
-                headers: {
-                    '_token': '{{ csrf_token() }}'
-                },
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
-                    myModal.show();
-                    //alert(data.floor["floor_no"]);
-                    document.getElementById("floorNo").value = data.floor['floor_no'];
-                    document.getElementById("status").value = data.floor['status'];
-
-                },
-                error: function() {
-                    return false;
-                }
-            });
-
-        }
-</script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script><script>
     $(document).ready(function() {
         // Add custom validation method for letters only
         $.validator.addMethod("lettersonly", function(value, element) {
             return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
         }, "Only letters and spaces are allowed.");
-        // $.validator.addMethod("numsonly", function(value, element) {
-        //     return this.optional(element) || /^[0-9]+$/.test(value);
-        // }, "Only numbers are allowed.");
 
         // Form validation rules
-        $("#floorform").validate({
+        $("#amenityform").validate({
             rules: {
-                floorNo: {
+                amenity: {
                     required: true,
                     lettersonly: true
                 },
@@ -239,9 +140,9 @@
                 }
             },
             messages: {
-                floorNo: {
-                    required: "Floor No is required.",
-                    lettersonly: "Only numbers are allowed."
+                amenity: {
+                    required: "Amenity Name is required.",
+                    lettersonly: "Only letters and spaces are allowed."
                 },
                 status: {
                     required: "Status is required."
@@ -297,17 +198,17 @@
     });
 
     function showAdd() {
-        document.getElementById("floorform").reset();
+        document.getElementById("amenityform").reset();
         document.getElementById("mode").value = "add";
         document.getElementById("recordid").value = "";
     }
 
     function showEdit(id) {
-        document.getElementById("floorform").reset();
+        document.getElementById("amenityform").reset();
         document.getElementById("mode").value = "edit";
         document.getElementById("recordid").value = id;
         $.ajax({
-            url: "{{ url('floors/editData') }}/" + id,
+            url: "{{ url('amenities/editData') }}/" + id,
             headers: {
                 '_token': '{{ csrf_token() }}'
             },
@@ -316,8 +217,8 @@
             success: function(data) {
                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
                 myModal.show();
-                document.getElementById("floorNo").value = data.floor['floor_no'];
-                document.getElementById("status").value = data.floor['status'];
+                document.getElementById("amenity").value = data.amenity['amenities'];
+                document.getElementById("status").value = data.amenity['status'];
             },
             error: function() {
                 return false;
@@ -331,5 +232,4 @@
         }
     }
 </script>
-
 @endsection

@@ -15,10 +15,10 @@ return new class extends Migration
                 $table->id();
                 $table->string('block_name',3);
                 $table->string('block_code',3)->unique();
-                $table->string('floor_no')->references('floor_no')->on('floors')->onDelete('cascade');
+                $table->foreignId('floor_id')->references('id')->on('floors')->onDelete('cascade');
                 $table->enum('status',['Active','Inactive','Deleted']);
-                $table->bigInteger('created_by')->references('id')->on('users')->onDelete('cascade');
-                $table->bigInteger('updated_by')->references('id')->on('users')->onDelete('cascade');
+                $table->string('created_by');
+                $table->string('updated_by');
                 $table->timestamps();
     
             });

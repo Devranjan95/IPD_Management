@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('floors', function (Blueprint $table) {
+        Schema::create('cabin_types', function (Blueprint $table) {
             $table->id();
-            $table->string('floor_no',15)->unique();
+            $table->string('cabin_type',15);
             $table->enum('status',['Active','Inactive','Deleted']);
             $table->string('created_by');
             $table->string('updated_by');
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('floors');
+        Schema::dropIfExists('cabin_types');
     }
 };

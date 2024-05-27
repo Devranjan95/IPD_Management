@@ -20,7 +20,7 @@ class FloorController extends Controller
         //dd($request->all());
         try{
             $request->validate([
-                'floorNo' => 'required|integer|max:3',
+                'floorNo' => 'required|string|max:15',
                 'status' => 'required',
             ]);
             if($request->mode == "add"){

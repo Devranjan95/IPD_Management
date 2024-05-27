@@ -8,12 +8,12 @@
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-xl">
                         <div class="modal-content">
-                            <form enctype="multipart/form-data" name="blockform" id="blockform">
-                                <input type="hidden" id="saveurl" value="{{ url('blocks/saveData') }}" />
+                            <form enctype="multipart/form-data" name="cabintypeform" id="cabintypeform">
+                                <input type="hidden" id="saveurl" value="{{ url('cabintypes/saveData') }}" />
                                 <input type="hidden" id="recordid" name="recordid" value="" />
                                 <input type="hidden" id="mode" name="mode">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Blocks</h1>
+                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Cabin Types</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         style="color:rgb(250,235,215)" aria-label="Close"></button>
                                 </div>
@@ -22,24 +22,9 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="block" class="form-label">Block Name</label>
-                                            <input type="text" class="form-control" placeholder="Enter Block Name." id="blockname" name="blockname">
+                                            <label for="block" class="form-label">Cabin Type</label>
+                                            <input type="text" class="form-control" placeholder="Enter Cabin Type." id="cabintype" name="cabintype">
                                         </div>
-                                        <div class="col-md-6">
-                                            <label for="floor" class="form-label">Floor No</label>
-                                            <select class="form-control" id="floorNo" name="floorNo">
-                                                    <option value="" selected disabled>Please Select Floor</option>
-                                                @foreach($floors as $key=>$value)
-                                                    <option value={{$key}}>{{$value}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <!-- <div class="col-md-6">
-                                            <label for="block" class="form-label">Block Code</label>
-                                            <input type="text" class="form-control" placeholder="Enter Block Code." id="blockcode" name="blockcode">
-                                        </div> -->
-                                    </div>
-                                    <div class="row pb-3">
                                         <div class="col-md-6">
                                             <label for="floor" class="form-label">Status</label>
                                             <select class="form-control" id="status" name="status">
@@ -67,7 +52,7 @@
                             <div class="col-lg-12">
                                 <div class='row pb-2'>
                                     <div class='col-lg-6'>
-                                        <h3 class="headingcolor">Blocks</h3>
+                                        <h3 class="headingcolor">Cabin Types</h3>
                                     </div>
                                     <div class='col-lg-6 pb-2'>
                                         <button type="button" class="btn btn-rounded btn-fw btn-success" style="float:right"
@@ -83,44 +68,40 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
-                                            <th>Block Name</th>
-                                            <th>Block Code</th>
-                                            <th>Floor No</th>
+                                            <th>Cabin Type</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @php 
-                                            $sl = 1;
-                                            $c = 0;
+                                            $sl = 0;
                                         @endphp
-                                        @foreach($blocks as $block)
+                                        @foreach($cabintypes as $cabintype)
                                             <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$block->block_name}}</td>
-                                                <td>{{$block->block_code}}</td>
-                                                <td>{{$floorno[$c]}}</td>
+                                                <td>{{$sl++}}</td>
+                                                <td>{{$cabintype->cabin_type}}</td>
                                                 <td>
-                                                        @if($block->status=="Active")
+                                                        @if($cabintype->status=="Active")
                                                         <label class="badge badge-success">Active</label>
                                                         @else 
                                                         <label class="badge badge-danger">In Active</label>
                                                         @endif
                                                 </td>
                                                 <td>
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $block->id }})'
+                                                    <div class="btn-group">
+                                    
+                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $cabintype->id }})'
                                                             title='Edit'><img src='assets/previous/user.svg'
                                                                 style='height:20px; width:20px' /></a>&nbsp&nbsp
                                                         <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('blocks/deleteData') }}/{{ $block->id }}')"
+                                                            onclick="deleteData('{{ url('cabintypes/deleteData') }}/{{ $cabintype->id }}')"
                                                             title='Delete'><img src='assets/previous/delete.svg'
                                                                 style='height:23px; width:23px' /></a>
+                                    
+                                                    </div>
                                                 </td>
                                             </tr>
-                                            @php 
-                                                $c++;
-                                            @endphp
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -139,105 +120,7 @@
 
 @endsection
 @section('scripts')
-<!-- <script>
-        $("#blockform").submit(function(event) {
-            event.preventDefault();
-            var formData = new FormData(document.getElementById('blockform'));
-            formData.append("_token", '{{ csrf_token() }}');
-            $.ajax({
-                type: "POST",
-                url: $("#saveurl").val(),
-                data: formData,
-                contentType: false, //MUST
-                processData: false, //MUST
-                dataType: "json",
-                success: function(response) {
-                   
-                if($('#mode').val()=='add'){
-                    if(response.message == "Error!! Sorry Block already exists"){
-                        $('#error').html(response.message).slideDown();
-                        setTimeout(function() {
-                        $('#error').slideUp();
-                            }, 4000);
-                    }else{
-                        $('#success').html(response.message).slideDown();
-                        document.getElementById('floorform').reset();
-                        setTimeout(function() {
-                            $('#success').slideUp();
-                        }, 2000);
-                    }
-                }
-                
-                
-                if($('#mode').val()=='edit'){
-                    if(response.message == "Error!! Sorry Block already exists"){
-                        $('#error').html(response.message).slideDown();
-                        setTimeout(function() {
-                        $('#error').slideUp();
-                        }, 4000);
-                    }else{
-                            //location.reload();
-                        $('#success').html(response.message).slideDown();
-                        //document.getElementById('chamberform').reset();
-                        setTimeout(function() {
-                            $('#success').slideUp();
-                        }, 2000);
-                    }
-                }
-                },
-                error: function() {
-                    if (xhr.status === 422) {
-                        alert(1);
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '';
-                        $.each(errors, function(key, value) {
-                            errorMessage += value[0] + '<br>';
-                        });
-                        $('#error').html(errorMessage).slideDown();
-                        setTimeout(function() {
-                            $('#error').slideUp();
-                        }, 4000);
-                    } else {
-                        alert("Error saving data.");
-                    }
-                }
-            });
-        });
-        
-        function showAdd() {
-            document.getElementById("blockform").reset();
-            document.getElementById("mode").value = "add";
-            document.getElementById("recordid").value = "";
-        }
 
-        function showEdit(id) {
-            document.getElementById("blockform").reset();
-            document.getElementById("mode").value = "edit";
-            document.getElementById("recordid").value = id;
-            $.ajax({
-                url: "{{ url('blocks/editData') }}/" + id,
-                headers: {
-                    '_token': '{{ csrf_token() }}'
-                },
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
-                    myModal.show();
-                    //alert(data.floor["floor_no"]);
-                    document.getElementById("blockname").value = data.block['block_name'];
-                    //document.getElementById("blockcode").value = data.block['block_code'];
-                    document.getElementById("floorNo").value = data.block['floor_no'];
-                    document.getElementById("status").value = data.block['status'];
-
-                },
-                error: function() {
-                    return false;
-                }
-            });
-
-        }
-</script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script><script>
     $(document).ready(function() {
         // Add custom validation method for letters only
@@ -246,26 +129,20 @@
         }, "Only letters and spaces are allowed.");
 
         // Form validation rules
-        $("#blockform").validate({
+        $("#cabintypeform").validate({
             rules: {
-                blockname: {
+                cabintype: {
                     required: true,
                     lettersonly: true
-                },
-                floorNo:{
-                    required: true,
                 },
                 status: {
                     required: true
                 }
             },
             messages: {
-                blockname: {
-                    required: "Block Name is required.",
+                cabintype: {
+                    required: "CabinType is required.",
                     lettersonly: "Only letters and spaces are allowed."
-                },
-                floorNo:{
-                    required: "Floor No is required.",
                 },
                 status: {
                     required: "Status is required."
@@ -321,17 +198,17 @@
     });
 
     function showAdd() {
-        document.getElementById("blockform").reset();
+        document.getElementById("cabintypeform").reset();
         document.getElementById("mode").value = "add";
         document.getElementById("recordid").value = "";
     }
 
     function showEdit(id) {
-        document.getElementById("blockform").reset();
+        document.getElementById("cabintypeform").reset();
         document.getElementById("mode").value = "edit";
         document.getElementById("recordid").value = id;
         $.ajax({
-            url: "{{ url('blocks/editData') }}/" + id,
+            url: "{{ url('cabintypes/editData') }}/" + id,
             headers: {
                 '_token': '{{ csrf_token() }}'
             },
@@ -340,11 +217,9 @@
             success: function(data) {
                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
                 myModal.show();
-                //alert(data.floor["floor_no"]);
-                document.getElementById("blockname").value = data.block['block_name'];
-                //document.getElementById("blockcode").value = data.block['block_code'];
-                document.getElementById("floorNo").value = data.block['floor_id'];
-                document.getElementById("status").value = data.block['status'];
+                document.getElementById("cabintype").value = data.amenity['amenities'];
+                document.getElementById("status").value = data.amenity['status'];
+                
             },
             error: function() {
                 return false;

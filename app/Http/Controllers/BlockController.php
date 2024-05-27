@@ -12,23 +12,32 @@ class BlockController extends Controller
 {
     //
     public function index(){
-        $floors = Floor::where('status','=','Active')->select('floor_no')->get();
+        $floors = Floor::where('status','=','Active')->pluck('floor_no','id');
         $blocks = Block::where('status','!=','Deleted')->get();
-        return view("backend.blockMaster",['floors'=>$floors,'blocks'=>$blocks]);
+        $floorno = [];
+        foreach($blocks as $block){
+            $floor = Floor::where('id',$block->floor_id)->value('floor_no');
+            $floorno[]=$floor;
+        }
+        return view("backend.blockMaster",['floors'=>$floors,'blocks'=>$blocks,'floorno'=>$floorno]);
     }
     public function saveBlock(Request $request){
         //dd($request->all());
         try{
             $request->validate([
                 'blockname'=> 'required|string|max:5',
-                'floorNo' => 'required|integer|max:3',
+                'floorNo' => 'required|integer',
                 'status' => 'required',
             ]);
+            //dd(1);
             if($request->mode == "add"){
+                //dd(1);
                 $blockcode = $request->blockname."-".$request->floorNo;
-                $blockexist = Block::where('block_code',$blockcode)->where('floor_no',$request->floorNo)->first();
+                //dd($blockcode);
+                $blockexist = Block::where('block_code',$blockcode)->first();
                 //dd($blockexist);
                 if($blockexist){
+                    dd(1);
                     if($blockexist->status == "Deleted"){
                         $updateblock = Block::where('id',$blockexist->id)
                                             ->update([
@@ -43,15 +52,17 @@ class BlockController extends Controller
                         return response()->json(["message"=>"Error!! Sorry Block already exists"]);
                     }
                 }
+                //dd($request->floorNo);
                 $saveBlock = Block::create([
                     "block_name"=>$request->blockname,
                     "block_code"=>$blockcode,
-                    "floor_no"=>$request->floorNo,
+                    "floor_id"=>$request->floorNo,
                     "status"=>$request->status,
                     "created_by"=>1,
                     "updated_by"=>1
                 ]);
                 if($saveBlock){
+                    //dd(1);
                     return response()->json(['status'=>true,'message'=>'Block Saved Successfully']);
                 }else{
                     return response()->json(['status'=>true,'message'=>'Block could not be saved']);
@@ -59,7 +70,7 @@ class BlockController extends Controller
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $blockexists = Block::where('status','!=','Deleted')->where('block_code',$request->blockcode)->where('floor_no',$request->floorNo)->get();
+                $blockexists = Block::where('status','!=','Deleted')->where('block_code',$request->blockcode)->get();
                 if($blockexists){
                     foreach($blockexists as $ex){
                         if($request->recordid != $ex->id){
@@ -71,7 +82,7 @@ class BlockController extends Controller
                 $updateblock = Block::where('id',$request->recordid)
                                     ->update(["block_name"=>$request->blockname,
                                             //   "block_code"=>$request->blockcode,
-                                              "floor_no"=>$request->floorNo,
+                                              "floor_id"=>$request->floorNo,
                                               "status"=>$request->status,
                                               "updated_by"=>1,
                                               "updated_at"=>date('Y-m-d H:i:s')]);

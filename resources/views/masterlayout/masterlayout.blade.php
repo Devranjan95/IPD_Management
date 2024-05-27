@@ -279,7 +279,7 @@
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="{{url('floors')}}">Floors</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('blocks')}}">Blocks</a></li>
-                  <!-- <li class="nav-item"> <a class="nav-link" href="{{url('idproof')}}">ID Proof</a></li> -->
+                  <li class="nav-item"> <a class="nav-link" href="{{url('amenities')}}">Amenity</a></li>
                   <!-- <li class="nav-item"> <a class="nav-link" href="{{url('department')}}">Department</a></li> -->
                   <!-- <li class="nav-item"> <a class="nav-link" href="{{url('chambers')}}">Chamber</a></li> -->
                 </ul>
