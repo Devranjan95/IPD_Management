@@ -214,6 +214,7 @@
             },
             type: "GET",
             dataType: "json",
+            
             success: function(data) {
                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
                 myModal.show();
