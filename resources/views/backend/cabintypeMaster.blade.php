@@ -75,11 +75,11 @@
                                     </thead>
                                     <tbody>
                                         @php 
-                                            $sl = 0;
+                                            $sl = 1;
                                         @endphp
                                         @foreach($cabintypes as $cabintype)
                                             <tr>
-                                                <td>{{$sl++}}</td>
+                                                <td style="text-align:center">{{$sl++}}</td>
                                                 <td>{{$cabintype->cabin_type}}</td>
                                                 <td>
                                                         @if($cabintype->status=="Active")
@@ -218,8 +218,8 @@
             success: function(data) {
                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
                 myModal.show();
-                document.getElementById("cabintype").value = data.amenity['amenities'];
-                document.getElementById("status").value = data.amenity['status'];
+                document.getElementById("cabintype").value = data.cabintype['cabin_type'];
+                document.getElementById("status").value = data.cabintype['status'];
                 
             },
             error: function() {

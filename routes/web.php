@@ -42,4 +42,4 @@ Route::get('amenities/deleteData/{id}',[AmenityController::class,'deleteData']);
 Route::get('cabintypes/',[CabinTypeController::class,'index']);
 Route::post('cabintypes/saveData',[CabinTypeController::class,'saveCabinType']);
 Route::get('cabintypes/editData/{id}',[CabinTypeController::class,'getData']);
-Route::get('amenities/deleteData/{id}',[CabinTypeController::class,'deleteData']);
+Route::get('cabintypes/deleteData/{id}',[CabinTypeController::class,'deleteData']);
