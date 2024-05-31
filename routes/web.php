@@ -5,6 +5,7 @@ use App\Http\Controllers\FloorController;
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\CabinTypeController;
+use App\Http\Controllers\CabinController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,3 +44,7 @@ Route::get('cabintypes/',[CabinTypeController::class,'index']);
 Route::post('cabintypes/saveData',[CabinTypeController::class,'saveCabinType']);
 Route::get('cabintypes/editData/{id}',[CabinTypeController::class,'getData']);
 Route::get('cabintypes/deleteData/{id}',[CabinTypeController::class,'deleteData']);
+
+Route::get('cabins/',[CabinController::class,'index']);
+Route::post('cabin/loadblocks', [CabinController::class, 'showBlocks']);
+Route::post('cabin/saveData', [CabinController::class, 'saveCabin']);

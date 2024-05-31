@@ -14,9 +14,17 @@
     <link rel="stylesheet" href="{{asset('assets/vendors/simple-line-icons/css/simple-line-icons.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/css/vendor.bundle.base.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+    <!-- <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-multiselect.css') }}"/> -->
     <!-- ***************DATATABLES FILES****************************** -->
     <link rel="stylesheet" href="{{asset('assets/css/dataTables.bootstrap5.css')}}">
     <!-- *************************************************************** -->
+    <link rel="stylesheet" href="{{asset('assets/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <!-- *******************************MULTISELECT CDN********************************** -->
+
+
+<!-- ***************************************************************************** -->
+    <!-- ******************************************************************** -->
 <!-- *************DATATABLES CDNS************************ -->
     <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.bootstrap5.css"> -->
 <!-- ************************************************************ -->
@@ -280,8 +288,8 @@
                   <li class="nav-item"> <a class="nav-link" href="{{url('floors')}}">Floors</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('blocks')}}">Blocks</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('amenities')}}">Amenity</a></li>
-                  <!-- <li class="nav-item"> <a class="nav-link" href="{{url('department')}}">Department</a></li> -->
-                  <!-- <li class="nav-item"> <a class="nav-link" href="{{url('chambers')}}">Chamber</a></li> -->
+                  <li class="nav-item"> <a class="nav-link" href="{{url('cabintypes')}}">Cabin-Type</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('cabins')}}">Cabins</a></li>
                 </ul>
               </div>
             </li>
@@ -330,6 +338,8 @@
     <script src="{{asset('assets/js/dataTables.js')}}"></script>
     <script src="{{asset('assets/js/dataTables.bootstrap5.js')}}"></script>
 <!--***************************************************************************  -->
+    <script src="{{asset('assets/vendors/select2/select2.min.js')}}"></script>
+    <script src="{{asset('assets/js/select2.js')}}"></script>
     <script src="{{asset('assets/vendors/js/vendor.bundle.base.js')}}"></script>
     <script src="{{asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
     <!-- endinject -->

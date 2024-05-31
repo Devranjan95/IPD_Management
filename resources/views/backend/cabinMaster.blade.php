@@ -8,12 +8,12 @@
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-xl">
                         <div class="modal-content">
-                            <form enctype="multipart/form-data" name="cabintypeform" id="cabintypeform">
-                                <input type="hidden" id="saveurl" value="{{ url('cabintypes/saveData') }}" />
+                            <form enctype="multipart/form-data" name="cabinform" id="cabinform">
+                                <input type="hidden" id="saveurl" value="{{ url('cabin/saveData') }}" />
                                 <input type="hidden" id="recordid" name="recordid" value="" />
                                 <input type="hidden" id="mode" name="mode">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Cabin Types</h1>
+                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Cabins</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         style="color:rgb(250,235,215)" aria-label="Close"></button>
                                 </div>
@@ -22,8 +22,64 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="block" class="form-label">Cabin Type</label>
-                                            <input type="text" class="form-control" placeholder="Enter Cabin Type." id="cabintype" name="cabintype">
+                                            <label for="block" class="form-label">Cabin Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter Cabin Name" id="cabinname" name="cabinname">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="floor" class="form-label">Cabin Type</label>
+                                            <select class="form-control" id="cabintype" name="cabintype">
+                                                    <option value="" selected disabled>Please select cabin type</option>
+                                                @foreach($cabintypes as $key=>$value)
+                                                    <option value="{{$key}}">{{$value}}</option>
+                                                @endforeach    
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="floor" class="form-label">Floor</label>
+                                            <select class="form-control" id="floor" name="floor" onchange="showBlock(this)">
+                                                <option value="" selected disabled>Please select floor</option>
+                                                @foreach($floors as $key=>$value)
+                                                    <option value="{{$key}}">{{$value}}</option>
+                                                @endforeach    
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="floor" class="form-label">Block</label>
+                                            <select class="form-control" id="block" name="block">
+                                                
+                                                
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="block" class="form-label">Occupancy</label>
+                                            <input type="text" class="form-control" placeholder="Enter cabin capacity." id="occupancy" name="occupancy">
+                                        </div>
+                                        <!-- <div class="col-md-6">
+                                            <label for="amenities" class="form-label">Amenities</label>
+                                            <select class="form-control select2 form-select" id="amenities" name="amenities[]" multiple="multiple">
+                                                <option value="">Select an option</option>
+                                                @foreach ($amenities as $key => $item)
+                                                    <option value="{{ $key }}">{{ $item }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div> -->
+                                        <div class="col-md-6">
+                                            <label for="block" class="form-label">Amenities</label>
+                                            <input type="text" class="form-control" placeholder="Enter Amenities" id="amenities" name="amenities">
+                                        </div>
+<!-- <div class="form-group">
+                      <label>Multiple select using select 2</label>
+                      <select class="js-example-basic-multiple w-100" multiple="multiple">
+                        <option value="AL">Alabama</option>
+                        <option value="WY">Wyoming</option>
+                        <option value="AM">America</option>
+                        <option value="CA">Canada</option>
+                        <option value="RU">Russia</option>
+                      </select>
+                    </div> -->
+                                        <div class="col-md-6">
+                                            <label for="block" class="form-label">Price</label>
+                                            <input type="text" class="form-control" placeholder="Enter price" id="cabinprice" name="cabinprice">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="floor" class="form-label">Status</label>
@@ -74,35 +130,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php 
-                                            $sl = 1;
-                                        @endphp
-                                        @foreach($cabintypes as $cabintype)
-                                            <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$cabintype->cabin_type}}</td>
-                                                <td>
-                                                        @if($cabintype->status=="Active")
-                                                        <label class="badge badge-success">Active</label>
-                                                        @else 
-                                                        <label class="badge badge-danger">In Active</label>
-                                                        @endif
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group">
-                                    
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $cabintype->id }})'
-                                                            title='Edit'><img src='assets/previous/user.svg'
-                                                                style='height:20px; width:20px' /></a>&nbsp&nbsp
-                                                        <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('cabintypes/deleteData') }}/{{ $cabintype->id }}')"
-                                                            title='Delete'><img src='assets/previous/delete.svg'
-                                                                style='height:23px; width:23px' /></a>
-                                    
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                        
                                     </tbody>
                                 </table>
                                 </div>
@@ -120,9 +148,38 @@
 
 @endsection
 @section('scripts')
-
+<!-- jQuery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script>
+    function showBlock(floorElement){
+        let floor = $(floorElement).val();
+        //alert(floor);
+        if(floor){
+            $.ajax({
+                type:"POST",
+                url:"{{ url('cabin/loadblocks') }}",
+                data:{_token:"{{csrf_token()}}",floor:floor},
+                success:function(response){
+                    if (response.blocks) {
+                        let blockSelect = $('#block');
+                        blockSelect.empty();
+                        blockSelect.append('<option value="" selected disabled>Please select block</option>');
+                        $.each(response.blocks, function(key, value) {
+                            blockSelect.append('<option value="' + key + '">' + value + '</option>');
+                        });
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Status:', status);
+                    console.log('Error:', error);
+                    console.log('Response:', xhr.responseText);
+                    alert('Error');
+                }
+            })
+        }
+    }
     $(document).ready(function() {
         // Add custom validation method for letters only
         $.validator.addMethod("lettersonly", function(value, element) {
