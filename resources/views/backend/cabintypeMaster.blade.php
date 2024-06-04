@@ -22,15 +22,22 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="block" class="form-label">Cabin Type</label>
-                                            <input type="text" class="form-control" placeholder="Enter Cabin Type." id="cabintype" name="cabintype">
+                                            <label for="block" class="form-label">Cabin Type<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Enter Cabin Type" id="cabintype" name="cabintype">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Status</label>
+                                            <label for="floor" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
                                             <select class="form-control" id="status" name="status">
+                                                <option value="" selected disabled>Please select status</option>
                                                 <option value="Active">Active</option>
                                                 <option value="Inactive">Inactive</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col-md-12">
+                                            <label for="floor" class="form-label">Narration</label>
+                                            <textarea class="form-control" placeholder="Narration" id="narration" name="narration" rows="10"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -125,16 +132,19 @@
 <script>
     $(document).ready(function() {
         // Add custom validation method for letters only
-        $.validator.addMethod("lettersonly", function(value, element) {
-            return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
-        }, "Only letters and spaces are allowed.");
+        // $.validator.addMethod("lettersonly", function(value, element) {
+        //     return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+        // }, "Only letters and spaces are allowed.");
+        $.validator.addMethod("alphanumeric", function(value, element) {
+            return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
+        }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
         // Form validation rules
         $("#cabintypeform").validate({
             rules: {
                 cabintype: {
                     required: true,
-                    lettersonly: true
+                    alphanumeric: true
                 },
                 status: {
                     required: true
@@ -143,7 +153,7 @@
             messages: {
                 cabintype: {
                     required: "CabinType is required.",
-                    lettersonly: "Only letters and spaces are allowed."
+                    alphanumeric: "Must be alphabets or alphanumeric"
                 },
                 status: {
                     required: "Status is required."
@@ -176,25 +186,63 @@
                             $("#success").text(response.message).show();
                             $("#error").hide();
                             setTimeout(function() {
+                                $('#success').slideUp();
+                            }, 2000);
+                            if ($("#mode").val() === 'add') {
+                                form.reset(); // Reset the form
+                            } else {
+                                window.location.reload();
+                            }
+                        } else {
+                            $("#error").text(response.message).show();
+                            $("#success").hide();
+                            setTimeout(function() {
                                 $('#error').slideUp();
                             }, 2000);
-                            form.reset(); // Reset the form
-                           
-                        } else {
-                            $("#success").text(response.message).show();
-                            $("#error").hide();
-                            setTimeout(function() {
-                                $('#success').slideUp();
-                            }, 4000);
-                           
-                            //$('#recordid').val(response.new_reg_no);
                         }
                     },
                     error: function(xhr) {
-                        $("#error").text("An error occurred: " + xhr.responseText).show();
+                        var response = JSON.parse(xhr.responseText);
+                        $("#error").text(response.message).show();
                         $("#success").hide();
                     }
                 });
+
+
+                // $.ajax({
+                //     url: $("#saveurl").val(),
+                //     type: "POST",
+                //     data: formData,
+                //     processData: false,
+                //     contentType: false,
+                //     success: function(response) {
+                //         if (response.status) {
+                //             $("#success").text(response.message).show();
+                //             $("#error").hide();
+                //             setTimeout(function() {
+                //                 $('#error').slideUp();
+                //             }, 2000);
+                //             if ($("#mode").val() === 'add') {
+                //                 form.reset(); // Reset the form
+                //             }else{
+                //                 window.location.reload();
+                //             }
+                           
+                //         } else {
+                //             $("#success").text(response.message).show();
+                //             $("#error").hide();
+                //             setTimeout(function() {
+                //                 $('#success').slideUp();
+                //             }, 2000);
+                           
+                //             //$('#recordid').val(response.new_reg_no);
+                //         }
+                //     },
+                //     error: function(xhr) {
+                //         $("#error").text("An error occurred: " + xhr.responseText).show();
+                //         $("#success").hide();
+                //     }
+                // });
             }
         });
 
@@ -223,6 +271,7 @@
                 myModal.show();
                 document.getElementById("cabintype").value = data.cabintype['cabin_type'];
                 document.getElementById("status").value = data.cabintype['status'];
+                document.getElementById("narration").value = data.cabintype['narration'];
                 
             },
             error: function() {

@@ -22,15 +22,22 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Amenity Name.</label>
+                                            <label for="floor" class="form-label">Amenity Name<span style="color:red" title="Mandatory">*</span></label>
                                             <input type="text" class="form-control" placeholder="Enter Amenity." id="amenity" name="amenity">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Status</label>
+                                            <label for="floor" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
                                             <select class="form-control" id="status" name="status">
+                                                <option value="" selected disabled>Please select status</option>
                                                 <option value="Active">Active</option>
                                                 <option value="Inactive">Inactive</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col-md-12">
+                                            <label for="floor" class="form-label">Narration</label>
+                                            <textarea class="form-control" placeholder="Narration" id="narration" name="narration" rows="10"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -124,16 +131,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script><script>
     $(document).ready(function() {
         // Add custom validation method for letters only
-        $.validator.addMethod("lettersonly", function(value, element) {
-            return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
-        }, "Only letters and spaces are allowed.");
+        // $.validator.addMethod("lettersonly", function(value, element) {
+        //     return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+        // }, "Only letters and spaces are allowed.");
+        // $.validator.addMethod("alphanumeric", function(value, element) {
+        // return this.optional(element) || /^[a-zA-Z0-9\s]+$/.test(value);
+        // }, "Only letters, numbers, and spaces are allowed.");
+        $.validator.addMethod("alphanumeric", function(value, element) {
+            return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
+        }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
         // Form validation rules
         $("#amenityform").validate({
             rules: {
                 amenity: {
                     required: true,
-                    lettersonly: true
+                    alphanumeric: true
                 },
                 status: {
                     required: true
@@ -142,7 +155,7 @@
             messages: {
                 amenity: {
                     required: "Amenity Name is required.",
-                    lettersonly: "Only letters and spaces are allowed."
+                    alphanumeric: "Must be alphabets or alphanumeric"
                 },
                 status: {
                     required: "Status is required."
@@ -177,8 +190,12 @@
                             setTimeout(function() {
                                 $('#success').slideUp();
                             }, 4000);
-                            form.reset(); // Reset the form
-                            $('#recordid').val(response.new_reg_no);
+                            if ($("#mode").val() === 'add') {
+                                form.reset(); // Reset the form
+                            }else{
+                                window.location.reload();
+                            }
+                            //$('#recordid').val(response.new_reg_no);
                         } else {
                             $("#error").text(response.message).show();
                             $("#success").hide();
@@ -219,6 +236,7 @@
                 myModal.show();
                 document.getElementById("amenity").value = data.amenity['amenities'];
                 document.getElementById("status").value = data.amenity['status'];
+                document.getElementById("narration").value = data.amenity['narration'];
             },
             error: function() {
                 return false;

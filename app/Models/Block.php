@@ -14,6 +14,7 @@ class Block extends Model
         'block_code',
         'floor_id',
         'status',
+        'narration',
         'created_by',
         'updated_by'
     ];

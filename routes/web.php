@@ -6,6 +6,8 @@ use App\Http\Controllers\BlockController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\CabinTypeController;
 use App\Http\Controllers\CabinController;
+use App\Http\Controllers\WardTypeController;
+use App\Http\Controllers\IcuTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +46,16 @@ Route::get('cabintypes/',[CabinTypeController::class,'index']);
 Route::post('cabintypes/saveData',[CabinTypeController::class,'saveCabinType']);
 Route::get('cabintypes/editData/{id}',[CabinTypeController::class,'getData']);
 Route::get('cabintypes/deleteData/{id}',[CabinTypeController::class,'deleteData']);
+
+Route::get('wardtypes/',[WardTypeController::class,'index']);
+Route::post('wardtypes/saveData',[WardTypeController::class,'saveWardType']);
+Route::get('wardtypes/editData/{id}',[WardTypeController::class,'getData']);
+Route::get('wardtypes/deleteData/{id}',[WardTypeController::class,'deleteData']);
+
+Route::get('icutypes/',[IcuTypeController::class,'index']);
+Route::post('icutypes/saveData',[IcuTypeController::class,'saveIcuType']);
+Route::get('icutypes/editData/{id}',[IcuTypeController::class,'getData']);
+Route::get('icutypes/deleteData/{id}',[IcuTypeController::class,'deleteData']);
 
 Route::get('cabins/',[CabinController::class,'index']);
 Route::post('cabin/loadblocks', [CabinController::class, 'showBlocks']);

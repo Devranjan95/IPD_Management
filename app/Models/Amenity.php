@@ -12,6 +12,7 @@ class Amenity extends Model
     protected $fillable = [
         'amenities',
         'status',
+        'narration',
         'created_by',
         'updated_by'
     ];

@@ -19,6 +19,7 @@ class Cabin extends Model
         'amenities',
         'price',
         'status',
+        'narration',
         'created_by',
         'updated_by'
     ];

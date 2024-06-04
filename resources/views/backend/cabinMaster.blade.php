@@ -235,7 +235,11 @@
                             setTimeout(function() {
                                 $('#error').slideUp();
                             }, 2000);
-                            form.reset(); // Reset the form
+                            if ($("#mode").val() === 'add') {
+                                form.reset(); // Reset the form
+                            }else{
+                                window.location.reload();
+                            }
                            
                         } else {
                             $("#success").text(response.message).show();

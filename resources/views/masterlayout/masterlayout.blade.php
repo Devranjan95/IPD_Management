@@ -287,8 +287,10 @@
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="{{url('floors')}}">Floors</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('blocks')}}">Blocks</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="{{url('amenities')}}">Amenity</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="{{url('cabintypes')}}">Cabin-Type</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('amenities')}}">Amenities</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('cabintypes')}}">Cabin-Types</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('wardtypes')}}">Ward-Types</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('icutypes')}}">ICU-Types</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('cabins')}}">Cabins</a></li>
                 </ul>
               </div>

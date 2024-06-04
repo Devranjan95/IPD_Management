@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('floor_no',15)->unique();
             $table->enum('status',['Active','Inactive','Deleted']);
+            $table->text('narration')->nullable(); // Adding the narration field
             $table->string('created_by');
             $table->string('updated_by');
             $table->timestamps();

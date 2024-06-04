@@ -8,12 +8,12 @@
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-xl">
                         <div class="modal-content">
-                            <form enctype="multipart/form-data" name="floorform" id="floorform">
-                                <input type="hidden" id="saveurl" value="{{ url('floors/saveData') }}" />
+                            <form enctype="multipart/form-data" name="icutypeform" id="icutypeform">
+                                <input type="hidden" id="saveurl" value="{{ url('icutypes/saveData') }}" />
                                 <input type="hidden" id="recordid" name="recordid" value="" />
                                 <input type="hidden" id="mode" name="mode">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Floors</h1>
+                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage ICU Types</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         style="color:rgb(250,235,215)" aria-label="Close"></button>
                                 </div>
@@ -22,8 +22,8 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Insert Floor<span style="color:red" title="Mandatory">*</span></label>
-                                            <input type="text" class="form-control" placeholder="Mention Floor" id="floorNo" name="floorNo">
+                                            <label for="block" class="form-label">ICU Type<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Enter ICU Type" id="icutype" name="icutype">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="floor" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
@@ -59,7 +59,7 @@
                             <div class="col-lg-12">
                                 <div class='row pb-2'>
                                     <div class='col-lg-6'>
-                                        <h3 class="headingcolor">Floors</h3>
+                                        <h3 class="headingcolor">ICU Types</h3>
                                     </div>
                                     <div class='col-lg-6 pb-2'>
                                         <button type="button" class="btn btn-rounded btn-fw btn-success" style="float:right"
@@ -75,41 +75,37 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
-                                            <th style="text-align:center">Floor No</th>
+                                            <th>ICU Type</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $sl = 1; 
-                                        @endphp
-                                        @foreach($floordata as $floor)
-                                            <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td style="text-align:center">{{$floor->floor_no}}</td>
-                                                <td>
-                                                        @if($floor->status=="Active")
-                                                        <label class="badge badge-success">Active</label>
-                                                        @else 
-                                                        <label class="badge badge-danger">In Active</label>
-                                                        @endif
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group">
-                                   
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $floor->id }})'
-                                                            title='Edit'><img src='assets/previous/user.svg'
-                                                                style='height:20px; width:20px' /></a>&nbsp&nbsp
-                                                        <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('floors/deleteData') }}/{{ $floor->id }}')"
-                                                            title='Delete'><img src='assets/previous/delete.svg'
-                                                                style='height:23px; width:23px' /></a>
-                                  
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                      @php 
+                                        $sl=1;
+                                      @endphp
+                                      @foreach($icutypes as $icu)
+                                        <tr>
+                                            <td style="text-align:center">{{$sl++}}</td>
+                                            <td>{{$icu->icu_type}}</td>
+                                            <td>
+                                                @if($icu->status=="Active")
+                                                <label class="badge badge-success">Active</label>
+                                                @else 
+                                                <label class="badge badge-danger">In Active</label>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href='#' class='editbtn'  onclick='showEdit({{ $icu->id }})'
+                                                    title='Edit'><img src='assets/previous/user.svg'
+                                                        style='height:20px; width:20px' /></a>&nbsp&nbsp
+                                                <a href='javascript:void(0)'
+                                                    onclick="deleteData('{{ url('icutypes/deleteData') }}/{{ $icu->id }}')"
+                                                    title='Delete'><img src='assets/previous/delete.svg'
+                                                        style='height:23px; width:23px' /></a>
+                                            </td>
+                                        </tr>
+                                      @endforeach
                                     </tbody>
                                 </table>
                                 </div>
@@ -127,120 +123,22 @@
 
 @endsection
 @section('scripts')
-<!-- <script>
-        $("#floorform").submit(function(event) {
-            event.preventDefault();
-            var formData = new FormData(document.getElementById('floorform'));
-            formData.append("_token", '{{ csrf_token() }}');
-            $.ajax({
-                type: "POST",
-                url: $("#saveurl").val(),
-                data: formData,
-                contentType: false, //MUST
-                processData: false, //MUST
-                dataType: "json",
-                success: function(response) {
-                   
-                if($('#mode').val()=='add'){
-                    if(response.message == "Error!! Sorry Floor already exists"){
-                        $('#error').html(response.message).slideDown();
-                        setTimeout(function() {
-                        $('#error').slideUp();
-                            }, 4000);
-                    }else{
-                        $('#success').html(response.message).slideDown();
-                        document.getElementById('floorform').reset();
-                        setTimeout(function() {
-                            $('#success').slideUp();
-                        }, 2000);
-                    }
-                }
-                
-                
-                if($('#mode').val()=='edit'){
-                    if(response.message == "Error!! Sorry Floor already exists"){
-                        $('#error').html(response.message).slideDown();
-                        setTimeout(function() {
-                        $('#error').slideUp();
-                        }, 4000);
-                    }else{
-                            //location.reload();
-                        $('#success').html(response.message).slideDown();
-                        //document.getElementById('chamberform').reset();
-                        setTimeout(function() {
-                            $('#success').slideUp();
-                        }, 2000);
-                    }
-                }
-                },
-                error: function() {
-                    if (xhr.status === 422) {
-                        alert(1);
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '';
-                        $.each(errors, function(key, value) {
-                            errorMessage += value[0] + '<br>';
-                        });
-                        $('#error').html(errorMessage).slideDown();
-                        setTimeout(function() {
-                            $('#error').slideUp();
-                        }, 4000);
-                    } else {
-                        alert("Error saving data.");
-                    }
-                }
-            });
-        });
-        
-        function showAdd() {
-            document.getElementById("floorform").reset();
-            document.getElementById("mode").value = "add";
-            document.getElementById("recordid").value = "";
-        }
 
-        function showEdit(id) {
-            document.getElementById("floorform").reset();
-            document.getElementById("mode").value = "edit";
-            document.getElementById("recordid").value = id;
-            $.ajax({
-                url: "{{ url('floors/editData') }}/" + id,
-                headers: {
-                    '_token': '{{ csrf_token() }}'
-                },
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
-                    myModal.show();
-                    //alert(data.floor["floor_no"]);
-                    document.getElementById("floorNo").value = data.floor['floor_no'];
-                    document.getElementById("status").value = data.floor['status'];
-
-                },
-                error: function() {
-                    return false;
-                }
-            });
-
-        }
-</script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script><script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script>
     $(document).ready(function() {
         // Add custom validation method for letters only
         // $.validator.addMethod("lettersonly", function(value, element) {
         //     return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
         // }, "Only letters and spaces are allowed.");
-        // $.validator.addMethod("numsonly", function(value, element) {
-        //     return this.optional(element) || /^[0-9]+$/.test(value);
-        // }, "Only numbers are allowed.");
         $.validator.addMethod("alphanumeric", function(value, element) {
-        return this.optional(element) || /^[a-zA-Z0-9\s]+$/.test(value);
-        }, "Only letters, numbers, and spaces are allowed.");
+            return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
+        }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
         // Form validation rules
-        $("#floorform").validate({
+        $("#icutypeform").validate({
             rules: {
-                floorNo: {
+                icutype: {
                     required: true,
                     alphanumeric: true
                 },
@@ -249,9 +147,9 @@
                 }
             },
             messages: {
-                floorNo: {
-                    required: "Floor No is required.",
-                    lettersonly: "Only letters, numbers, and spaces are allowed."
+                icutype: {
+                    required: "ICU type is required.",
+                    alphanumeric: "Must be alphabets or alphanumeric"
                 },
                 status: {
                     required: "Status is required."
@@ -273,6 +171,40 @@
                 var formData = new FormData(form);
                 formData.append('_token', '{{ csrf_token() }}');
 
+                // $.ajax({
+                //     url: $("#saveurl").val(),
+                //     type: "POST",
+                //     data: formData,
+                //     processData: false,
+                //     contentType: false,
+                //     success: function(response) {
+                //         if (response.status) {
+                //             $("#success").text(response.message).show();
+                //             $("#error").hide();
+                //             setTimeout(function() {
+                //                 $('#error').slideUp();
+                //             }, 2000);
+                //             if ($("#mode").val() === 'add') {
+                //                 form.reset(); // Reset the form
+                //             }else{
+                //                 window.location.reload();
+                //             }
+                           
+                //         } else {
+                //             $("#success").text(response.message).show();
+                //             $("#error").hide();
+                //             setTimeout(function() {
+                //                 $('#success').slideUp();
+                //             }, 2000);
+                           
+                //             //$('#recordid').val(response.new_reg_no);
+                //         }
+                //     },
+                //     error: function(xhr) {
+                //         $("#error").text("An error occurred: " + xhr.responseText).show();
+                //         $("#success").hide();
+                //     }
+                // });
                 $.ajax({
                     url: $("#saveurl").val(),
                     type: "POST",
@@ -285,14 +217,12 @@
                             $("#error").hide();
                             setTimeout(function() {
                                 $('#success').slideUp();
-                            }, 4000);
-
+                            }, 2000);
                             if ($("#mode").val() === 'add') {
                                 form.reset(); // Reset the form
-                            }else{
+                            } else {
                                 window.location.reload();
                             }
-                            //$('#recordid').val(response.new_reg_no);
                         } else {
                             $("#error").text(response.message).show();
                             $("#success").hide();
@@ -302,7 +232,8 @@
                         }
                     },
                     error: function(xhr) {
-                        $("#error").text("An error occurred: " + xhr.responseText).show();
+                        var response = JSON.parse(xhr.responseText);
+                        $("#error").text(response.message).show();
                         $("#success").hide();
                     }
                 });
@@ -312,28 +243,30 @@
     });
 
     function showAdd() {
-        document.getElementById("floorform").reset();
+        document.getElementById("icutypeform").reset();
         document.getElementById("mode").value = "add";
         document.getElementById("recordid").value = "";
     }
 
     function showEdit(id) {
-        document.getElementById("floorform").reset();
+        document.getElementById("icutypeform").reset();
         document.getElementById("mode").value = "edit";
         document.getElementById("recordid").value = id;
         $.ajax({
-            url: "{{ url('floors/editData') }}/" + id,
+            url: "{{ url('icutypes/editData') }}/" + id,
             headers: {
                 '_token': '{{ csrf_token() }}'
             },
             type: "GET",
             dataType: "json",
+            
             success: function(data) {
                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
                 myModal.show();
-                document.getElementById("floorNo").value = data.floor['floor_no'];
-                document.getElementById("status").value = data.floor['status'];
-                document.getElementById("narration").value = data.floor['narration'];
+                document.getElementById("icutype").value = data.icutype['icu_type'];
+                document.getElementById("status").value = data.icutype['status'];
+                document.getElementById("narration").value = data.icutype['narration'];
+                
             },
             error: function() {
                 return false;

@@ -22,11 +22,11 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="block" class="form-label">Block Name</label>
+                                            <label for="block" class="form-label">Block Name<span style="color:red" title="Mandatory">*</span></label>
                                             <input type="text" class="form-control" placeholder="Enter Block Name." id="blockname" name="blockname">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Floor No</label>
+                                            <label for="floor" class="form-label">Floor<span style="color:red" title="Mandatory">*</span></label>
                                             <select class="form-control" id="floorNo" name="floorNo">
                                                     <option value="" selected disabled>Please Select Floor</option>
                                                 @foreach($floors as $key=>$value)
@@ -41,12 +41,19 @@
                                     </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Status</label>
+                                            <label for="floor" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
                                             <select class="form-control" id="status" name="status">
+                                                <option value="" selected disabled>Please select status</option>
                                                 <option value="Active">Active</option>
                                                 <option value="Inactive">Inactive</option>
                                             </select>
                                         </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label for="floor" class="form-label">Narration</label>
+                                            <textarea class="form-control" placeholder="Narration" id="narration" name="narration" rows="10"></textarea>
+                                        </div>
+                                   
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -241,16 +248,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script><script>
     $(document).ready(function() {
         // Add custom validation method for letters only
-        $.validator.addMethod("lettersonly", function(value, element) {
-            return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
-        }, "Only letters and spaces are allowed.");
+        // $.validator.addMethod("lettersonly", function(value, element) {
+        //     return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+        // }, "Only letters and spaces are allowed.");
+        // $.validator.addMethod("alphanumeric", function(value, element) {
+        // return this.optional(element) || /^[a-zA-Z0-9\s]+$/.test(value);
+        // }, "Only letters, numbers, and spaces are allowed.");
+        $.validator.addMethod("alphanumeric", function(value, element) {
+            return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
+        }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
+
 
         // Form validation rules
         $("#blockform").validate({
             rules: {
                 blockname: {
                     required: true,
-                    lettersonly: true
+                    alphanumeric: true
                 },
                 floorNo:{
                     required: true,
@@ -262,7 +276,7 @@
             messages: {
                 blockname: {
                     required: "Block Name is required.",
-                    lettersonly: "Only letters and spaces are allowed."
+                    alphanumeric: "Must be alphabets or alphanumeric"
                 },
                 floorNo:{
                     required: "Floor No is required.",
@@ -295,14 +309,20 @@
                     contentType: false,
                     success: function(response) {
                         if (response.status) {
+                            //alert(response.message);
                             $("#success").text(response.message).show();
                             $("#error").hide();
                             setTimeout(function() {
                                 $('#success').slideUp();
                             }, 4000);
-                            form.reset(); // Reset the form
-                            $('#recordid').val(response.new_reg_no);
+                            if ($("#mode").val() === 'add') {
+                                form.reset(); // Reset the form
+                            }else{
+                                window.location.reload();
+                            }
+                            //$('#recordid').val(response.new_reg_no);
                         } else {
+                            //alert(response.message);
                             $("#error").text(response.message).show();
                             $("#success").hide();
                             setTimeout(function() {
@@ -345,6 +365,7 @@
                 //document.getElementById("blockcode").value = data.block['block_code'];
                 document.getElementById("floorNo").value = data.block['floor_id'];
                 document.getElementById("status").value = data.block['status'];
+                document.getElementById("narration").value = data.block['narration'];
             },
             error: function() {
                 return false;

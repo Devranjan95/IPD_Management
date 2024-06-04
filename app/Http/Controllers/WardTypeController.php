@@ -5,76 +5,73 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use App\Models\Amenity;
+use App\Models\WardType;
 
-class AmenityController extends Controller
+class WardTypeController extends Controller
 {
     //
     public function index(){
-        $amenities = Amenity::where('status',"!=","Deleted")->get();
-        return view('backend.amenityMaster',['amenities'=>$amenities]);
+        $wardtypes = WardType::where('status','!=','Deleted')->get();
+        return view("backend.wardtypeMaster",['wardtypes'=>$wardtypes]);
     }
-    public function saveAmenity(Request $request){
+    public function saveWardType(Request $request){
         //dd($request->all());
         try{
             $request->validate([
-                'amenity' => 'required|string|max:15',
+                'wardtype' => 'required|string|max:15',
                 'status' => 'required',
             ]);
-           // dd($request->all());
             if($request->mode == "add"){
-                //dd($request->all());
-                $amenityexist = Amenity::where('amenities',$request->amenity)->first();
-                if($amenityexist){
-                    //dd($amenityexist);
-                    if($amenityexist->status == "Deleted"){
-                        $updateamenity = Amenity::where('id',$amenityexist->id)
+                $wardtypeexist = WardType::where('ward_type',$request->wardtype)->first();
+                if($wardtypeexist){
+                    if($wardtypeexist->status == "Deleted"){
+                        $updatewardtype = WardType::where('id',$wardtypeexist->id)
                                             ->update([
                                                 "updated_by"=>1,
                                                 "updated_at"=>date("Y-m-d H:i:s"),
                                                 "status"=>$request->status
                                             ]);
-                        if($updateamenity){
-                            return response()->json(["message"=>"Amenity saved successfully"]);
+                        if($updatewardtype){
+                            return response()->json(["message"=>"Error!! Sorry wardtype already exists"]);
                         }
                     }else{
-                        return response()->json(["message"=>"Error!! Sorry amenity already exists"]);
+                        return response()->json(["message"=>"Error!! Sorry wardtype already exists"]);
                     }
                 }
-                $saveAmenity = Amenity::create([
-                    "amenities"=>ucwords($request->amenity),
+                $saveWardType = WardType::create([
+                    "ward_type"=>ucwords($request->wardtype),
                     "status"=>$request->status,
                     "narration"=>$request->narration,
                     "created_by"=>1,
                     "updated_by"=>1
                 ]);
-                if($saveAmenity){
-                    return response()->json(['status'=>true,'message'=>'Amenity saved successfully']);
+                if($saveWardType){
+                    return response()->json(['status'=>true,'message'=>'Wardtype saved successfully']);
                 }else{
-                    return response()->json(['status'=>true,'message'=>'Amenity could not be saved']);
+                    return response()->json(['status'=>true,'message'=>'Wardtype could not be saved']);
                 }
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $amenityexists = Amenity::where('status','!=','Deleted')->where('amenities', $request->amenity)->get();
-                if($amenityexists){
-                    foreach($amenityexists as $ex){
+                $wardtypeexists = WardType::where('status','!=','Deleted')->where('ward_type', $request->wardtype)->get();
+                if($wardtypeexists){
+                    foreach($wardtypeexists as $ex){
                         if($request->recordid != $ex->id){
-                            return response()->json(['status' => false, 'message' => "Error!! Sorry amenity already exists"]);
+                            return response()->json(['status' => false, 'message' => "Error!! Sorry wardtype already exists"]);
                         }
     
                     }
                 }
-                $updateamenity = Amenity::where('id',$request->recordid)
-                                    ->update(["amenities"=>ucwords($request->amenity),
+                $updatewardtype = WardType::where('id',$request->recordid)
+                                    ->update(["ward_type"=>ucwords($request->wardtype),
                                               "status"=>$request->status,
                                               "narration"=>$request->narration,
                                               "updated_by"=>1,
                                               "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updateamenity){
-                    return response()->json(['status'=>true,'message'=>'Amenity updated successfully']);
+                if($updatewardtype){
+                    return response()->json(['status'=>true,'message'=>'Wardtype updated successfully']);
                 }else{
-                    return response()->json(['status'=>false,'message'=>'Amenity could not be updated']);
+                    return response()->json(['status'=>false,'message'=>'Wardtype could not be updated']);
                 }
                 
             }
@@ -89,37 +86,37 @@ class AmenityController extends Controller
     public function getData(string $id)
     {   
         //dd($id);
-        $amenity = Amenity::where('id', $id)->first();
-        return response()->json(['amenity'=>$amenity]);
+        $wardtype = WardType::where('id', $id)->first();
+        return response()->json(['wardtype'=>$wardtype]);
     }
     public function deleteData(string $id)
     {
-        $amenity = Amenity::find($id);
+        $wardtype = WardType::find($id);
 
         // Check if the floor record exists
-        if (!$amenity) {
-            return response()->json(['message' => 'Amenity not found'], 404);
+        if (!$wardtype) {
+            return response()->json(['message' => 'Wardtype not found'], 404);
         }
 
         // Attempt to delete the floor record
-        if ($amenity->delete()) {
+        if ($wardtype->delete()) {
             return response()->json([
                 'status' => true,
-                'message' => 'Amenity Deleted',
+                'message' => 'Wardtype Deleted',
             ]);
         } else {
             return response()->json([
                 'status' => false,
-                'message' => 'Amenity could not be deleted.',
+                'message' => 'Wardtype could not be deleted.',
             ]);
         }
         //dd($id);
-        // $amenity = Amenity::find($id);
-        // if(!$amenity){
-        //     return response()->json(['message'=>'Amenity Not Found']);
+        // $floor = CabinType::find($id);
+        // if(!$floor){
+        //     return response()->json(['message'=>'Cabintype Not Found']);
         // }
 
-        // $update = Amenity::where('id',$id)
+        // $update = CabinType::where('id',$id)
         //     ->update([
         //         'updated_at'  => date('Y-m-d H:i:s'),
         //         'updated_by'  => "1",
@@ -129,12 +126,12 @@ class AmenityController extends Controller
         //     if($update){
         //         return response()->json([
         //             'status' => true,
-        //             'message' => 'Amenity deleted',
+        //             'message' => 'Cabintype deleted',
         //         ]);
         //     }else{
         //         return response()->json([
         //             'status' => false,
-        //             'message' => "Amenity could not be deleted.",
+        //             'message' => "CabinType could not be deleted.",
         //         ]);
         // }
     }

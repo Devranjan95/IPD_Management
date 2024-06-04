@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CabinType extends Model
+class IcuType extends Model
 {
     use HasFactory;
-    protected $table = "cabin_types";
+    protected $table = "icu_types";
     protected $fillable = [
-        'cabin_type',
+        'icu_type',
         'status',
         'narration',
         'created_by',

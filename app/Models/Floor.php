@@ -12,6 +12,7 @@ class Floor extends Model
     protected $fillable = [
         'floor_no',
         'status',
+        'narration',
         'created_by',
         'updated_by'
     ];

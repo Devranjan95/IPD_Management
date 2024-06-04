@@ -3,77 +3,75 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use App\Models\Floor;
+use App\Models\IcuType;
 
-
-class FloorController extends Controller
+class IcuTypeController extends Controller
 {
     //
+    //
     public function index(){
-        $floordata = Floor::where('status','!=','Deleted')->get();
-        return view("backend.floorMaster",['floordata'=>$floordata]);
+        $icutypes = IcuType::where('status','!=','Deleted')->get();
+        return view("backend.icutypeMaster",['icutypes'=>$icutypes]);
     }
-
-    public function saveFloor(Request $request){
+    public function saveIcuType(Request $request){
         //dd($request->all());
         try{
             $request->validate([
-                'floorNo' => 'required|string|max:15',
+                'icutype' => 'required|string|max:15',
                 'status' => 'required',
             ]);
             if($request->mode == "add"){
-                $floorexist = Floor::where('floor_no',$request->floorNo)->first();
-                if($floorexist){
-                    if($floorexist->status == "Deleted"){
-                        $updatefloor = Floor::where('id',$floorexist->id)
+                $icutypeexist = IcuType::where('icu_type',$request->icutype)->first();
+                if($icutypeexist){
+                    if($icutypeexist->status == "Deleted"){
+                        $updateicutype = IcuType::where('id',$icutypeexist->id)
                                             ->update([
                                                 "updated_by"=>1,
                                                 "updated_at"=>date("Y-m-d H:i:s"),
                                                 "status"=>$request->status
                                             ]);
-                        if($updatefloor){
-                            return response()->json(["message"=>"Error!! Sorry floor already exists"]);
+                        if($updateicutype){
+                            return response()->json(["message"=>"Error!! Sorry ICU type already exists"]);
                         }
                     }else{
-                        return response()->json(["message"=>"Error!! Sorry floor already exists"]);
+                        return response()->json(["message"=>"Error!! Sorry ICU type already exists"]);
                     }
                 }
-                $saveFloor = Floor::create([
-                    "floor_no"=>ucwords($request->floorNo),
+                $saveIcuType = IcuType::create([
+                    "icu_type"=>ucwords($request->icutype),
                     "status"=>$request->status,
                     "narration"=>$request->narration,
                     "created_by"=>1,
                     "updated_by"=>1
                 ]);
-                if($saveFloor){
-                    return response()->json(['status'=>true,'message'=>'Floor saved successfully']);
+                if($saveIcuType){
+                    return response()->json(['status'=>true,'message'=>'ICU type saved successfully']);
                 }else{
-                    return response()->json(['status'=>true,'message'=>'Floor could not be saved']);
+                    return response()->json(['status'=>true,'message'=>'ICU type could not be saved']);
                 }
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $floorexists = Floor::where('status','!=','Deleted')->where('floor_no', $request->floorNo)->get();
-                if($floorexists){
-                    foreach($floorexists as $ex){
+                $icutypeexists = IcuType::where('status','!=','Deleted')->where('icu_type', $request->icutype)->get();
+                if($icutypeexists){
+                    foreach($icutypeexists as $ex){
                         if($request->recordid != $ex->id){
-                            return response()->json(['status' => false, 'message' => "Error!! Sorry floor already exists"]);
+                            return response()->json(['status' => false, 'message' => "Error!! Sorry ICU type already exists"]);
                         }
     
                     }
                 }
-                $updatefloor = Floor::where('id',$request->recordid)
-                                    ->update(["floor_no"=>ucwords($request->floorNo),
+                $updateicutype = IcuType::where('id',$request->recordid)
+                                    ->update(["icu_type"=>ucwords($request->icutype),
                                               "status"=>$request->status,
                                               "narration"=>$request->narration,
                                               "updated_by"=>1,
                                               "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updatefloor){
-                    return response()->json(['status'=>true,'message'=>'Floor updated successfully']);
+                if($updateicutype){
+                    return response()->json(['status'=>true,'message'=>'ICU type updated successfully']);
                 }else{
-                    return response()->json(['status'=>false,'message'=>'Floor could not be updated']);
+                    return response()->json(['status'=>false,'message'=>'ICU type could not be updated']);
                 }
                 
             }
@@ -88,38 +86,37 @@ class FloorController extends Controller
     public function getData(string $id)
     {   
         //dd($id);
-        $floor = Floor::where('id', $id)->first();
-        return response()->json(['floor'=>$floor]);
+        $icutype = IcuType::where('id', $id)->first();
+        return response()->json(['icutype'=>$icutype]);
     }
     public function deleteData(string $id)
     {
-        // Find the floor record by ID
-        $floor = Floor::find($id);
+        $icutype = IcuType::find($id);
 
         // Check if the floor record exists
-        if (!$floor) {
-            return response()->json(['message' => 'Floor not found'], 404);
+        if (!$icutype) {
+            return response()->json(['message' => 'Wardtype not found'], 404);
         }
 
         // Attempt to delete the floor record
-        if ($floor->delete()) {
+        if ($icutype->delete()) {
             return response()->json([
                 'status' => true,
-                'message' => 'Floor Deleted',
+                'message' => 'ICU type Deleted',
             ]);
         } else {
             return response()->json([
                 'status' => false,
-                'message' => 'Floor could not be deleted.',
+                'message' => 'ICU type could not be deleted.',
             ]);
         }
         //dd($id);
-        // $floor = Floor::find($id);
+        // $floor = CabinType::find($id);
         // if(!$floor){
-        //     return response()->json(['message'=>'Floor Not Found']);
+        //     return response()->json(['message'=>'Cabintype Not Found']);
         // }
 
-        // $update = Floor::where('id',$id)
+        // $update = CabinType::where('id',$id)
         //     ->update([
         //         'updated_at'  => date('Y-m-d H:i:s'),
         //         'updated_by'  => "1",
@@ -129,15 +126,13 @@ class FloorController extends Controller
         //     if($update){
         //         return response()->json([
         //             'status' => true,
-        //             'message' => 'Floor deleted',
+        //             'message' => 'Cabintype deleted',
         //         ]);
         //     }else{
         //         return response()->json([
         //             'status' => false,
-        //             'message' => "Floor could not be deleted.",
+        //             'message' => "CabinType could not be deleted.",
         //         ]);
         // }
     }
-
-    
 }
