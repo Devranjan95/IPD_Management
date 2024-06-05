@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <image width="40" height="40" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAADp0lEQVR4nO2YS08bVxTHR6oqpVVTiUWr9hN0X7apyKaaGc+4PCJS5QOkm2TRLqoK0ohFoJ47HttAYnAXjQSirURopQr1obQqKIDvYwZVtDziPgKbtBia8JAx9njGt7omRh5jJwY82FI50n8z0mh+Psf/c+49HPd/Cq9GIrwCLSZZw59w9RSNnxrP8wqybiKT9k7vUhGgXa6eoqlr4owIUCZi2DRMMlQAKMPVUzSdAh7dEDQvUUV2vsSFz5/o5IxTaIiIYVekIxvnbf/Mq3KA/CACtCNr5BceTL9RGSA8GUCvX//pyhfLZj9K0w+/fpiV/fh+Re8FcfgwJWaulv16z6EBBQDNAZLZ/6WiitLvgOmzdeNiXolmC0shqSTJyn4KeNIZbCwwTlVHXTGgrGHbq6GNtpAOJQA/qsTVxcY5siFKBe+DDsC2Xt0eNdbp+Nxj2v3NX6nWEEm0BvVJQYHnqvLB4wK2hnT7q9l1uryZzenPxzYdgavZCyGy0xwiI8ytXC0BZQ1bt6f+3gfMa2HNpB98vrjbHMCz7YHoCzUD9KgofX0slioGZHqwmaXXxmLJFg2PsXclP77FA2iXmLuHlSlrZFkEqFvyTTU4AQG0HS4GONXWpydLATL9/sii7X1GgvfB88wQbAJVOu7KiQ0K389b9PLwHymPijZ5gN4qD6iSZEuIrNxd2iwJyDQ0s5ptDuFJ3ufsANXQjbsbbJrt8CD6ZllAQUXvv/fZr4kHG6UBl9YyVPKjVHGLqpY+/nYtK2l4pX109LmSgB4Vv9YS1Ge071fMclm8OjS/5RYg07vhuW3BF23nBOUgIJskQs+9V5qDeKljNJb87Z/0AcDeH1fYScY1wI7xOJUCZLwsICu/3GW86NVIn6yiVOedWOK7+Q16fz2TA/ySxKngImBgKkk9Kl5/KuC+kbqN10UQ7WwJkgURQPNiv7F9KTybcBMwd2RToMmxVlFo98P0L0GBrsDlxbqEA3DQsHIfLmcMh5Pj7FAK3QPUbcpM6ABkEhSUm7/PAlxcM9mp2TXAQd2irMOwNuMA9KiIxv61ngm4EDfZmc81wAGSByzKoKTi485VWi2xCnHsfuvmHz1yHJMoyKpzQFjfgIICbS5/l33KTuXEJD65+O9nEJQArNVer6lr4iVBRem6BZR8Uw0eFaccgD6416jzS6Barm6FLvSyCJAZxntrmJswvZcsOUAG8ksg9sDrJ91cjULS9OGCO47l8euhWrFUHP8BRbLSSUDlrqMAAAAASUVORK5CYII=" id="img_1" />
+    <pattern patternUnits="objectBoundingBox" y="-0%" height="100%" width="100%" id="pattern_1">
+      <use xlink:href="#img_1" transform="matrix(1.2 0 0 1.2 0 0)" />
+    </pattern>
+  </defs>
+  <path d="M0 0L48 0L48 48L0 48L0 0Z" id="icons8-hospital-room-40" fill="url(#pattern_1)" fill-rule="evenodd" stroke="none" />
+</svg>

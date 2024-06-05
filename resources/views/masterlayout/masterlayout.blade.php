@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Moon Hospital </title>
     <!-- plugins:css -->
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Multiselect CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('assets/vendors/feather/feather.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/ti-icons/css/themify-icons.css')}}">
@@ -21,7 +25,9 @@
     <link rel="stylesheet" href="{{asset('assets/vendors/select2/select2.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
     <!-- *******************************MULTISELECT CDN********************************** -->
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Bootstrap CSS CDN (optional, for styling) -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- ***************************************************************************** -->
     <!-- ******************************************************************** -->
@@ -260,6 +266,13 @@
                 <span class="menu-title">Users</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{url('masters')}}">
+                <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
+                <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/lock.svg')}}" alt=""  width="30px" height="30px">
+                <span class="menu-title">Masters</span>
+              </a>
+            </li>
             <!-- <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="ui-basic">
                 
@@ -276,9 +289,8 @@
               </div>
             </li> -->
             
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#masters" aria-expanded="false" aria-controls="ui-basic">
-                <!-- <i class="menu-icon mdi mdi-floor-plan"></i> -->
                 <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/lock.svg')}}" alt=""  width="30px" height="30px">
                 <span class="menu-title">Masters</span>
                 <i class="menu-arrow"></i>
@@ -294,7 +306,7 @@
                   <li class="nav-item"> <a class="nav-link" href="{{url('cabins')}}">Cabins</a></li>
                 </ul>
               </div>
-            </li>
+            </li> -->
           </ul>
         </nav>
 <!-- ******************************DELETE MODAL***************************** -->

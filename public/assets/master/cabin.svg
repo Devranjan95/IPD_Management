@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <image width="48" height="48" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABc0lEQVR4nO2Xv0rDUBSHfwoiuDi4CIqL4gv4CuoLqK/g6ugYB8k5dCvNPeU+gopP4KhjN3FxcqmTggULImKksSq2iTS3NTfV88HZMny/8ychgKIoyt/D8iyEdiHcgOErCO2jFs6h9AitQdhC6BHC8feiJwgfQ2gdcTyB0hBV5mFoD4Yv+6UzytA1DB3A8pIf6SCYTDrZ6aih54HF+4O8QPgMQjuwdur3xau8mOyz0I2zdGYYvoUww1aWRyxdnU461OmUodeRi0tqNZKXgA1mhpOPeBtCzYKk45TDb0Joy03ehJvdHfUkz193UucNhwB84V1ePuvcJUC7BOLx+xS4nT+Ab2npKQ0g2d3pZdjnUPQENIDoBFLQFeLxPeJBgQb4if88AeiHjHUC0BWSMf4OQI+Y9YcGufaziMqNb2HRANzy3nXpluEHhxWiU+/i8lF0kj9ALVyF8J13eUP3iMIVOFE/XIChI/hZp1bSeWd5RVEUFMAbqbvF6dOw7oAAAAAASUVORK5CYII=" id="img_1" />
+    <pattern patternUnits="objectBoundingBox" y="-0%" height="100%" width="100%" id="pattern_1">
+      <use xlink:href="#img_1" transform="matrix(1 0 0 1 0 0)" />
+    </pattern>
+  </defs>
+  <path d="M0 0L48 0L48 48L0 48L0 0Z" id="icons8-hospital-sign-48" fill="url(#pattern_1)" fill-rule="evenodd" stroke="none" />
+</svg>

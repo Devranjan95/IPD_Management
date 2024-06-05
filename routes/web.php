@@ -27,6 +27,10 @@ Route::get('/masterlayout', function () {
     return view('masterlayout.masterlayout');
 });
 
+Route::get('/masters', function () {
+    return view('backend.master');
+});
+
 Route::get('floors/',[FloorController::class,'index']);
 Route::post('floors/saveData',[FloorController::class,'saveFloor']);
 Route::get('floors/editData/{id}',[FloorController::class,'getData']);
