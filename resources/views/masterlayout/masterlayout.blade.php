@@ -7,9 +7,6 @@
     <title>Moon Hospital </title>
     <!-- plugins:css -->
     <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Multiselect CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('assets/vendors/feather/feather.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/ti-icons/css/themify-icons.css')}}">
@@ -27,7 +24,8 @@
     <!-- *******************************MULTISELECT CDN********************************** -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Bootstrap CSS CDN (optional, for styling) -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- ***************************************************************************** -->
     <!-- ******************************************************************** -->
@@ -43,6 +41,16 @@
     <link rel="icon"  type="image/png" href="{{asset('assets/previous/Hospyllum.svg')}}">
    
     <style>
+      .breadcrumb {
+    border: 1px solid #fff;
+    padding-left:2px
+}
+      .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+    cursor: default;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size:12px
+}
       .table thead{
             /* background-color: green;  */
            
@@ -310,23 +318,44 @@
           </ul>
         </nav>
 <!-- ******************************DELETE MODAL***************************** -->
+                  <!-- Delete Confirmation Modal -->
+<!-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this record?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-rounded btn-fw btn-success btn-sm" data-bs-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-rounded btn-fw btn-danger btn-sm" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel"></h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <h5>Are You Sure To Delete The Record ?</h5>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">No</button>
-                            <button type="button" class="btn btn-success btn-sm" id="confirmDelete">Yes</button>
-                        </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this record?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-rounded btn-fw btn-success btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-rounded btn-fw btn-danger btn-sm" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
                 <!-- ****************************************************************** -->
         <div class="main-panel">
           @yield('content')
@@ -352,6 +381,7 @@
     <script src="{{asset('assets/js/dataTables.js')}}"></script>
     <script src="{{asset('assets/js/dataTables.bootstrap5.js')}}"></script>
 <!--***************************************************************************  -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script src="{{asset('assets/vendors/select2/select2.min.js')}}"></script>
     <script src="{{asset('assets/js/select2.js')}}"></script>
     <script src="{{asset('assets/vendors/js/vendor.bundle.base.js')}}"></script>
@@ -386,11 +416,12 @@ function openUrl(url){
   var target = '__blank';
   window.open(Url,target);
 }
-  let deleteUrl = '';
+
+let deleteUrl = '';
 
 function deleteData(delurl) {
     deleteUrl = delurl;
-    let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteModal'));
+    let myModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     myModal.show();
 }
 
@@ -398,7 +429,7 @@ document.getElementById('confirmDelete').addEventListener('click', function() {
     $.ajax({
         url: deleteUrl,
         headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-        type: "get",
+        type: "GET",
         dataType: "json",
         success: function (data) {
             console.log(data);
@@ -409,6 +440,7 @@ document.getElementById('confirmDelete').addEventListener('click', function() {
         }
     });
 });
+
 
 function reload(){
             window.location.reload();

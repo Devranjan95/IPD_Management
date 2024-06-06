@@ -7,36 +7,36 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\Floor;
 use App\Models\Block;
-use App\Models\Cabin;
-use App\Models\CabinType;
+use App\Models\Ward;
+use App\Models\WardType;
 use App\Models\Amenity;
 
 
-class CabinController extends Controller
+class WardController extends Controller
 {
     //
     public function index(){
-        $cabintypes = CabinType::where('status','Active')->pluck('cabin_type','id');
+        $wardtypes = WardType::where('status','Active')->pluck('ward_type','id');
         $floors = Floor::where('status','Active')->pluck('floor_no','id');
         $amenities = Amenity::where('status','Active')->pluck('amenities','id');
-        $cabins = Cabin::where('status','!=','Deleted')->get();
+        $wards = Ward::where('status','!=','Deleted')->get();
     
-        $cabinDetails = []; // Array to store cabin details
+        $wardDetails = []; // Array to store cabin details
     
-        foreach($cabins as $cabin){
-            $cabinDetails[] = [
-                'cabin_type' => CabinType::where('id',$cabin->cabin_type_id)->value('cabin_type'),
-                'floor_no' => Floor::where('id',$cabin->floor_id)->value('floor_no'),
-                'block_name' => Block::where('id',$cabin->block_id)->value('block_name'),
+        foreach($wards as $ward){
+            $wardDetails[] = [
+                'ward_type' => WardType::where('id',$ward->ward_type_id)->value('ward_type'),
+                'floor_no' => Floor::where('id',$ward->floor_id)->value('floor_no'),
+                'block_name' => Block::where('id',$ward->block_id)->value('block_name'),
             ];
         }
     
-        return view('backend.cabinMaster', [
-            'cabintypes' => $cabintypes,
+        return view('backend.wardMaster', [
+            'wardtypes' => $wardtypes,
             'floors' => $floors,
             'amenities' => $amenities,
-            'cabins' => $cabins,
-            'cabinDetails' => $cabinDetails, // Pass the details to the view
+            'wards' => $wards,
+            'wardDetails' => $wardDetails, // Pass the details to the view
         ]);
     }
     
@@ -51,77 +51,76 @@ class CabinController extends Controller
         }
     }
 
-    public function saveCabin(Request $request){
+    public function saveWard(Request $request){
         //dd($request->all());
         try{
             $request->validate([
-                'cabinname' => 'required|alpha_num',
-                'cabintype' => 'required',
+                'wardname' => 'required|alpha_num',
+                'wardtype' => 'required',
                 'floor' => 'required',
                 'block' => 'required',
                 'occupancy' => 'required|numeric',
                 'amenities' => 'required|array',
-                'cabinprice' => 'required|numeric',
+                'wardprice' => 'required|numeric',
                 'status' => 'required',
             ]);
             $amenities = implode(',', $request->amenities);
             //dd($request->cabintype);
             if($request->mode == "add"){
                 //dd($request->all());
-                $cabinexist = Cabin::where('cabin_name',$request->cabinname)->where('floor_id',$request->floor)->first();
+                $wardexist = Ward::where('ward_name',$request->wardname)->where('floor_id',$request->floor)->first();
                 //dd($cabinexist);
-                if($cabinexist){
+                if($wardexist){
                     //dd(1);
-                    return response()->json(["message"=>"Error!! Sorry cabin already exists"]);
-                    
+                    return response()->json(["message"=>"Error!! Sorry ward already exists"]);    
                 }
-                $saveCabin = Cabin::create([
-                    "cabin_name" => ucwords($request->cabinname),
-                    "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
+                $saveWard = Ward::create([
+                    "ward_name" => ucwords($request->wardname),
+                    "ward_type_id" => $request->wardtype, // Make sure to include cabin_type_id
                     "floor_id" => $request->floor,
                     "block_id" => $request->block,
                     "occupancy" => $request->occupancy,
                     "amenities" => $amenities,
-                    "price" => $request->cabinprice,
+                    "price" => $request->wardprice,
                     "status" => $request->status,
                     "narration" => $request->narration,
                     "created_by" => 1,
                     "updated_by" => 1
                 ]);
-                if($saveCabin){
-                    return response()->json(['status'=>true,'message'=>'Cabin saved successfully']);
+                if($saveWard){
+                    return response()->json(['status'=>true,'message'=>'Ward saved successfully']);
                 }else{
-                    return response()->json(['status'=>true,'message'=>'Cabin could not be saved']);
+                    return response()->json(['status'=>true,'message'=>'Ward could not be saved']);
                 }
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $cabinexists = $cabinexist = Cabin::where('cabin_name',$request->cabinname)->where('floor_id',$request->floor)->get();
-                if($cabinexists){
-                    foreach($cabinexists as $ex){
+                $wardexists =  Ward::where('ward_name',$request->wardname)->where('floor_id',$request->floor)->get();
+                if($wardexists){
+                    foreach($wardexists as $ex){
                         if($request->recordid != $ex->id){
-                            return response()->json(['status' => false, 'message' => "Error!! Sorry cabin already exists"]);
+                            return response()->json(['status' => false, 'message' => "Error!! Sorry ward already exists"]);
                         }
     
                     }
                 }
-                $updatecabin = Cabin::where('id',$request->recordid)
-                                    ->update(["cabin_name" => ucwords($request->cabinname),
-                                              "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
+                $updateward = Ward::where('id',$request->recordid)
+                                    ->update(["ward_name" => ucwords($request->wardname),
+                                              "ward_type_id" => $request->wardtype, // Make sure to include cabin_type_id
                                               "floor_id" => $request->floor,
                                               "block_id" => $request->block,
                                               "occupancy" => $request->occupancy,
                                               "amenities" => $amenities,
-                                              "price" => $request->cabinprice,
+                                              "price" => $request->wardprice,
                                               "status" => $request->status,
                                               "narration" => $request->narration,
                                               "created_by" => 1,
                                               "updated_by" => 1,
                                               "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updatecabin){
-                    return response()->json(['status'=>true,'message'=>'Cabin updated successfully']);
+                if($updateward){
+                    return response()->json(['status'=>true,'message'=>'Ward updated successfully']);
                 }else{
-                    return response()->json(['status'=>false,'message'=>'Cabin could not be updated']);
+                    return response()->json(['status'=>false,'message'=>'Ward could not be updated']);
                 }
                
                 
@@ -138,30 +137,30 @@ class CabinController extends Controller
     public function getData(string $id)
     {   
         //dd($id);
-        $cabin = Cabin::where('id', $id)->first();
-        return response()->json(['cabin'=>$cabin]);
+        $ward = Ward::where('id', $id)->first();
+        return response()->json(['ward'=>$ward]);
     }
 
     public function deleteData(string $id)
     {
         // Find the cabin record by ID
-        $cabin = Cabin::find($id);
+        $ward = Ward::find($id);
 
         // Check if the floor record exists
-        if (!$cabin) {
-            return response()->json(['message' => 'Cabin not found'], 404);
+        if (!$ward) {
+            return response()->json(['message' => 'Ward not found'], 404);
         }
 
         // Attempt to delete the floor record
-        if ($cabin->delete()) {
+        if ($ward->delete()) {
             return response()->json([
                 'status' => true,
-                'message' => 'Cabin Deleted',
+                'message' => 'Ward Deleted',
             ]);
         } else {
             return response()->json([
                 'status' => false,
-                'message' => 'Cabin could not be deleted.',
+                'message' => 'Ward could not be deleted.',
             ]);
         }
     }

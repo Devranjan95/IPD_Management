@@ -18,7 +18,7 @@
                                 </div>
                                 <div class="row">
                                     <!-- Floors Card -->
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('floors')}}" class="card-link">
                                                 <div class="card-body text-center">
@@ -29,7 +29,7 @@
                                         </div>
                                     </div>
                                     <!-- Blocks Card -->
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('blocks')}}" class="card-link">
                                                 <div class="card-body text-center">
@@ -40,7 +40,7 @@
                                         </div>
                                     </div>
                                     <!-- Amenities Card -->
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('amenities')}}" class="card-link">
                                                 <div class="card-body text-center">
@@ -51,7 +51,7 @@
                                         </div>
                                     </div>
                                     <!-- Cabin-Types Card -->
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('cabintypes')}}" class="card-link">
                                                 <div class="card-body text-center">
@@ -62,7 +62,7 @@
                                         </div>
                                     </div>
                                     <!-- Ward-Types Card -->
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('wardtypes')}}" class="card-link">
                                                 <div class="card-body text-center">
@@ -73,7 +73,7 @@
                                         </div>
                                     </div>
                                     <!-- ICU-Types Card -->
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('icutypes')}}" class="card-link">
                                                 <div class="card-body text-center">
@@ -84,12 +84,42 @@
                                         </div>
                                     </div>
                                     <!-- Cabins Card -->
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('cabins')}}" class="card-link">
                                                 <div class="card-body text-center">
-                                                <img src="{{asset('assets/master/cabin.svg')}}" alt="">
+                                                <img src="{{asset('assets/master/cabins.svg')}}" alt="">
                                                     <h5 class="card-title mt-3">Cabins</h5>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="card h-100 transition shadow">
+                                            <a href="{{url('wards')}}" class="card-link">
+                                                <div class="card-body text-center">
+                                                <img src="{{asset('assets/master/wards.svg')}}" alt="">
+                                                    <h5 class="card-title mt-3">Wards</h5>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="card h-100 transition shadow">
+                                            <a href="{{url('icus')}}" class="card-link">
+                                                <div class="card-body text-center">
+                                                <img src="{{asset('assets/master/icu.svg')}}" alt="">
+                                                    <h5 class="card-title mt-3">ICU's</h5>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="card h-100 transition shadow">
+                                            <a href="{{url('icus')}}" class="card-link">
+                                                <div class="card-body text-center">
+                                                <img src="{{asset('assets/master/icu.svg')}}" alt="">
+                                                    <h5 class="card-title mt-3">Beds</h5>
                                                 </div>
                                             </a>
                                         </div>

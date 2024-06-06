@@ -75,6 +75,12 @@
                                 <div class='row pb-2'>
                                     <div class='col-lg-6'>
                                         <h3 class="headingcolor">Blocks</h3>
+                                        <nav>
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item text-secondary"><a href="{{url('masters')}}">Masters</a></li>
+                                            <li class="breadcrumb-item active text-primary" aria-current="page">Blocks</li>
+                                        </ol>
+                                    </nav>
                                     </div>
                                     <div class='col-lg-6 pb-2'>
                                         <button type="button" class="btn btn-rounded btn-fw btn-success" style="float:right"
@@ -362,7 +368,6 @@
                 myModal.show();
                 //alert(data.floor["floor_no"]);
                 document.getElementById("blockname").value = data.block['block_name'];
-                //document.getElementById("blockcode").value = data.block['block_code'];
                 document.getElementById("floorNo").value = data.block['floor_id'];
                 document.getElementById("status").value = data.block['status'];
                 document.getElementById("narration").value = data.block['narration'];

@@ -60,6 +60,12 @@
                                 <div class='row pb-2'>
                                     <div class='col-lg-6'>
                                         <h3 class="headingcolor">Amenities</h3>
+                                        <nav>
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item text-secondary"><a href="{{url('masters')}}">Masters</a></li>
+                                            <li class="breadcrumb-item active text-primary" aria-current="page">Amenities</li>
+                                        </ol>
+                                    </nav>
                                     </div>
                                     <div class='col-lg-6 pb-2'>
                                         <button type="button" class="btn btn-rounded btn-fw btn-success" style="float:right"

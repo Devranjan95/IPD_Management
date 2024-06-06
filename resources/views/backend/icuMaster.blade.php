@@ -9,12 +9,12 @@
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl">
                     <div class="modal-content">
-                        <form enctype="multipart/form-data" name="cabinform" id="cabinform">
-                            <input type="hidden" id="saveurl" value="{{ url('cabin/saveData') }}" />
+                        <form enctype="multipart/form-data" name="icuform" id="icuform">
+                            <input type="hidden" id="saveurl" value="{{ url('icu/saveData') }}" />
                             <input type="hidden" id="recordid" name="recordid" value="" />
                             <input type="hidden" id="mode" name="mode">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Cabins</h1>
+                                <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage ICU</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" style="color:rgb(250,235,215)" aria-label="Close"></button>
                             </div>
                             <div class="modal-body" style="color:black;font-weight:600">
@@ -22,16 +22,16 @@
                                 <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                 <div class="row pb-3">
                                     <div class="col-md-6">
-                                        <label for="block" class="form-label">Cabin Name<span style="color:red" title="Mandatory">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Enter Cabin Name" id="cabinname" name="cabinname">
+                                        <label for="block" class="form-label">ICU Name<span style="color:red" title="Mandatory">*</span></label>
+                                        <input type="text" class="form-control" placeholder="Enter ICU Name" id="icuname" name="icuname">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="floor" class="form-label">Cabin Type<span style="color:red" title="Mandatory">*</span></label>
-                                        <select class="form-control" id="cabintype" name="cabintype">
-                                            <option value="" selected disabled>Please select cabin type</option>
-                                            @foreach($cabintypes as $key=>$value)
+                                        <label for="floor" class="form-label">ICU Type<span style="color:red" title="Mandatory">*</span></label>
+                                        <select class="form-control" id="icutype" name="icutype">
+                                            <option value="" selected disabled>Please select ICU type</option>
+                                            @foreach($icutypes as $key=>$value)
                                                 <option value="{{$key}}">{{$value}}</option>
-                                            @endforeach    
+                                            @endforeach  
                                         </select>
                                     </div>
                                     <div class="col-md-6">
@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="block" class="form-label">Price<span style="color:red" title="Mandatory">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Enter price" id="cabinprice" name="cabinprice">
+                                        <input type="text" class="form-control" placeholder="Enter price" id="icuprice" name="icuprice">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="floor" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
@@ -94,11 +94,11 @@
                         <div class="col-lg-12">
                             <div class='row pb-2'>
                                 <div class='col-lg-6'>
-                                    <h3 class="headingcolor">Cabins</h3>
+                                    <h3 class="headingcolor">ICU's</h3>
                                     <nav>
                                         <ol class="breadcrumb">
                                             <li class="breadcrumb-item text-secondary"><a href="{{url('masters')}}">Masters</a></li>
-                                            <li class="breadcrumb-item active text-primary" aria-current="page">Cabins</li>
+                                            <li class="breadcrumb-item active text-primary" aria-current="page">ICU's</li>
                                         </ol>
                                     </nav>
                                 </div>
@@ -107,21 +107,14 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- *********** -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                
-                            </div>
-                        </div>
-                        <!-- ************ -->
                         <div class='col-lg-12'>
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="height: 400px; overflow-y: auto;">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
-                                            <th>Cabin</th>
-                                            <th>Cabin Type</th>
+                                            <th>ICU</th>
+                                            <th>ICU Type</th>
                                             <th>Floor</th>
                                             <th>Block</th>
                                             <th>Occupancy</th>
@@ -132,33 +125,32 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                            <!-- Content dynamically loaded here -->
                                             @php 
                                                 $sl = 1;
                                             @endphp
-                                            @foreach($cabins as $index => $cabin)
+                                            @foreach($icus as $index => $icu)
                                             <tr>
                                                 <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$cabin->cabin_name}}</td>
-                                                <td>{{$cabinDetails[$index]['cabin_type']}}</td>
-                                                <td>{{$cabinDetails[$index]['floor_no']}}</td>
-                                                <td>{{$cabinDetails[$index]['block_name']}}</td>
-                                                <td style="text-align:center">{{$cabin->occupancy}}</td>
-                                                <td>{{$cabin->amenities}}</td>
-                                                <td style="text-align:center">{{$cabin->price}}</td>
+                                                <td>{{$icu->icu_name}}</td>
+                                                <td>{{$icuDetails[$index]['icu_type']}}</td>
+                                                <td>{{$icuDetails[$index]['floor_no']}}</td>
+                                                <td>{{$icuDetails[$index]['block_name']}}</td>
+                                                <td style="text-align:center">{{$icu->occupancy}}</td>
+                                                <td>{{$icu->amenities}}</td>
+                                                <td style="text-align:center">{{$icu->price}}</td>
                                                 <td>
-                                                        @if($cabin->status=="Active")
+                                                        @if($icu->status=="Active")
                                                         <label class="badge badge-success">Active</label>
                                                         @else 
                                                         <label class="badge badge-danger">In Active</label>
                                                         @endif
                                                 </td>
                                                 <td>
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $cabin->id }})'
+                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $icu->id }})'
                                                             title='Edit'><img src='assets/previous/user.svg'
                                                                 style='height:20px; width:20px' /></a>&nbsp&nbsp
                                                         <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('cabins/deleteData') }}/{{ $cabin->id }}')"
+                                                            onclick="deleteData('{{ url('icu/deleteData') }}/{{ $icu->id }}')"
                                                             title='Delete'><img src='assets/previous/delete.svg'
                                                                 style='height:23px; width:23px' /></a>
                                                 </td>
@@ -211,13 +203,13 @@ $(document).ready(function() {
     }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
     // Form validation rules
-    $("#cabinform").validate({
+    $("#icuform").validate({
         rules: {
-            cabinname: {
+            icuname: {
                 required: true,
                 alphanumeric: true
             },
-            cabintype: {
+            icutype: {
                 required: true
             },
             floor: {
@@ -232,7 +224,7 @@ $(document).ready(function() {
             amenities: {
                 required: true
             },
-            cabinprice: {
+            icuprice: {
                 required: true,
                 number: true
             },
@@ -241,12 +233,12 @@ $(document).ready(function() {
             }
         },
         messages: {
-            cabinname: {
-                required: "Cabin name is required.",
+            icuname: {
+                required: "ICU name is required.",
                 alphanumeric: "Must be alphabets or alphanumeric"
             },
-            cabintype: {
-                required: "Cabin type is required."
+            icutype: {
+                required: "ICU type is required."
             },
             floor: {
                 required: "Floor is required."
@@ -260,7 +252,7 @@ $(document).ready(function() {
             amenities: {
                 required: "Amenities Required"
             },
-            cabinprice: {
+            icuprice: {
                 required: "Price is required.",
                 number: "Please enter a valid price"
             },
@@ -358,7 +350,7 @@ function showBlock(floors, selectedBlock = null) {
     if (floor) {
         $.ajax({
             type: "POST",
-            url: "{{ url('cabin/loadblocks') }}",
+            url: "{{ url('ward/loadblocks') }}",
             data: { _token: "{{ csrf_token() }}", floor: floor },
             success: function(response) {
                 let blockSelect = $('#block');
@@ -383,33 +375,33 @@ function showBlock(floors, selectedBlock = null) {
 
 
 function showAdd() {
-    document.getElementById("cabinform").reset();
+    document.getElementById("icuform").reset();
     document.getElementById("mode").value = "add";
     document.getElementById("recordid").value = "";
 }
 
 function showEdit(id) {
-    document.getElementById("cabinform").reset();
+    document.getElementById("icuform").reset();
     document.getElementById("mode").value = "edit";
     document.getElementById("recordid").value = id;
     $.ajax({
-        url: "{{ url('cabin/editData') }}/" + id,
+        url: "{{ url('icu/editData') }}/" + id,
         type: "GET",
         dataType: "json",
         success: function(data) {
             let myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             myModal.show();
-            document.getElementById("cabinname").value = data.cabin['cabin_name'];
-            document.getElementById("cabintype").value = data.cabin['cabin_type_id'];
-            document.getElementById("floor").value = data.cabin['floor_id'];
-            showBlock($('#floor'), data.cabin['block_id']);
-            document.getElementById("occupancy").value = data.cabin['occupancy'];
-            document.getElementById("cabinprice").value = data.cabin['price'];
+            document.getElementById("icuname").value = data.icu['icu_name'];
+            document.getElementById("icutype").value = data.icu['icu_type_id'];
+            document.getElementById("floor").value = data.icu['floor_id'];
+            showBlock($('#floor'), data.icu['block_id']);
+            document.getElementById("occupancy").value = data.icu['occupancy'];
+            document.getElementById("icuprice").value = data.icu['price'];
              // Pre-select amenities
-             let selectedAmenities = data.cabin['amenities'].split(','); // Assuming amenities are stored as comma-separated values
+             let selectedAmenities = data.icu['amenities'].split(','); // Assuming amenities are stored as comma-separated values
             $('#amenities').val(selectedAmenities).trigger('change');
-            document.getElementById("status").value = data.cabin['status'];
-            document.getElementById("narration").value = data.cabin['narration'];
+            document.getElementById("status").value = data.icu['status'];
+            document.getElementById("narration").value = data.icu['narration'];
         },
         error: function() {
             alert('Error fetching data');

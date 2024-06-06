@@ -5,9 +5,12 @@ use App\Http\Controllers\FloorController;
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\CabinTypeController;
-use App\Http\Controllers\CabinController;
 use App\Http\Controllers\WardTypeController;
 use App\Http\Controllers\IcuTypeController;
+use App\Http\Controllers\CabinController;
+use App\Http\Controllers\WardController;
+use App\Http\Controllers\IcuController;
+use App\Http\Controllers\BedController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,3 +67,21 @@ Route::get('icutypes/deleteData/{id}',[IcuTypeController::class,'deleteData']);
 Route::get('cabins/',[CabinController::class,'index']);
 Route::post('cabin/loadblocks', [CabinController::class, 'showBlocks']);
 Route::post('cabin/saveData', [CabinController::class, 'saveCabin']);
+Route::get('cabin/editData/{id}',[CabinController::class,'getData']);
+Route::get('cabins/deleteData/{id}',[CabinController::class,'deleteData']);
+
+Route::get('wards/',[WardController::class,'index']);
+Route::post('ward/loadblocks', [WardController::class, 'showBlocks']);
+Route::post('ward/saveData', [WardController::class, 'saveWard']);
+Route::get('ward/editData/{id}',[WardController::class,'getData']);
+Route::get('wards/deleteData/{id}',[WardController::class,'deleteData']);
+
+Route::get('icus/',[IcuController::class,'index']);
+Route::post('icu/loadblocks', [IcuController::class, 'showBlocks']);
+Route::post('icu/saveData', [IcuController::class, 'saveIcu']);
+Route::get('icu/editData/{id}',[IcuController::class,'getData']);
+Route::get('icu/deleteData/{id}',[IcuController::class,'deleteData']);
+
+Route::get('beds/',[BedController::class,'index']);
+Route::post('bed/loadblocks', [BedController::class, 'showBlocks']);
+Route::post('bed/loadroom', [BedController::class, 'showRooms']);

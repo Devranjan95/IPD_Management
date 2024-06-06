@@ -7,36 +7,36 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\Floor;
 use App\Models\Block;
-use App\Models\Cabin;
-use App\Models\CabinType;
+use App\Models\Icu;
+use App\Models\IcuType;
 use App\Models\Amenity;
 
 
-class CabinController extends Controller
+class IcuController extends Controller
 {
     //
     public function index(){
-        $cabintypes = CabinType::where('status','Active')->pluck('cabin_type','id');
+        $icutypes = IcuType::where('status','Active')->pluck('icu_type','id');
         $floors = Floor::where('status','Active')->pluck('floor_no','id');
         $amenities = Amenity::where('status','Active')->pluck('amenities','id');
-        $cabins = Cabin::where('status','!=','Deleted')->get();
+        $icus = Icu::where('status','!=','Deleted')->get();
     
-        $cabinDetails = []; // Array to store cabin details
+        $icuDetails = []; // Array to store cabin details
     
-        foreach($cabins as $cabin){
-            $cabinDetails[] = [
-                'cabin_type' => CabinType::where('id',$cabin->cabin_type_id)->value('cabin_type'),
-                'floor_no' => Floor::where('id',$cabin->floor_id)->value('floor_no'),
-                'block_name' => Block::where('id',$cabin->block_id)->value('block_name'),
+        foreach($icus as $icu){
+            $icuDetails[] = [
+                'icu_type' => IcuType::where('id',$icu->icu_type_id)->value('icu_type'),
+                'floor_no' => Floor::where('id',$icu->floor_id)->value('floor_no'),
+                'block_name' => Block::where('id',$icu->block_id)->value('block_name'),
             ];
         }
     
-        return view('backend.cabinMaster', [
-            'cabintypes' => $cabintypes,
+        return view('backend.icuMaster', [
+            'icutypes' => $icutypes,
             'floors' => $floors,
             'amenities' => $amenities,
-            'cabins' => $cabins,
-            'cabinDetails' => $cabinDetails, // Pass the details to the view
+            'icus' => $icus,
+            'icuDetails' => $icuDetails, // Pass the details to the view
         ]);
     }
     
@@ -51,77 +51,76 @@ class CabinController extends Controller
         }
     }
 
-    public function saveCabin(Request $request){
+    public function saveIcu(Request $request){
         //dd($request->all());
         try{
             $request->validate([
-                'cabinname' => 'required|alpha_num',
-                'cabintype' => 'required',
+                'icuname' => 'required|alpha_num',
+                'icutype' => 'required',
                 'floor' => 'required',
                 'block' => 'required',
                 'occupancy' => 'required|numeric',
                 'amenities' => 'required|array',
-                'cabinprice' => 'required|numeric',
+                'icuprice' => 'required|numeric',
                 'status' => 'required',
             ]);
             $amenities = implode(',', $request->amenities);
             //dd($request->cabintype);
             if($request->mode == "add"){
                 //dd($request->all());
-                $cabinexist = Cabin::where('cabin_name',$request->cabinname)->where('floor_id',$request->floor)->first();
+                $icuexist = Icu::where('icu_name',$request->icuname)->where('floor_id',$request->floor)->first();
                 //dd($cabinexist);
-                if($cabinexist){
+                if($icuexist){
                     //dd(1);
-                    return response()->json(["message"=>"Error!! Sorry cabin already exists"]);
-                    
+                    return response()->json(["message"=>"Error!! Sorry ICU already exists"]);    
                 }
-                $saveCabin = Cabin::create([
-                    "cabin_name" => ucwords($request->cabinname),
-                    "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
+                $saveIcu = Icu::create([
+                    "icu_name" => ucwords($request->icuname),
+                    "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
                     "floor_id" => $request->floor,
                     "block_id" => $request->block,
                     "occupancy" => $request->occupancy,
                     "amenities" => $amenities,
-                    "price" => $request->cabinprice,
+                    "price" => $request->icuprice,
                     "status" => $request->status,
                     "narration" => $request->narration,
                     "created_by" => 1,
                     "updated_by" => 1
                 ]);
-                if($saveCabin){
-                    return response()->json(['status'=>true,'message'=>'Cabin saved successfully']);
+                if($saveIcu){
+                    return response()->json(['status'=>true,'message'=>'ICU saved successfully']);
                 }else{
-                    return response()->json(['status'=>true,'message'=>'Cabin could not be saved']);
+                    return response()->json(['status'=>true,'message'=>'ICU could not be saved']);
                 }
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $cabinexists = $cabinexist = Cabin::where('cabin_name',$request->cabinname)->where('floor_id',$request->floor)->get();
-                if($cabinexists){
-                    foreach($cabinexists as $ex){
+                $icuexists =  Icu::where('icu_name',$request->icuname)->where('floor_id',$request->floor)->get();
+                if($icuexists){
+                    foreach($icuexists as $ex){
                         if($request->recordid != $ex->id){
-                            return response()->json(['status' => false, 'message' => "Error!! Sorry cabin already exists"]);
+                            return response()->json(['status' => false, 'message' => "Error!! Sorry ICU already exists"]);
                         }
     
                     }
                 }
-                $updatecabin = Cabin::where('id',$request->recordid)
-                                    ->update(["cabin_name" => ucwords($request->cabinname),
-                                              "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
+                $updateicu = Icu::where('id',$request->recordid)
+                                    ->update(["icu_name" => ucwords($request->icuname),
+                                              "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
                                               "floor_id" => $request->floor,
                                               "block_id" => $request->block,
                                               "occupancy" => $request->occupancy,
                                               "amenities" => $amenities,
-                                              "price" => $request->cabinprice,
+                                              "price" => $request->icuprice,
                                               "status" => $request->status,
                                               "narration" => $request->narration,
                                               "created_by" => 1,
                                               "updated_by" => 1,
                                               "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updatecabin){
-                    return response()->json(['status'=>true,'message'=>'Cabin updated successfully']);
+                if($updateicu){
+                    return response()->json(['status'=>true,'message'=>'ICU updated successfully']);
                 }else{
-                    return response()->json(['status'=>false,'message'=>'Cabin could not be updated']);
+                    return response()->json(['status'=>false,'message'=>'ICU could not be updated']);
                 }
                
                 
@@ -138,30 +137,30 @@ class CabinController extends Controller
     public function getData(string $id)
     {   
         //dd($id);
-        $cabin = Cabin::where('id', $id)->first();
-        return response()->json(['cabin'=>$cabin]);
+        $icu = Icu::where('id', $id)->first();
+        return response()->json(['icu'=>$icu]);
     }
 
     public function deleteData(string $id)
     {
         // Find the cabin record by ID
-        $cabin = Cabin::find($id);
+        $icu = Icu::find($id);
 
         // Check if the floor record exists
-        if (!$cabin) {
-            return response()->json(['message' => 'Cabin not found'], 404);
+        if (!$icu) {
+            return response()->json(['message' => 'ICU not found'], 404);
         }
 
         // Attempt to delete the floor record
-        if ($cabin->delete()) {
+        if ($icu->delete()) {
             return response()->json([
                 'status' => true,
-                'message' => 'Cabin Deleted',
+                'message' => 'ICU Deleted',
             ]);
         } else {
             return response()->json([
                 'status' => false,
-                'message' => 'Cabin could not be deleted.',
+                'message' => 'ICU could not be deleted.',
             ]);
         }
     }

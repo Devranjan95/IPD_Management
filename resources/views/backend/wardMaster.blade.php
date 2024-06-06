@@ -9,12 +9,12 @@
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl">
                     <div class="modal-content">
-                        <form enctype="multipart/form-data" name="cabinform" id="cabinform">
-                            <input type="hidden" id="saveurl" value="{{ url('cabin/saveData') }}" />
+                        <form enctype="multipart/form-data" name="wardform" id="wardform">
+                            <input type="hidden" id="saveurl" value="{{ url('ward/saveData') }}" />
                             <input type="hidden" id="recordid" name="recordid" value="" />
                             <input type="hidden" id="mode" name="mode">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Cabins</h1>
+                                <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Wards</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" style="color:rgb(250,235,215)" aria-label="Close"></button>
                             </div>
                             <div class="modal-body" style="color:black;font-weight:600">
@@ -22,16 +22,16 @@
                                 <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                 <div class="row pb-3">
                                     <div class="col-md-6">
-                                        <label for="block" class="form-label">Cabin Name<span style="color:red" title="Mandatory">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Enter Cabin Name" id="cabinname" name="cabinname">
+                                        <label for="block" class="form-label">Ward Name<span style="color:red" title="Mandatory">*</span></label>
+                                        <input type="text" class="form-control" placeholder="Enter Ward Name" id="wardname" name="wardname">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="floor" class="form-label">Cabin Type<span style="color:red" title="Mandatory">*</span></label>
-                                        <select class="form-control" id="cabintype" name="cabintype">
-                                            <option value="" selected disabled>Please select cabin type</option>
-                                            @foreach($cabintypes as $key=>$value)
+                                        <label for="floor" class="form-label">Ward Type<span style="color:red" title="Mandatory">*</span></label>
+                                        <select class="form-control" id="wardtype" name="wardtype">
+                                            <option value="" selected disabled>Please select ward type</option>
+                                            @foreach($wardtypes as $key=>$value)
                                                 <option value="{{$key}}">{{$value}}</option>
-                                            @endforeach    
+                                            @endforeach  
                                         </select>
                                     </div>
                                     <div class="col-md-6">
@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="block" class="form-label">Price<span style="color:red" title="Mandatory">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Enter price" id="cabinprice" name="cabinprice">
+                                        <input type="text" class="form-control" placeholder="Enter price" id="wardprice" name="wardprice">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="floor" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
@@ -94,11 +94,11 @@
                         <div class="col-lg-12">
                             <div class='row pb-2'>
                                 <div class='col-lg-6'>
-                                    <h3 class="headingcolor">Cabins</h3>
+                                    <h3 class="headingcolor">Wards</h3>
                                     <nav>
                                         <ol class="breadcrumb">
                                             <li class="breadcrumb-item text-secondary"><a href="{{url('masters')}}">Masters</a></li>
-                                            <li class="breadcrumb-item active text-primary" aria-current="page">Cabins</li>
+                                            <li class="breadcrumb-item active text-primary" aria-current="page">Wards</li>
                                         </ol>
                                     </nav>
                                 </div>
@@ -107,21 +107,14 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- *********** -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                
-                            </div>
-                        </div>
-                        <!-- ************ -->
                         <div class='col-lg-12'>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
-                                            <th>Cabin</th>
-                                            <th>Cabin Type</th>
+                                            <th>Ward</th>
+                                            <th>Ward Type</th>
                                             <th>Floor</th>
                                             <th>Block</th>
                                             <th>Occupancy</th>
@@ -136,29 +129,29 @@
                                             @php 
                                                 $sl = 1;
                                             @endphp
-                                            @foreach($cabins as $index => $cabin)
+                                            @foreach($wards as $index => $ward)
                                             <tr>
                                                 <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$cabin->cabin_name}}</td>
-                                                <td>{{$cabinDetails[$index]['cabin_type']}}</td>
-                                                <td>{{$cabinDetails[$index]['floor_no']}}</td>
-                                                <td>{{$cabinDetails[$index]['block_name']}}</td>
-                                                <td style="text-align:center">{{$cabin->occupancy}}</td>
-                                                <td>{{$cabin->amenities}}</td>
-                                                <td style="text-align:center">{{$cabin->price}}</td>
+                                                <td>{{$ward->ward_name}}</td>
+                                                <td>{{$wardDetails[$index]['ward_type']}}</td>
+                                                <td>{{$wardDetails[$index]['floor_no']}}</td>
+                                                <td>{{$wardDetails[$index]['block_name']}}</td>
+                                                <td style="text-align:center">{{$ward->occupancy}}</td>
+                                                <td>{{$ward->amenities}}</td>
+                                                <td style="text-align:center">{{$ward->price}}</td>
                                                 <td>
-                                                        @if($cabin->status=="Active")
+                                                        @if($ward->status=="Active")
                                                         <label class="badge badge-success">Active</label>
                                                         @else 
                                                         <label class="badge badge-danger">In Active</label>
                                                         @endif
                                                 </td>
                                                 <td>
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $cabin->id }})'
+                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $ward->id }})'
                                                             title='Edit'><img src='assets/previous/user.svg'
                                                                 style='height:20px; width:20px' /></a>&nbsp&nbsp
                                                         <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('cabins/deleteData') }}/{{ $cabin->id }}')"
+                                                            onclick="deleteData('{{ url('wards/deleteData') }}/{{ $ward->id }}')"
                                                             title='Delete'><img src='assets/previous/delete.svg'
                                                                 style='height:23px; width:23px' /></a>
                                                 </td>
@@ -211,13 +204,13 @@ $(document).ready(function() {
     }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
     // Form validation rules
-    $("#cabinform").validate({
+    $("#wardform").validate({
         rules: {
-            cabinname: {
+            wardname: {
                 required: true,
                 alphanumeric: true
             },
-            cabintype: {
+            wardtype: {
                 required: true
             },
             floor: {
@@ -232,7 +225,7 @@ $(document).ready(function() {
             amenities: {
                 required: true
             },
-            cabinprice: {
+            wardprice: {
                 required: true,
                 number: true
             },
@@ -241,12 +234,12 @@ $(document).ready(function() {
             }
         },
         messages: {
-            cabinname: {
-                required: "Cabin name is required.",
+            wardname: {
+                required: "Ward name is required.",
                 alphanumeric: "Must be alphabets or alphanumeric"
             },
-            cabintype: {
-                required: "Cabin type is required."
+            wardtype: {
+                required: "Ward type is required."
             },
             floor: {
                 required: "Floor is required."
@@ -260,7 +253,7 @@ $(document).ready(function() {
             amenities: {
                 required: "Amenities Required"
             },
-            cabinprice: {
+            wardprice: {
                 required: "Price is required.",
                 number: "Please enter a valid price"
             },
@@ -358,7 +351,7 @@ function showBlock(floors, selectedBlock = null) {
     if (floor) {
         $.ajax({
             type: "POST",
-            url: "{{ url('cabin/loadblocks') }}",
+            url: "{{ url('ward/loadblocks') }}",
             data: { _token: "{{ csrf_token() }}", floor: floor },
             success: function(response) {
                 let blockSelect = $('#block');
@@ -383,33 +376,33 @@ function showBlock(floors, selectedBlock = null) {
 
 
 function showAdd() {
-    document.getElementById("cabinform").reset();
+    document.getElementById("wardform").reset();
     document.getElementById("mode").value = "add";
     document.getElementById("recordid").value = "";
 }
 
 function showEdit(id) {
-    document.getElementById("cabinform").reset();
+    document.getElementById("wardform").reset();
     document.getElementById("mode").value = "edit";
     document.getElementById("recordid").value = id;
     $.ajax({
-        url: "{{ url('cabin/editData') }}/" + id,
+        url: "{{ url('ward/editData') }}/" + id,
         type: "GET",
         dataType: "json",
         success: function(data) {
             let myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             myModal.show();
-            document.getElementById("cabinname").value = data.cabin['cabin_name'];
-            document.getElementById("cabintype").value = data.cabin['cabin_type_id'];
-            document.getElementById("floor").value = data.cabin['floor_id'];
-            showBlock($('#floor'), data.cabin['block_id']);
-            document.getElementById("occupancy").value = data.cabin['occupancy'];
-            document.getElementById("cabinprice").value = data.cabin['price'];
+            document.getElementById("wardname").value = data.ward['ward_name'];
+            document.getElementById("wardtype").value = data.ward['ward_type_id'];
+            document.getElementById("floor").value = data.ward['floor_id'];
+            showBlock($('#floor'), data.ward['block_id']);
+            document.getElementById("occupancy").value = data.ward['occupancy'];
+            document.getElementById("wardprice").value = data.ward['price'];
              // Pre-select amenities
-             let selectedAmenities = data.cabin['amenities'].split(','); // Assuming amenities are stored as comma-separated values
+             let selectedAmenities = data.ward['amenities'].split(','); // Assuming amenities are stored as comma-separated values
             $('#amenities').val(selectedAmenities).trigger('change');
-            document.getElementById("status").value = data.cabin['status'];
-            document.getElementById("narration").value = data.cabin['narration'];
+            document.getElementById("status").value = data.ward['status'];
+            document.getElementById("narration").value = data.ward['narration'];
         },
         error: function() {
             alert('Error fetching data');

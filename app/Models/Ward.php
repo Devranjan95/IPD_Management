@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cabin extends Model
+class Ward extends Model
 {
     use HasFactory;
-    protected $table = "cabins";
+    protected $table = "wards";
     protected $fillable = [
-        'cabin_name',
-        'cabin_code',
-        'cabin_type_id',
+        'ward_name',
+        'ward_type_id',
         'floor_id',
         'block_id',
         'occupancy',
