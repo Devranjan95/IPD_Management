@@ -55,7 +55,7 @@ class IcuController extends Controller
         //dd($request->all());
         try{
             $request->validate([
-                'icuname' => 'required|alpha_num',
+                'icuname' => 'required',
                 'icutype' => 'required',
                 'floor' => 'required',
                 'block' => 'required',

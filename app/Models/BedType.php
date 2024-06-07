@@ -5,14 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Bed extends Model
+class BedType extends Model
 {
     use HasFactory;
-    protected $table = "beds";
+    protected $table = "bed_types";
     protected $fillable = [
-        'bed_name',
-        'bed_type_id',
-        'bed_category_id',
+        'bed_type',
         'narration',
         'status',
         'created_by',
@@ -22,13 +20,5 @@ class Bed extends Model
     public function user()
 	{
 		return $this->belongsTo(User::class);
-	}
-    public function bedtype()
-	{
-		return $this->belongsTo(BedType::class);
-	}
-    public function bedcategory()
-	{
-		return $this->belongsTo(BedCategory::class);
 	}
 }

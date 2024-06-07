@@ -10,7 +10,11 @@ use App\Http\Controllers\IcuTypeController;
 use App\Http\Controllers\CabinController;
 use App\Http\Controllers\WardController;
 use App\Http\Controllers\IcuController;
+use App\Http\Controllers\BedTypeController;
+use App\Http\Controllers\BedCategoryController;
 use App\Http\Controllers\BedController;
+use App\Http\Controllers\BedAssignController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +86,19 @@ Route::post('icu/saveData', [IcuController::class, 'saveIcu']);
 Route::get('icu/editData/{id}',[IcuController::class,'getData']);
 Route::get('icu/deleteData/{id}',[IcuController::class,'deleteData']);
 
+Route::get('bedtypes/',[BedTypeController::class,'index']);
+Route::post('bedtypes/saveData', [BedTypeController::class, 'saveBedtype']);
+Route::get('bedtypes/editData/{id}',[BedTypeController::class,'getData']);
+Route::get('bedtypes/deleteData/{id}',[BedTypeController::class,'deleteData']);
+
+Route::get('bedcategories/',[BedCategoryController::class,'index']);
+Route::post('bedcategories/saveData', [BedCategoryController::class, 'saveBedCateggory']);
+Route::get('bedcategories/editData/{id}',[BedCategoryController::class,'getData']);
+Route::get('bedcategories/deleteData/{id}',[BedCategoryController::class,'deleteData']);
+
 Route::get('beds/',[BedController::class,'index']);
-Route::post('bed/loadblocks', [BedController::class, 'showBlocks']);
-Route::post('bed/loadroom', [BedController::class, 'showRooms']);
+Route::post('beds/saveData',[BedController::class,'saveBed']);
+Route::get('beds/editData/{id}',[BedController::class,'getData']);
+Route::get('beds/deleteData/{id}',[BedController::class,'deleteData']);
+
+Route::get('bedassign/',[BedAssignController::class,'index']);

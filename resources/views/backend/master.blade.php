@@ -116,7 +116,27 @@
                                     </div>
                                     <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
-                                            <a href="{{url('icus')}}" class="card-link">
+                                            <a href="{{url('bedtypes')}}" class="card-link">
+                                                <div class="card-body text-center">
+                                                <img src="{{asset('assets/master/icu.svg')}}" alt="">
+                                                    <h5 class="card-title mt-3">Bed Types</h5>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="card h-100 transition shadow">
+                                            <a href="{{url('bedcategories')}}" class="card-link">
+                                                <div class="card-body text-center">
+                                                <img src="{{asset('assets/master/icu.svg')}}" alt="">
+                                                    <h5 class="card-title mt-3">Bed Categories</h5>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="card h-100 transition shadow">
+                                            <a href="{{url('beds')}}" class="card-link">
                                                 <div class="card-body text-center">
                                                 <img src="{{asset('assets/master/icu.svg')}}" alt="">
                                                     <h5 class="card-title mt-3">Beds</h5>
@@ -159,6 +179,13 @@
         }
         .card h5 {
             margin-top: 10px;
+        }
+        .card .card-title {
+            color: #010101;
+            margin-bottom: 1.5rem;
+            text-transform: capitalize;
+            font-size: 14px;
+            font-weight: 600;
         }
     </style>
 @endsection

@@ -55,7 +55,7 @@ class WardController extends Controller
         //dd($request->all());
         try{
             $request->validate([
-                'wardname' => 'required|alpha_num',
+                'wardname' => 'required',
                 'wardtype' => 'required',
                 'floor' => 'required',
                 'block' => 'required',
