@@ -15,6 +15,8 @@ class BedController extends Controller
         $bedcategory = BedCategory::where('status','Active')->pluck('bed_category','id');
         $bedtype = BedType::where('status','Active')->pluck('bed_type','id');
         $beds = Bed::where('status','!=','Deleted')->get();
+        $bedtypename = []; // Initialize the array
+        $bedcategoryname = []; // Initialize the array
         foreach($beds as $bed){
             $bedtypename[] = BedType::where('id',$bed->bed_type_id)->value('bed_type');
             $bedcategoryname[] = BedCategory::where('id',$bed->bed_category_id)->value('bed_category');
@@ -49,10 +51,13 @@ class BedController extends Controller
                         return response()->json(["message"=>"Error!! Sorry Bed already exists"]);
                     }
                 }
+                $assigned = 0;
                 $saveBed = Bed::create([
                     "bed_name"=>ucwords($request->bedname),
                     "bed_type_id"=>$request->bed_type_id,
                     "bed_category_id"=>$request->bed_category_id,
+                    "no_of_beds"=>$request->no_of_beds,
+                    "assigned_no"=>$assigned,
                     "status"=>$request->status,
                     "narration"=>$request->narration,
                     "created_by"=>1,
@@ -79,6 +84,7 @@ class BedController extends Controller
                                     ->update(["bed_name"=>ucwords($request->bedname),
                                               "bed_type_id"=>$request->bed_type_id,
                                               "bed_category_id"=>$request->bed_category_id,
+                                              "no_of_beds"=>$request->no_of_beds,
                                               "status"=>$request->status,
                                               "narration"=>$request->narration,
                                               "updated_by"=>1,

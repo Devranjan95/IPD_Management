@@ -117,7 +117,9 @@
                                             <th>Ward Type</th>
                                             <th>Floor</th>
                                             <th>Block</th>
-                                            <th>Occupancy</th>
+                                            <th style="text-align:center">Occupancy</th>
+                                            <th style="text-align:center">Beds Assigned</th>
+                                            <th style="text-align:center">Beds Available</th>
                                             <th>Amenities</th>
                                             <th>Price</th>
                                             <th>Status</th>
@@ -130,13 +132,18 @@
                                                 $sl = 1;
                                             @endphp
                                             @foreach($wards as $index => $ward)
+                                            @php 
+                                                $available = $ward->total_occupancy - $ward->assigned;
+                                            @endphp
                                             <tr>
                                                 <td style="text-align:center">{{$sl++}}</td>
                                                 <td>{{$ward->ward_name}}</td>
                                                 <td>{{$wardDetails[$index]['ward_type']}}</td>
                                                 <td>{{$wardDetails[$index]['floor_no']}}</td>
                                                 <td>{{$wardDetails[$index]['block_name']}}</td>
-                                                <td style="text-align:center">{{$ward->occupancy}}</td>
+                                                <td style="text-align:center">{{$ward->total_occupancy}}</td>
+                                                <td style="text-align:center">{{$ward->assigned}}</td>
+                                                <td style="text-align:center">{{$available}}</td>
                                                 <td>{{$ward->amenities}}</td>
                                                 <td style="text-align:center">{{$ward->price}}</td>
                                                 <td>
@@ -203,6 +210,10 @@ $(document).ready(function() {
         return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
     }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
+    $.validator.addMethod("positiveNumber", function(value, element) {
+        return this.optional(element) || (value > 0);
+    }, "Price must be a positive number.");
+
     // Form validation rules
     $("#wardform").validate({
         rules: {
@@ -227,7 +238,8 @@ $(document).ready(function() {
             },
             wardprice: {
                 required: true,
-                number: true
+                number: true,
+                positiveNumber:true
             },
             status: {
                 required: true
@@ -255,7 +267,8 @@ $(document).ready(function() {
             },
             wardprice: {
                 required: "Price is required.",
-                number: "Please enter a valid price"
+                number: "Please enter a valid price",
+                positiveNumber:"Price cannot be -ve or 0"
             },
             status: {
                 required: "Status is required."
@@ -303,6 +316,7 @@ $(document).ready(function() {
                         }, 2000);
                         if ($("#mode").val() === 'add') {
                             form.reset(); // Reset the form
+                            $('.select2').val(null).trigger('change');
                         } else {
                             window.location.reload();
                         }
@@ -396,7 +410,7 @@ function showEdit(id) {
             document.getElementById("wardtype").value = data.ward['ward_type_id'];
             document.getElementById("floor").value = data.ward['floor_id'];
             showBlock($('#floor'), data.ward['block_id']);
-            document.getElementById("occupancy").value = data.ward['occupancy'];
+            document.getElementById("occupancy").value = data.ward['total_occupancy'];
             document.getElementById("wardprice").value = data.ward['price'];
              // Pre-select amenities
              let selectedAmenities = data.ward['amenities'].split(','); // Assuming amenities are stored as comma-separated values

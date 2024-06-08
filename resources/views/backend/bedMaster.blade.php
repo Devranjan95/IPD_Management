@@ -46,6 +46,12 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
+                                        <label for="bed_count" class="form-label">No. of beds<span style="color:red" title="Mandatory">*</span></label>
+                                        <input type="text" class="form-control" placeholder="Enter no of beds" id="no_of_beds" name="no_of_beds">
+                                    </div>
+                                </div>
+                                <div class="row pb-3">
+                                    <div class="col-md-6">
                                         <label for="status" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="status" name="status">
                                             <option value="" selected disabled>Please select status</option>
@@ -54,9 +60,7 @@
                                             
                                         </select>
                                     </div>
-                                </div>
-                                <div class="row pb-3">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <label for="narration" class="form-label">Narration</label>
                                         <textarea class="form-control" placeholder="Narration" id="narration" name="narration" rows="4"></textarea>
                                     </div>
@@ -97,10 +101,13 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>SL</th>
+                                            <th style="text-align:center">SL</th>
                                             <th>Bed Name</th>
                                             <th>Bed Type</th>
                                             <th>Bed Category</th>
+                                            <th style="text-align:center">No. Of Beds</th>
+                                            <th style="text-align:center">Assigned</th>
+                                            <th style="text-align:center">Available</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -110,11 +117,17 @@
                                             $sl = 1;
                                         @endphp
                                         @foreach($beds as $bed)
+                                        @php 
+                                            $available = $bed->no_of_beds - $bed->assigned_no;
+                                        @endphp
                                             <tr>
-                                                <td>{{ $sl++ }}</td>
+                                                <td style="text-align:center">{{ $sl++ }}</td>
                                                 <td>{{ $bed->bed_name }}</td>
                                                 <td>{{ $bedtypename[$loop->index] }}</td>
                                                 <td>{{ $bedcategoryname[$loop->index] }}</td>
+                                                <td style="text-align:center">{{ $bed->no_of_beds }}</td>
+                                                <td style="text-align:center">{{ $bed->assigned_no }}</td>
+                                                <td style="text-align:center">{{ $available }}</td>
                                                 <td>
                                                     @if($bed->status == 'Active')
                                                         <label class="badge badge-success">Active</label>
@@ -158,6 +171,14 @@
             return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
         }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
+        $.validator.addMethod("numsonly", function(value, element) {
+            return this.optional(element) || /^[0-9]+$/.test(value);
+        }, "Only numbers are allowed.");
+
+        $.validator.addMethod("positiveNumber", function(value, element) {
+        return this.optional(element) || (value > 0);
+        }, "Price must be a positive number.");
+
         $("#bedform").validate({
             rules: {
                 bedname: {
@@ -169,6 +190,11 @@
                 },
                 bed_category_id: {
                     required: true
+                },
+                no_of_beds:{
+                    required: true,
+                    numsonly:true,
+                    positiveNumber:true,
                 },
                 status: {
                     required: true
@@ -184,6 +210,11 @@
                 },
                 bed_category_id: {
                     required: "Bed Category is required."
+                },
+                no_of_beds:{
+                    required:"Please enter number of beds",
+                    numsonly:"Please enter a valid number",
+                    positiveNumber:"No cannot be -ve or 0"
                 },
                 status: {
                     required: "Status is required."
@@ -258,6 +289,7 @@
                 document.getElementById("bedname").value = data.bed['bed_name'];
                 document.getElementById("bed_type_id").value = data.bed['bed_type_id'];
                 document.getElementById("bed_category_id").value = data.bed['bed_category_id'];
+                document.getElementById("no_of_beds").value = data.bed['no_of_beds'];
                 document.getElementById("status").value = data.bed['status'];
                 document.getElementById("narration").value = data.bed['narration'];
             },

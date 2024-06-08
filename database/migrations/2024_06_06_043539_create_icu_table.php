@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('icu', function (Blueprint $table) {
             $table->id();
-            $table->string('icu_name',15);
-            $table->foreignId('icu_type_id')->references('id')->on('icu_types')->onDelete('cascade');
-            $table->foreignId('floor_id')->references('id')->on('floors')->onDelete('cascade');
-            $table->foreignId('block_id')->references('id')->on('blocks')->onDelete('cascade');
-            $table->string('occupancy',3);
-            $table->string('amenities',250);
+            $table->string('icu_name', 15);
+            $table->foreignId('icu_type_id')->constrained('icu_types')->onDelete('cascade');
+            $table->foreignId('floor_id')->constrained('floors')->onDelete('cascade');
+            $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade');
+            $table->integer('total_occupancy');
+            $table->integer('assigned')->nullable();
+            $table->integer('available')->nullable();
+            $table->string('amenities', 250);
             $table->integer('price');
-            $table->enum('status',['Active','Inactive','Deleted']);
-            $table->text('narration')->nullable(); // Adding the narration field
+            $table->enum('status', ['Active', 'Inactive', 'Deleted']);
+            $table->text('narration')->nullable();
             $table->string('created_by');
             $table->string('updated_by');
             $table->timestamps();

@@ -102,3 +102,5 @@ Route::get('beds/editData/{id}',[BedController::class,'getData']);
 Route::get('beds/deleteData/{id}',[BedController::class,'deleteData']);
 
 Route::get('bedassign/',[BedAssignController::class,'index']);
+Route::post('bedassign/loadblocks', [BedAssignController::class, 'showBlocks']);
+Route::post('bedassign/typevalue', [BedAssignController::class, 'typeAvailable']);

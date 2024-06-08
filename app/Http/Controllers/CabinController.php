@@ -60,6 +60,7 @@ class CabinController extends Controller
                 'floor' => 'required',
                 'block' => 'required',
                 'occupancy' => 'required|numeric',
+                'available' => 'numeric',
                 'amenities' => 'required|array',
                 'cabinprice' => 'required|numeric',
                 'status' => 'required',
@@ -75,12 +76,14 @@ class CabinController extends Controller
                     return response()->json(["message"=>"Error!! Sorry cabin already exists"]);
                     
                 }
+                $assigned = 0;
                 $saveCabin = Cabin::create([
                     "cabin_name" => ucwords($request->cabinname),
                     "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
                     "floor_id" => $request->floor,
                     "block_id" => $request->block,
-                    "occupancy" => $request->occupancy,
+                    "total_occupancy" => $request->occupancy,
+                    "assigned"=>$assigned,
                     "amenities" => $amenities,
                     "price" => $request->cabinprice,
                     "status" => $request->status,
@@ -105,12 +108,14 @@ class CabinController extends Controller
     
                     }
                 }
+                //$available = $request->occupancy - $assigned;
+
                 $updatecabin = Cabin::where('id',$request->recordid)
                                     ->update(["cabin_name" => ucwords($request->cabinname),
                                               "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
                                               "floor_id" => $request->floor,
                                               "block_id" => $request->block,
-                                              "occupancy" => $request->occupancy,
+                                              "total_occupancy" => $request->occupancy,
                                               "amenities" => $amenities,
                                               "price" => $request->cabinprice,
                                               "status" => $request->status,

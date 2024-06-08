@@ -74,12 +74,14 @@ class WardController extends Controller
                     //dd(1);
                     return response()->json(["message"=>"Error!! Sorry ward already exists"]);    
                 }
+                $assigned = 0;
                 $saveWard = Ward::create([
                     "ward_name" => ucwords($request->wardname),
                     "ward_type_id" => $request->wardtype, // Make sure to include cabin_type_id
                     "floor_id" => $request->floor,
                     "block_id" => $request->block,
-                    "occupancy" => $request->occupancy,
+                    "total_occupancy" => $request->occupancy,
+                    "assigned"=>$assigned,
                     "amenities" => $amenities,
                     "price" => $request->wardprice,
                     "status" => $request->status,
@@ -104,12 +106,13 @@ class WardController extends Controller
     
                     }
                 }
+                
                 $updateward = Ward::where('id',$request->recordid)
                                     ->update(["ward_name" => ucwords($request->wardname),
                                               "ward_type_id" => $request->wardtype, // Make sure to include cabin_type_id
                                               "floor_id" => $request->floor,
                                               "block_id" => $request->block,
-                                              "occupancy" => $request->occupancy,
+                                              "total_occupancy" => $request->occupancy,
                                               "amenities" => $amenities,
                                               "price" => $request->wardprice,
                                               "status" => $request->status,

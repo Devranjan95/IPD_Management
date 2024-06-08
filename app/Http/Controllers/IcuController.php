@@ -74,12 +74,14 @@ class IcuController extends Controller
                     //dd(1);
                     return response()->json(["message"=>"Error!! Sorry ICU already exists"]);    
                 }
+                $assigned = 0;
                 $saveIcu = Icu::create([
                     "icu_name" => ucwords($request->icuname),
                     "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
                     "floor_id" => $request->floor,
                     "block_id" => $request->block,
-                    "occupancy" => $request->occupancy,
+                    "total_occupancy" => $request->occupancy,
+                    "assigned"=>$assigned,
                     "amenities" => $amenities,
                     "price" => $request->icuprice,
                     "status" => $request->status,
@@ -104,12 +106,13 @@ class IcuController extends Controller
     
                     }
                 }
+                
                 $updateicu = Icu::where('id',$request->recordid)
                                     ->update(["icu_name" => ucwords($request->icuname),
                                               "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
                                               "floor_id" => $request->floor,
                                               "block_id" => $request->block,
-                                              "occupancy" => $request->occupancy,
+                                              "total_occupancy" => $request->occupancy,
                                               "amenities" => $amenities,
                                               "price" => $request->icuprice,
                                               "status" => $request->status,
