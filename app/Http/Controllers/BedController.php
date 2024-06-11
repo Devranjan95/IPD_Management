@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\BedCategory;
 use App\Models\BedType;
 use App\Models\Bed;
+use App\Models\Floor;
+use App\Models\Block;
+use App\Models\Cabin;
+use App\Models\Ward;
+use App\Models\Icu;
 
 class BedController extends Controller
 {
@@ -17,11 +22,62 @@ class BedController extends Controller
         $beds = Bed::where('status','!=','Deleted')->get();
         $bedtypename = []; // Initialize the array
         $bedcategoryname = []; // Initialize the array
+        $floors = Floor::where('status','Active')->pluck('floor_no','id');
+    //    **************************************************************************
+    $floorDetails = [];
+
+    foreach ($floors as $floorId => $floorNo) {
+        $cabinOccupancy = Cabin::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
+        $cabinAssigned = Cabin::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
+
+        $wardOccupancy = Ward::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
+        $wardAssigned = Ward::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
+
+        $icuOccupancy = Icu::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
+        $icuAssigned = Icu::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
+
+        $floorDetails[$floorId] = [
+            'floor_no' => $floorNo,
+            'cabin' => [
+                'total_occupancy' => $cabinOccupancy,
+                'total_assigned' => $cabinAssigned,
+                'available' => $cabinOccupancy - $cabinAssigned
+            ],
+            'ward' => [
+                'total_occupancy' => $wardOccupancy,
+                'total_assigned' => $wardAssigned,
+                'available' => $wardOccupancy - $wardAssigned
+            ],
+            'icu' => [
+                'total_occupancy' => $icuOccupancy,
+                'total_assigned' => $icuAssigned,
+                'available' => $icuOccupancy - $icuAssigned
+            ]
+        ];
+    }
+dd($floorDetails);
+    // ********************************************************************************
+        
         foreach($beds as $bed){
             $bedtypename[] = BedType::where('id',$bed->bed_type_id)->value('bed_type');
             $bedcategoryname[] = BedCategory::where('id',$bed->bed_category_id)->value('bed_category');
         }
-        return view("backend.bedMaster",['bedcategory'=>$bedcategory,'bedtype'=>$bedtype,'beds'=>$beds,'bedtypename'=>$bedtypename,'bedcategoryname'=>$bedcategoryname]);
+        return view("backend.bedMaster",['bedcategory'=>$bedcategory,'bedtype'=>$bedtype,
+                                         'beds'=>$beds,
+                                         'bedtypename'=>$bedtypename,
+                                         'bedcategoryname'=>$bedcategoryname,
+                                         'floors'=>$floors,
+                                         ]);
+    }
+
+    public function showBlocks(Request $request){
+        //dd($request);
+        $blocks = Block::where('status','Active')->where('floor_id',$request->floor)->pluck('block_code','id');
+        if($blocks){
+            return response()->json(['blocks'=>$blocks]);
+        }else{
+            return response()->json(['message'=>"Sorry no blocks found for the given floor"]);
+        }
     }
 
     public function saveBed(Request $request){

@@ -97,10 +97,15 @@ Route::get('bedcategories/editData/{id}',[BedCategoryController::class,'getData'
 Route::get('bedcategories/deleteData/{id}',[BedCategoryController::class,'deleteData']);
 
 Route::get('beds/',[BedController::class,'index']);
+Route::post('beds/loadblocks', [CabinController::class, 'showBlocks']);
 Route::post('beds/saveData',[BedController::class,'saveBed']);
 Route::get('beds/editData/{id}',[BedController::class,'getData']);
 Route::get('beds/deleteData/{id}',[BedController::class,'deleteData']);
 
 Route::get('bedassign/',[BedAssignController::class,'index']);
+Route::get('bedassignvisual/',[BedAssignController::class,'newIndex']);
+Route::post('getblockdetails/bedassignment',[BedAssignController::class,'getblockDetails']);
+Route::post('getdetails/block',[BedAssignController::class,'getRoomDetails']);
 Route::post('bedassign/loadblocks', [BedAssignController::class, 'showBlocks']);
 Route::post('bedassign/typevalue', [BedAssignController::class, 'typeAvailable']);
+Route::get('bedassign/assigning/{id}/{flag}', [BedAssignController::class, 'showOccupancy']);

@@ -152,7 +152,7 @@
                                                 <td style="text-align:center">{{$cabin->assigned}}</td>
                                                 <td style="text-align:center">{{$available}}</td>
                                                 <td>{{$cabin->amenities}}</td>
-                                                <td style="text-align:center">{{$cabin->price}}</td>
+                                                <td style="text-align:center">{{$cabin->price}}</td> 
                                                 <td>
                                                         @if($cabin->status=="Active")
                                                         <label class="badge badge-success">Active</label>

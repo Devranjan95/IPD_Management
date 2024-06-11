@@ -55,7 +55,7 @@ class CabinController extends Controller
         //dd($request->all());
         try{
             $request->validate([
-                'cabinname' => 'required|alpha_num',
+                'cabinname' => 'required',
                 'cabintype' => 'required',
                 'floor' => 'required',
                 'block' => 'required',

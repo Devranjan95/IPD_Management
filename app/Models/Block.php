@@ -27,4 +27,16 @@ class Block extends Model
 	{
 		return $this->belongsTo(User::class);
 	}
+    public function cabins()
+    {
+        return $this->hasMany(Cabin::class);
+    }
+    public function wards()
+    {
+        return $this->hasMany(Ward::class);
+    }
+    public function icus()
+    {
+        return $this->hasMany(Icu::class);
+    }
 }

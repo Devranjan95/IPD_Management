@@ -6,7 +6,7 @@
     <div class="container-fluid" id="fluid">
         <!-- ========== title-wrapper start ========== -->
         <div class="container-wrapper pt-30">
-            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <!-- <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-xl">
                     <div class="modal-content">
                         <form enctype="multipart/form-data" name="bedassignform" id="bedassignform">
@@ -69,7 +69,7 @@
                         </form>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- ========== tables-wrapper start ========== -->
             <div class="card mb-30">
@@ -162,13 +162,12 @@ function showBlock(floors, selectedBlock = null) {
         });
     }
 }
-function Takevalue(value, element) {
-    
-    if(value){
+function Takevalue(value, element) { 
+    if (value) {
         $.ajax({
             type: "POST",
             url: "{{ url('bedassign/typevalue') }}",
-            data: { _token: "{{ csrf_token() }}", value: value},
+            data: { _token: "{{ csrf_token() }}", value: value },
             success: function(response) {
                 var tbody = $('#tbody');
                 tbody.empty(); // Clear existing table rows
@@ -178,6 +177,8 @@ function Takevalue(value, element) {
                     for (var i = 0; i < response.cabins.length; i++) {
                         var cabin = response.cabins[i];
                         var cabinDetail = response.cabinDetails[i];
+                        var available = cabin.total_occupancy - cabin.assigned;
+                        var flag = 'cabin';
 
                         var row = $('<tr>');
                         row.append('<td>' + cabin.cabin_name + '</td>');
@@ -186,22 +187,83 @@ function Takevalue(value, element) {
                         row.append('<td>' + cabinDetail.block_name + '</td>');
                         row.append('<td>' + cabin.total_occupancy + '</td>');
                         row.append('<td>' + cabin.assigned + '</td>');
-                        row.append('<td>' + cabin.available + '</td>');
-                        row.append('<td><button class="btn btn-primary assign-bed" data-cabin-id="' + cabin.id + '">Assign</button></td>');
+                        row.append('<td>' + available + '</td>');
+                        row.append('<td><button class="btn btn-primary assign-bed" onclick="assignBed(' + cabin.id + ', \'' + flag + '\')">Assign</button></td>');
+                        tbody.append(row);
+                    }
+                } else if (response.message === "Wards found" && response.wards && response.wardDetails) {
+                    // Populate table with ward data
+                    for (var i = 0; i < response.wards.length; i++) {
+                        var ward = response.wards[i];
+                        var wardDetail = response.wardDetails[i];
+                        var available = ward.total_occupancy - ward.assigned;
+                        var flag = 'ward';
+
+                        var row = $('<tr>');
+                        row.append('<td>' + ward.ward_name + '</td>'); // Assuming ward_name field exists
+                        row.append('<td>' + wardDetail.ward_type + '</td>');
+                        row.append('<td>' + wardDetail.floor_no + '</td>');
+                        row.append('<td>' + wardDetail.block_name + '</td>');
+                        row.append('<td>' + ward.total_occupancy + '</td>');
+                        row.append('<td>' + ward.assigned + '</td>');
+                        row.append('<td>' + available + '</td>');
+                        row.append('<td><button class="btn btn-primary assign-bed" onclick="assignBed(' + ward.id + ', \'' + flag + '\')">Assign</button></td>');
+                        tbody.append(row);
+                    }
+                } else if (response.message === "ICUs found" && response.icus && response.icuDetails) {
+                    // Populate table with ICU data
+                    for (var i = 0; i < response.icus.length; i++) {
+                        var icu = response.icus[i];
+                        var icuDetail = response.icuDetails[i];
+                        var available = icu.total_occupancy - icu.assigned;
+                        var flag = 'icu';
+
+                        var row = $('<tr>');
+                        row.append('<td>' + icu.icu_name + '</td>'); // Assuming icu_name field exists
+                        row.append('<td>' + icuDetail.icu_type + '</td>');
+                        row.append('<td>' + icuDetail.floor_no + '</td>');
+                        row.append('<td>' + icuDetail.block_name + '</td>');
+                        row.append('<td>' + icu.total_occupancy + '</td>');
+                        row.append('<td>' + icu.assigned + '</td>');
+                        row.append('<td>' + available + '</td>');
+                        row.append('<td><button class="btn btn-primary assign-bed" onclick="assignBed(' + icu.id + ', \'' + flag + '\')">Assign</button></td>');
                         tbody.append(row);
                     }
                 } else if (response.message === "No cabins found") {
-                    // Show message if no cabins found
-                    tbody.append('<tr><td colspan="7">No cabins found</td></tr>');
+                    tbody.append('<tr><td colspan="8">No cabins found</td></tr>');
+                } else if (response.message === "No wards found") {
+                    tbody.append('<tr><td colspan="8">No wards found</td></tr>');
+                } else if (response.message === "No ICUs found") {
+                    tbody.append('<tr><td colspan="8">No ICUs found</td></tr>');
                 }
-               
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
-                alert('Error fetching blocks');
+                alert('Error fetching data');
             }
         });
     }
 }
+function assignBed(id,flag){
+    alert(id);
+    alert(flag);
+    $.ajax({
+        type:"GET",
+        url:"{{url('bedassign/assigning')}}/"+id+'/'+flag,
+        headers: {_token:"{{csrf_token()}}"},
+        success:function(response){
+            if (response) {
+                window.location.href = "{{url('bedassign/assigning')}}/" + id + '/' + flag;
+            }
+           
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Error fetching blocks');
+        }
+    })
+
+}
+
 </script>
 @section('scripts')

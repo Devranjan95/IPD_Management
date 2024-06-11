@@ -74,6 +74,49 @@
                     </div>
                 </div>
             </div>
+            <!--**** Assign Modal***** -->
+            <div class="modal fade" id="assignmodal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="assignModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <form enctype="multipart/form-data" name="assignbedform" id="assignbedform">
+                    <input type="hidden" id="saveurl" value="{{ url('assignbeds/saveData') }}" />
+                    <input type="hidden" id="recordid" name="recordid" value="" />
+                    <input type="hidden" id="mode" name="mode">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Assign Bed</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="color:rgb(250,235,215)" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="color:black;font-weight:600">
+                        <div class="row" id='bed_details'></div>
+                       
+                        <div class="col-lg-12 text-center pb-3" style="color:red;font-weight:600" id="error"> </div>
+                        <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
+                        <div class="row pb-3">
+                            <div class="col-md-6">
+                                <label for="floor" class="form-label">Floor<span style="color:red" title="Mandatory">*</span></label>
+                                <select class="form-control" id="floor" name="floor" onchange="showBlock(this)">
+                                    <option value="" selected disabled>Please select floor</option>
+                                    @foreach($floors as $key => $value)
+                                        <option value="{{ $key }}">{{ $value }}</option>
+                                    @endforeach 
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="block" class="form-label">Block<span style="color:red" title="Mandatory">*</span></label>
+                                <select class="form-control" id="block" name="block"></select>
+                            </div>
+                        </div>
+                        <div class="row pb-3"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="reload()">Close</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+             <!-- **************** -->
 
             <!-- ========== tables-wrapper start ========== -->
             <div class="card mb-30">
@@ -139,6 +182,9 @@
                                                 </td>
                                                 <td>
                                                     <div class="btn-group">
+                                                        <a href='javascript:void(0)' onclick="showBed({{$bed->id}})" data-bs-toggle="modal" data-bs-target="#assignmodal"  title='Assign Bed'>
+                                                            <img src='assets/previous/assignbed.svg' style='height:23px; width:23px' />
+                                                        </a>&nbsp;&nbsp;&nbsp;
                                                         <a href='#' class='editbtn' onclick='showEdit({{ $bed->id }})' title='Edit'>
                                                             <img src='assets/previous/user.svg' style='height:20px; width:20px' />
                                                         </a>&nbsp;&nbsp;
@@ -164,6 +210,33 @@
 @endsection
 
 @section('scripts')
+<style>
+        .card-custom {
+            border: 1px solid #007bff;
+            transition: all 0.5s;
+            height: 100%;
+            margin-bottom: 1rem;
+            padding: 10px;
+        }
+        .card-custom:hover {
+            transform: scale(1.05);
+            border-color: #0056b3;
+        }
+        .card-title {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .card-body-custom {
+            padding: 0.75rem;
+            font-size: 0.875rem;
+        }
+        .modal-xl {
+            max-width: 90%;
+        }
+        .modal-header, .modal-body, .modal-footer {
+            padding: 1rem 2rem;
+        }
+    </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script>
     $(document).ready(function() {
@@ -265,7 +338,7 @@
             }
         });
     });
-
+    
     function showAdd() {
         document.getElementById("bedform").reset();
         document.getElementById("mode").value = "add";
@@ -305,7 +378,34 @@
         }
     }
     
+    function showBlock(floors, selectedBlock = null) {
+    let floor = $(floors).val();
+    //alert(floor);
+    if (floor) {
+        $.ajax({
+            type: "POST",
+            url: "{{ url('beds/loadblocks') }}",
+            data: { _token: "{{ csrf_token() }}", floor: floor },
+            success: function(response) {
+                let blockSelect = $('#block');
+                blockSelect.empty();
+                blockSelect.append('<option value="" selected disabled>Please select block</option>');
+                $.each(response.blocks, function(key, value) {
+                    blockSelect.append('<option value="' + key + '">' + value + '</option>');
+                });
 
+                // If there's a selected block, set it as selected
+                if (selectedBlock) {
+                    blockSelect.val(selectedBlock);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                alert('Error fetching blocks');
+            }
+        });
+    }
+}
 
 
 

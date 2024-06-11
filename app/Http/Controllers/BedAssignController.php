@@ -8,8 +8,10 @@ use App\Models\Floor;
 use App\Models\Block;
 use App\Models\Cabin;
 use App\Models\Ward;
+use App\Models\Icu;
 use App\Models\WardType;
 use App\Models\CabinType;
+use App\Models\IcuType;
 
 
 class BedAssignController extends Controller
@@ -64,5 +66,99 @@ class BedAssignController extends Controller
                 return response()->json(['message'=>"No wards found"]);
             }
         }
+        if($request->value == "icu"){
+            $icus = Icu::where('status','Active')->get();
+            //dd($cabins);
+            $icuDetails = []; 
+            foreach($icus as $icu){
+                $icuDetails[] = [
+                    'icu_type' => IcuType::where('id',$icu->icu_type_id)->value('icu_type'),
+                    'floor_no' => Floor::where('id',$icu->floor_id)->value('floor_no'),
+                    'block_name' => Block::where('id',$icu->block_id)->value('block_name'),
+                ];
+            }
+            if($icus->isNotEmpty()){
+                return response()->json(['message'=>'ICUs found','icus'=>$icus,'icuDetails'=>$icuDetails]);
+            }else{
+                return response()->json(['message'=>"No icu's found"]);
+            }
+        }
     }
+    public function showOccupancy($id, $flag) {
+        if ($flag == "cabin") {
+            $cabin = Cabin::where('id', $id)->first();
+            if ($cabin) {
+                return view("backend.bedassigningform", ["type" => "cabin", "data" => $cabin]);
+            }
+        } elseif ($flag == "ward") {
+            $ward = Ward::where('id', $id)->first();
+            if ($ward) {
+                return view("backend.bedassigningform", ["type" => "ward", "data" => $ward]);
+            }
+        } elseif ($flag == "icu") {
+            $icu = Icu::where('id', $id)->first();
+            if ($icu) {
+                return view("backend.bedassigningform", ["type" => "icu", "data" => $icu]);
+            }
+        }
+        return redirect()->back()->with('error', 'Invalid flag or ID');
+    }
+
+    public function newIndex(){
+        $floors = Floor::where('status','Active')->pluck('floor_no','id');
+        return view('backend.bedassignvisual',['floors'=>$floors]);
+    }
+
+
+    
+    
+    
+    
+    
+    
+    
+    public function getblockDetails(Request $request){
+        //dd($request);
+        $blocks = Block::where('floor_id',$request->floor)->get();
+        if($blocks->isEmpty()){
+            return response()->json(['message'=>'No blocks found']);
+        }else{
+            return response()->json(['blocks'=>$blocks]);
+        }
+    }
+    public function getRoomDetails(Request $request){
+        $cabins = Cabin::where('floor_id', $request->floor)
+                       ->where('block_id', $request->block)
+                       ->get();
+    
+        $wards = Ward::where('floor_id', $request->floor)
+                     ->where('block_id', $request->block)
+                     ->get();
+    
+        $icus = Icu::where('floor_id', $request->floor)
+                   ->where('block_id', $request->block)
+                   ->get();
+    
+        $response = [];
+    
+        if (!$cabins->isEmpty()) {
+            $response['cabins'] = $cabins;
+        } 
+    
+        if (!$wards->isEmpty()) {
+            $response['wards'] = $wards;
+        } 
+    
+        if (!$icus->isEmpty()) {
+            $response['icus'] = $icus;
+        } 
+    
+        // Check if any rooms found
+        if (empty($response)) {
+            return response()->json(['message' => 'No rooms found']);
+        } else {
+            return response()->json($response);
+        }
+    }
+    
 }
