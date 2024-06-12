@@ -13,7 +13,7 @@ class Cabin extends Model
         'cabin_name',
         'cabin_code',
         'cabin_type_id',
-        'floor_id',
+        'floor_count',
         'block_id',
         'total_occupancy',
         'assigned',

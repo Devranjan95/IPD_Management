@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('floors', function (Blueprint $table) {
-            $table->id();
-            $table->string('floor_no',15)->unique();
-            $table->enum('status',['Active','Inactive','Deleted']);
+            $table->id(); // This column is auto_increment and primary key
+            $table->integer('count')->nullable(); // This should not be auto_increment
+            $table->string('floor_no', 25)->unique();
+            $table->enum('status', ['Active', 'Inactive', 'Deleted']);
             $table->text('narration')->nullable(); // Adding the narration field
             $table->string('created_by');
             $table->string('updated_by');

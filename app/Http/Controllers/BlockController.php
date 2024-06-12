@@ -12,20 +12,22 @@ class BlockController extends Controller
 {
     //
     public function index(){
-        $floors = Floor::where('status','=','Active')->pluck('floor_no','id');
+        $floors = Floor::where('status','=','Active')->pluck('floor_no','count');
         $blocks = Block::where('status','!=','Deleted')->get();
         $floorno = [];
         foreach($blocks as $block){
-            $floor = Floor::where('id',$block->floor_id)->value('floor_no');
+            $floor = Floor::where('count',$block->floor_count)->value('floor_no');
+            //dd($floor);
             $floorno[]=$floor;
         }
+        //dd($floorno);
         return view("backend.blockMaster",['floors'=>$floors,'blocks'=>$blocks,'floorno'=>$floorno]);
     }
     public function saveBlock(Request $request){
         //dd($request->all());
         try{
             $request->validate([
-                'blockname'=> 'required|string|max:10',
+                'blockname'=> 'required|string|max:60',
                 'floorNo' => 'required|integer',
                 'status' => 'required',
             ]);
@@ -42,7 +44,7 @@ class BlockController extends Controller
                 $saveBlock = Block::create([
                     "block_name"=>ucwords($request->blockname),
                     "block_code"=>$blockcode,
-                    "floor_id"=>$request->floorNo,
+                    "floor_count"=>$request->floorNo,
                     "status"=>$request->status,
                     "narration"=>$request->narration,
                     "created_by"=>1,
@@ -73,7 +75,7 @@ class BlockController extends Controller
                 $updateblock = Block::where('id',$request->recordid)
                                     ->update(["block_name"=>ucwords($request->blockname),
                                               "block_code"=>$blockcode,
-                                              "floor_id"=>$request->floorNo,
+                                              "floor_count"=>$request->floorNo,
                                               "status"=>$request->status,
                                               "narration"=>$request->narration,
                                               "updated_by"=>1,

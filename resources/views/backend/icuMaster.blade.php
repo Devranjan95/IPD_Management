@@ -210,7 +210,7 @@ $(document).ready(function() {
     }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
     $.validator.addMethod("positiveNumber", function(value, element) {
-        return this.optional(element) || (value > 0);
+        return this.optional(element) || (value >= 0);
     }, "Price must be a positive number.");
 
     // Form validation rules
@@ -267,7 +267,7 @@ $(document).ready(function() {
             icuprice: {
                 required: "Price is required.",
                 number: "Please enter a valid price",
-                positiveNumber:"Price cannot be -ve or 0"
+                positiveNumber:"Price cannot be -ve"
             },
             status: {
                 required: "Status is required."
@@ -407,7 +407,7 @@ function showEdit(id) {
             myModal.show();
             document.getElementById("icuname").value = data.icu['icu_name'];
             document.getElementById("icutype").value = data.icu['icu_type_id'];
-            document.getElementById("floor").value = data.icu['floor_id'];
+            document.getElementById("floor").value = data.icu['floor_count'];
             showBlock($('#floor'), data.icu['block_id']);
             document.getElementById("occupancy").value = data.icu['total_occupancy'];
             document.getElementById("icuprice").value = data.icu['price'];

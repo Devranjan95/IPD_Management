@@ -12,7 +12,7 @@ class Block extends Model
     protected $fillable = [
         'block_name',
         'block_code',
-        'floor_id',
+        'floor_count',
         'status',
         'narration',
         'created_by',

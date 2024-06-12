@@ -10,6 +10,7 @@ class Floor extends Model
     use HasFactory;
     protected $table = "floors";
     protected $fillable = [
+        'count',
         'floor_no',
         'status',
         'narration',

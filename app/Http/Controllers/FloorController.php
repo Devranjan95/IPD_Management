@@ -18,6 +18,10 @@ class FloorController extends Controller
 
     public function saveFloor(Request $request){
         //dd($request->all());
+        // Define the path to the floor count file
+        $counterFile = storage_path('app/floorcount.txt');
+        $counter = intval(file_get_contents($counterFile));
+
         try{
             $request->validate([
                 'floorNo' => 'required|string|max:15',
@@ -41,6 +45,7 @@ class FloorController extends Controller
                     }
                 }
                 $saveFloor = Floor::create([
+                    "count" => $counter,
                     "floor_no"=>ucwords($request->floorNo),
                     "status"=>$request->status,
                     "narration"=>$request->narration,
@@ -48,6 +53,11 @@ class FloorController extends Controller
                     "updated_by"=>1
                 ]);
                 if($saveFloor){
+                    // Increment the counter
+                    $counter++;
+
+                    // Write the updated counter value back to the file
+                    file_put_contents($counterFile, $counter);
                     return response()->json(['status'=>true,'message'=>'Floor saved successfully']);
                 }else{
                     return response()->json(['status'=>true,'message'=>'Floor could not be saved']);
@@ -95,7 +105,8 @@ class FloorController extends Controller
     {
         // Find the floor record by ID
         $floor = Floor::find($id);
-
+        $counterFile = storage_path('app/floorcount.txt');
+        $counter = intval(file_get_contents($counterFile));
         // Check if the floor record exists
         if (!$floor) {
             return response()->json(['message' => 'Floor not found'], 404);
@@ -103,6 +114,8 @@ class FloorController extends Controller
 
         // Attempt to delete the floor record
         if ($floor->delete()) {
+            $counter--;
+            file_put_contents($counterFile, $counter);
             return response()->json([
                 'status' => true,
                 'message' => 'Floor Deleted',

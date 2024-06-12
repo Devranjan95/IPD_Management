@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ward_types', function (Blueprint $table) {
             $table->id();
-            $table->string('ward_type',15);
+            $table->string('ward_type',50);
             $table->enum('status',['Active','Inactive','Deleted']);
             $table->text('narration')->nullable(); // Adding the narration field
             $table->string('created_by');

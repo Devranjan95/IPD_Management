@@ -13,9 +13,9 @@ return new class extends Migration
     {
             Schema::create('blocks', function (Blueprint $table) {
                 $table->id();
-                $table->string('block_name',10);
+                $table->string('block_name',25);
                 $table->string('block_code',12)->unique();
-                $table->foreignId('floor_id')->references('id')->on('floors')->onDelete('cascade');
+                $table->string('floor_count',3);
                 $table->enum('status',['Active','Inactive','Deleted']);
                 $table->text('narration')->nullable(); // Adding the narration field
                 $table->string('created_by');

@@ -17,7 +17,7 @@ class IcuController extends Controller
     //
     public function index(){
         $icutypes = IcuType::where('status','Active')->pluck('icu_type','id');
-        $floors = Floor::where('status','Active')->pluck('floor_no','id');
+        $floors = Floor::where('status','Active')->pluck('floor_no','count');
         $amenities = Amenity::where('status','Active')->pluck('amenities','id');
         $icus = Icu::where('status','!=','Deleted')->get();
     
@@ -26,7 +26,7 @@ class IcuController extends Controller
         foreach($icus as $icu){
             $icuDetails[] = [
                 'icu_type' => IcuType::where('id',$icu->icu_type_id)->value('icu_type'),
-                'floor_no' => Floor::where('id',$icu->floor_id)->value('floor_no'),
+                'floor_no' => Floor::where('count',$icu->floor_count)->value('floor_no'),
                 'block_name' => Block::where('id',$icu->block_id)->value('block_name'),
             ];
         }
@@ -43,7 +43,7 @@ class IcuController extends Controller
 
     public function showBlocks(Request $request){
         //dd($request);
-        $blocks = Block::where('status','Active')->where('floor_id',$request->floor)->pluck('block_code','id');
+        $blocks = Block::where('status','Active')->where('floor_count',$request->floor)->pluck('block_code','id');
         if($blocks){
             return response()->json(['blocks'=>$blocks]);
         }else{
@@ -68,7 +68,7 @@ class IcuController extends Controller
             //dd($request->cabintype);
             if($request->mode == "add"){
                 //dd($request->all());
-                $icuexist = Icu::where('icu_name',$request->icuname)->where('floor_id',$request->floor)->first();
+                $icuexist = Icu::where('icu_name',$request->icuname)->where('floor_count',$request->floor)->first();
                 //dd($cabinexist);
                 if($icuexist){
                     //dd(1);
@@ -78,7 +78,7 @@ class IcuController extends Controller
                 $saveIcu = Icu::create([
                     "icu_name" => ucwords($request->icuname),
                     "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
-                    "floor_id" => $request->floor,
+                    "floor_count" => $request->floor,
                     "block_id" => $request->block,
                     "total_occupancy" => $request->occupancy,
                     "assigned"=>$assigned,
@@ -97,7 +97,7 @@ class IcuController extends Controller
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $icuexists =  Icu::where('icu_name',$request->icuname)->where('floor_id',$request->floor)->get();
+                $icuexists =  Icu::where('icu_name',$request->icuname)->where('floor_count',$request->floor)->get();
                 if($icuexists){
                     foreach($icuexists as $ex){
                         if($request->recordid != $ex->id){
@@ -110,7 +110,7 @@ class IcuController extends Controller
                 $updateicu = Icu::where('id',$request->recordid)
                                     ->update(["icu_name" => ucwords($request->icuname),
                                               "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
-                                              "floor_id" => $request->floor,
+                                              "floor_count" => $request->floor,
                                               "block_id" => $request->block,
                                               "total_occupancy" => $request->occupancy,
                                               "amenities" => $amenities,

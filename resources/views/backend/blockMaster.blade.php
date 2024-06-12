@@ -368,7 +368,7 @@
                 myModal.show();
                 //alert(data.floor["floor_no"]);
                 document.getElementById("blockname").value = data.block['block_name'];
-                document.getElementById("floorNo").value = data.block['floor_id'];
+                document.getElementById("floorNo").value = data.block['floor_count'];
                 document.getElementById("status").value = data.block['status'];
                 document.getElementById("narration").value = data.block['narration'];
             },

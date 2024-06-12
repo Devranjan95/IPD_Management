@@ -18,7 +18,7 @@ class CabinTypeController extends Controller
     {
         try {
             $request->validate([
-                'cabintype' => 'required|string|max:15',
+                'cabintype' => 'required|string|max:50',
                 'status' => 'required',
             ]);
 

@@ -18,7 +18,7 @@ class WardTypeController extends Controller
         //dd($request->all());
         try{
             $request->validate([
-                'wardtype' => 'required|string|max:15',
+                'wardtype' => 'required|string|max:50',
                 'status' => 'required',
             ]);
             if($request->mode == "add"){

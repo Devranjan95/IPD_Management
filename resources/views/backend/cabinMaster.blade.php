@@ -218,7 +218,7 @@ $(document).ready(function() {
     }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
     $.validator.addMethod("positiveNumber", function(value, element) {
-        return this.optional(element) || (value > 0);
+        return this.optional(element) || (value >= 0);
     }, "Price must be a positive number.");
 
     // Form validation rules
@@ -275,7 +275,7 @@ $(document).ready(function() {
             cabinprice: {
                 required: "Price is required.",
                 number: "Please enter a valid price",
-                positiveNumber:"Price cannot be -ve or 0"
+                positiveNumber:"Price cannot be -ve "
             },
             status: {
                 required: "Status is required."
@@ -415,7 +415,7 @@ function showEdit(id) {
             myModal.show();
             document.getElementById("cabinname").value = data.cabin['cabin_name'];
             document.getElementById("cabintype").value = data.cabin['cabin_type_id'];
-            document.getElementById("floor").value = data.cabin['floor_id'];
+            document.getElementById("floor").value = data.cabin['floor_count'];
             showBlock($('#floor'), data.cabin['block_id']);
             document.getElementById("occupancy").value = data.cabin['total_occupancy'];
             document.getElementById("cabinprice").value = data.cabin['price'];

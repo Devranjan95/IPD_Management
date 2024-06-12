@@ -18,7 +18,7 @@ class AmenityController extends Controller
         //dd($request->all());
         try{
             $request->validate([
-                'amenity' => 'required|string|max:15',
+                'amenity' => 'required|string|max:50',
                 'status' => 'required',
             ]);
            // dd($request->all());

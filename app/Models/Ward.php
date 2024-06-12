@@ -12,7 +12,7 @@ class Ward extends Model
     protected $fillable = [
         'ward_name',
         'ward_type_id',
-        'floor_id',
+        'floor_count',
         'block_id',
         'total_occupancy',
         'assigned',

@@ -24,38 +24,38 @@ class BedController extends Controller
         $bedcategoryname = []; // Initialize the array
         $floors = Floor::where('status','Active')->pluck('floor_no','id');
     //    **************************************************************************
-    $floorDetails = [];
+//     $floorDetails = [];
 
-    foreach ($floors as $floorId => $floorNo) {
-        $cabinOccupancy = Cabin::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
-        $cabinAssigned = Cabin::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
+//     foreach ($floors as $floorId => $floorNo) {
+//         $cabinOccupancy = Cabin::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
+//         $cabinAssigned = Cabin::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
 
-        $wardOccupancy = Ward::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
-        $wardAssigned = Ward::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
+//         $wardOccupancy = Ward::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
+//         $wardAssigned = Ward::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
 
-        $icuOccupancy = Icu::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
-        $icuAssigned = Icu::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
+//         $icuOccupancy = Icu::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
+//         $icuAssigned = Icu::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
 
-        $floorDetails[$floorId] = [
-            'floor_no' => $floorNo,
-            'cabin' => [
-                'total_occupancy' => $cabinOccupancy,
-                'total_assigned' => $cabinAssigned,
-                'available' => $cabinOccupancy - $cabinAssigned
-            ],
-            'ward' => [
-                'total_occupancy' => $wardOccupancy,
-                'total_assigned' => $wardAssigned,
-                'available' => $wardOccupancy - $wardAssigned
-            ],
-            'icu' => [
-                'total_occupancy' => $icuOccupancy,
-                'total_assigned' => $icuAssigned,
-                'available' => $icuOccupancy - $icuAssigned
-            ]
-        ];
-    }
-dd($floorDetails);
+//         $floorDetails[$floorId] = [
+//             'floor_no' => $floorNo,
+//             'cabin' => [
+//                 'total_occupancy' => $cabinOccupancy,
+//                 'total_assigned' => $cabinAssigned,
+//                 'available' => $cabinOccupancy - $cabinAssigned
+//             ],
+//             'ward' => [
+//                 'total_occupancy' => $wardOccupancy,
+//                 'total_assigned' => $wardAssigned,
+//                 'available' => $wardOccupancy - $wardAssigned
+//             ],
+//             'icu' => [
+//                 'total_occupancy' => $icuOccupancy,
+//                 'total_assigned' => $icuAssigned,
+//                 'available' => $icuOccupancy - $icuAssigned
+//             ]
+//         ];
+//     }
+// dd($floorDetails);
     // ********************************************************************************
         
         foreach($beds as $bed){

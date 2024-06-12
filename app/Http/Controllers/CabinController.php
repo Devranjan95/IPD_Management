@@ -17,7 +17,7 @@ class CabinController extends Controller
     //
     public function index(){
         $cabintypes = CabinType::where('status','Active')->pluck('cabin_type','id');
-        $floors = Floor::where('status','Active')->pluck('floor_no','id');
+        $floors = Floor::where('status','Active')->pluck('floor_no','count');
         $amenities = Amenity::where('status','Active')->pluck('amenities','id');
         $cabins = Cabin::where('status','!=','Deleted')->get();
     
@@ -26,7 +26,7 @@ class CabinController extends Controller
         foreach($cabins as $cabin){
             $cabinDetails[] = [
                 'cabin_type' => CabinType::where('id',$cabin->cabin_type_id)->value('cabin_type'),
-                'floor_no' => Floor::where('id',$cabin->floor_id)->value('floor_no'),
+                'floor_no' => Floor::where('count',$cabin->floor_count)->value('floor_no'),
                 'block_name' => Block::where('id',$cabin->block_id)->value('block_name'),
             ];
         }
@@ -43,7 +43,8 @@ class CabinController extends Controller
 
     public function showBlocks(Request $request){
         //dd($request);
-        $blocks = Block::where('status','Active')->where('floor_id',$request->floor)->pluck('block_code','id');
+        $blocks = Block::where('status','Active')->where('floor_count',$request->floor)->pluck('block_code','id');
+        //dd($blocks);
         if($blocks){
             return response()->json(['blocks'=>$blocks]);
         }else{
@@ -69,7 +70,7 @@ class CabinController extends Controller
             //dd($request->cabintype);
             if($request->mode == "add"){
                 //dd($request->all());
-                $cabinexist = Cabin::where('cabin_name',$request->cabinname)->where('floor_id',$request->floor)->first();
+                $cabinexist = Cabin::where('cabin_name',$request->cabinname)->where('floor_count',$request->floor)->first();
                 //dd($cabinexist);
                 if($cabinexist){
                     //dd(1);
@@ -80,7 +81,7 @@ class CabinController extends Controller
                 $saveCabin = Cabin::create([
                     "cabin_name" => ucwords($request->cabinname),
                     "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
-                    "floor_id" => $request->floor,
+                    "floor_count" => $request->floor,
                     "block_id" => $request->block,
                     "total_occupancy" => $request->occupancy,
                     "assigned"=>$assigned,
@@ -99,7 +100,7 @@ class CabinController extends Controller
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $cabinexists = $cabinexist = Cabin::where('cabin_name',$request->cabinname)->where('floor_id',$request->floor)->get();
+                $cabinexists = $cabinexist = Cabin::where('cabin_name',$request->cabinname)->where('floor_count',$request->floor)->get();
                 if($cabinexists){
                     foreach($cabinexists as $ex){
                         if($request->recordid != $ex->id){
@@ -113,7 +114,7 @@ class CabinController extends Controller
                 $updatecabin = Cabin::where('id',$request->recordid)
                                     ->update(["cabin_name" => ucwords($request->cabinname),
                                               "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
-                                              "floor_id" => $request->floor,
+                                              "floor_count" => $request->floor,
                                               "block_id" => $request->block,
                                               "total_occupancy" => $request->occupancy,
                                               "amenities" => $amenities,

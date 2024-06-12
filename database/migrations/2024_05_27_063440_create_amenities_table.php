@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('amenities', function (Blueprint $table) {
             $table->id();
-            $table->string("amenities",15)->unique();
+            $table->string("amenities",50)->unique();
             $table->enum('status',['Active','Inactive','Deleted']);
             $table->text('narration')->nullable(); // Adding the narration field
             $table->string('created_by');

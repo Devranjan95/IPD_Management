@@ -18,7 +18,7 @@ class BedTypeController extends Controller
         //dd($request->all());
         try{
             $request->validate([
-                'bedtype' => 'required|string|max:20',
+                'bedtype' => 'required|string|max:50',
                 'status' => 'required',
             ]);
            // dd($request->all());

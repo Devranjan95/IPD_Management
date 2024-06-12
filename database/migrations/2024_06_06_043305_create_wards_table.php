@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('wards', function (Blueprint $table) {
             $table->id();
-            $table->string('ward_name', 15);
+            $table->string('ward_name', 65);
             $table->foreignId('ward_type_id')->constrained('ward_types')->onDelete('cascade');
-            $table->foreignId('floor_id')->constrained('floors')->onDelete('cascade');
+            $table->string('floor_count',3);
             $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade');
             $table->integer('total_occupancy');
             $table->integer('assigned')->nullable();

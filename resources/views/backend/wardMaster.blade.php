@@ -211,7 +211,7 @@ $(document).ready(function() {
     }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
     $.validator.addMethod("positiveNumber", function(value, element) {
-        return this.optional(element) || (value > 0);
+        return this.optional(element) || (value >= 0);
     }, "Price must be a positive number.");
 
     // Form validation rules
@@ -268,7 +268,7 @@ $(document).ready(function() {
             wardprice: {
                 required: "Price is required.",
                 number: "Please enter a valid price",
-                positiveNumber:"Price cannot be -ve or 0"
+                positiveNumber:"Price cannot be -ve"
             },
             status: {
                 required: "Status is required."
@@ -408,7 +408,7 @@ function showEdit(id) {
             myModal.show();
             document.getElementById("wardname").value = data.ward['ward_name'];
             document.getElementById("wardtype").value = data.ward['ward_type_id'];
-            document.getElementById("floor").value = data.ward['floor_id'];
+            document.getElementById("floor").value = data.ward['floor_count'];
             showBlock($('#floor'), data.ward['block_id']);
             document.getElementById("occupancy").value = data.ward['total_occupancy'];
             document.getElementById("wardprice").value = data.ward['price'];

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('cabin_types', function (Blueprint $table) {
             $table->id();
-            $table->string('cabin_type',15);
+            $table->string('cabin_type',50);
             $table->enum('status',['Active','Inactive','Deleted']);
             $table->text('narration')->nullable(); // Adding the narration field
             $table->string('created_by');

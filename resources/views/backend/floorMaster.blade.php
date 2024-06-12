@@ -81,7 +81,7 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
-                                            <th style="text-align:center">Floor No</th>
+                                            <th>Floor No</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -93,7 +93,7 @@
                                         @foreach($floordata as $floor)
                                             <tr>
                                                 <td style="text-align:center">{{$sl++}}</td>
-                                                <td style="text-align:center">{{$floor->floor_no}}</td>
+                                                <td>{{$floor->floor_no}}</td>
                                                 <td>
                                                         @if($floor->status=="Active")
                                                         <label class="badge badge-success">Active</label>

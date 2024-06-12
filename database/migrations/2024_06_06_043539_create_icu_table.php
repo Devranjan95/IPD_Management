@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('icu', function (Blueprint $table) {
             $table->id();
-            $table->string('icu_name', 15);
+            $table->string('icu_name', 65);
             $table->foreignId('icu_type_id')->constrained('icu_types')->onDelete('cascade');
-            $table->foreignId('floor_id')->constrained('floors')->onDelete('cascade');
+            $table->string('floor_count',3);
             $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade');
             $table->integer('total_occupancy');
             $table->integer('assigned')->nullable();

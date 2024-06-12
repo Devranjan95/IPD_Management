@@ -18,7 +18,7 @@ class IcuTypeController extends Controller
         //dd($request->all());
         try{
             $request->validate([
-                'icutype' => 'required|string|max:15',
+                'icutype' => 'required|string|max:50',
                 'status' => 'required',
             ]);
             if($request->mode == "add"){
