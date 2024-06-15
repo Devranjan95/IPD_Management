@@ -104,6 +104,7 @@ Route::get('beds/deleteData/{id}',[BedController::class,'deleteData']);
 
 Route::get('bedassign/',[BedAssignController::class,'index']);
 Route::get('bedassignvisual/',[BedAssignController::class,'newIndex']);
+Route::post('bedform/getalldata',[BedAssignController::class,'getDataval']);
 Route::post('getblockdetails/bedassignment',[BedAssignController::class,'getblockDetails']);
 Route::post('getdetails/block',[BedAssignController::class,'getRoomDetails']);
 Route::post('bedassign/loadblocks', [BedAssignController::class, 'showBlocks']);

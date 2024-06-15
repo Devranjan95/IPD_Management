@@ -9,6 +9,7 @@ use App\Models\Block;
 use App\Models\Cabin;
 use App\Models\Ward;
 use App\Models\Icu;
+use App\Models\Bed;
 use App\Models\WardType;
 use App\Models\CabinType;
 use App\Models\IcuType;
@@ -104,12 +105,101 @@ class BedAssignController extends Controller
         return redirect()->back()->with('error', 'Invalid flag or ID');
     }
 
+    // public function newIndex(){
+    //     $floors = Floor::where('status','Active')->get();
+    //     $floorcount = [];
+    //     $cabindetails = [];
+    //     foreach($floors as $floor){
+    //         $floorcount[] = $floor->count;
+    //     }
+    //     foreach($floorcount as $key=>$value){
+    //         $cabins = Cabin::where('floor_count',$value)->where('status','Active')->select('cabin_name','total_occupancy','assigned')->get();
+    //         $cabindetails[]=$cabins;
+    //     }
+    //     print_r($cabindetails);
+    //     exit;
+    //     return view('backend.bedassignvisual',['floors'=>$floors]);
+    // }
     public function newIndex(){
-        $floors = Floor::where('status','Active')->pluck('floor_no','id');
-        return view('backend.bedassignvisual',['floors'=>$floors]);
+        $floors = Floor::where('status', 'Active')->get();
+        $cabindetails = [];
+        $warddetails = [];
+        $icudetails = [];
+        $beds = Bed::where('status','Active')->get();
+        foreach ($floors as $floor) {
+            $cabins = Cabin::where('floor_count', $floor->count) 
+                            ->where('status', 'Active')
+                            ->select('id','cabin_name', 'total_occupancy', 'assigned')
+                            ->get();
+            $wards = Ward::where('floor_count', $floor->count) 
+                            ->where('status', 'Active')
+                            ->select('id','ward_name', 'total_occupancy', 'assigned')
+                            ->get(); 
+            $icus = Icu::where('floor_count', $floor->count) 
+                            ->where('status', 'Active')
+                            ->select('id','icu_name', 'total_occupancy', 'assigned')
+                            ->get();                 
+            $cabindetails[$floor->count] = $cabins;
+            $warddetails[$floor->count] = $wards;
+            $icudetails[$floor->count] = $icus;
+        }
+    
+        return view('backend.bedassignvisual', [
+            'floors' => $floors,
+            'cabindetails' => $cabindetails,
+            'warddetails' => $warddetails,
+            'icudetails' => $icudetails,
+        ]);
     }
+    
 
-
+    // public function getDataval(Request $request){
+    //     $beds = Bed::where('status', 'Active')->get();
+    //     if($request->flag == "cabin"){
+    //         $cabininfo = Cabin::where('id',$request->id)->first();
+    //         $cabintype = CabinType::where('id',$cabininfo->cabin_type_id)->value('cabin_type');
+    //         $floor = Floor::where('count',$cabininfo->floor_count)->value('floor_no');
+    //         $block = Block::where('id',$cabininfo->block_id)->value('block_name');
+    //         return response()->json(['beds'=>$beds,'cabininfo'=>$cabininfo,'cabintype'=>$cabintype,
+    //                                  "floor"=>$floor,'block'=>$block ]);
+    //     }else if($request->flag == "ward"){
+    //         $wardinfo = Ward::where('id',$request->id)->first();
+    //         $wardtype = WardType::where('id',$wardinfo->ward_type_id)->value('ward_type');
+    //         $floor = Floor::where('count',$wardinfo->floor_count)->value('floor_no');
+    //         $block = Block::where('id',$wardinfo->block_id)->value('block_name');
+    //         return response()->json(['beds'=>$beds,'wardinfo'=>$wardinfo,'wardtype'=>$wardtype,
+    //                                  "floor"=>$floor,'block'=>$block ]);
+    //     }else if($request->flag == "icu"){
+    //         $icuinfo = Icu::where('id',$request->id)->first();
+    //         $icutype = IcuType::where('id',$icuinfo->icu_type_id)->value('icu_type');
+    //         $floor = Floor::where('count',$icuinfo->floor_count)->value('floor_no');
+    //         $block = Block::where('id',$icuinfo->block_id)->value('block_name');
+    //         return response()->json(['beds'=>$beds,'icuinfo'=>$icuinfo,'icutype'=>$icutype,
+    //                                  "floor"=>$floor,'block'=>$block ]);
+    //     }
+    // }
+    public function getDataval(Request $request) {
+        $beds = Bed::where('status', 'Active')->get();
+        if ($request->flag == "cabin") {
+            $cabininfo = Cabin::where('id', $request->id)->first();
+            $cabintype = CabinType::where('id', $cabininfo->cabin_type_id)->value('cabin_type');
+            $floor = Floor::where('count', $cabininfo->floor_count)->value('floor_no');
+            $block = Block::where('id', $cabininfo->block_id)->value('block_name');
+            return response()->json(['beds' => $beds, 'cabininfo' => $cabininfo, 'cabintype' => $cabintype, 'floor' => $floor, 'block' => $block]);
+        } else if ($request->flag == "ward") {
+            $wardinfo = Ward::where('id', $request->id)->first();
+            $wardtype = WardType::where('id', $wardinfo->ward_type_id)->value('ward_type');
+            $floor = Floor::where('count', $wardinfo->floor_count)->value('floor_no');
+            $block = Block::where('id', $wardinfo->block_id)->value('block_name');
+            return response()->json(['beds' => $beds, 'wardinfo' => $wardinfo, 'wardtype' => $wardtype, 'floor' => $floor, 'block' => $block]);
+        } else if ($request->flag == "icu") {
+            $icuinfo = Icu::where('id', $request->id)->first();
+            $icutype = IcuType::where('id', $icuinfo->icu_type_id)->value('icu_type');
+            $floor = Floor::where('count', $icuinfo->floor_count)->value('floor_no');
+            $block = Block::where('id', $icuinfo->block_id)->value('block_name');
+            return response()->json(['beds' => $beds, 'icuinfo' => $icuinfo, 'icutype' => $icutype, 'floor' => $floor, 'block' => $block]);
+        }
+    }
     
     
     
