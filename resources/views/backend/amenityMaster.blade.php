@@ -26,6 +26,13 @@
                                             <input type="text" class="form-control" placeholder="Enter Amenity." id="amenity" name="amenity">
                                         </div>
                                         <div class="col-md-6">
+                                            <label for="floor" class="form-label">Price<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Enter Amenity price" id="price" name="price">
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col-md-6">
                                             <label for="floor" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
                                             <select class="form-control" id="status" name="status">
                                                 <option value="" selected disabled>Please select status</option>
@@ -33,9 +40,7 @@
                                                 <option value="Inactive">Inactive</option>
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="row pb-3">
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <label for="floor" class="form-label">Narration</label>
                                             <textarea class="form-control" placeholder="Narration" id="narration" name="narration" rows="10"></textarea>
                                         </div>
@@ -82,6 +87,7 @@
                                         <tr>
                                             <th style="text-align:center">Sl</th>
                                             <th>Amenities</th>
+                                            <th style="text-align:center">Price</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -94,6 +100,7 @@
                                         <tr>
                                             <td style="text-align:center">{{$sl++}}</td>
                                             <td>{{$amenity->amenities}}</td>
+                                            <td style="text-align:center">{{$amenity->price}}</td>
                                             <td>
                                                         @if($amenity->status=="Active")
                                                         <label class="badge badge-success">Active</label>
@@ -147,12 +154,19 @@
             return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
         }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
+        $.validator.addMethod("positiveNumber", function(value, element) {
+             return this.optional(element) || (value >= 0);
+        }, "Price must be a positive number.");
         // Form validation rules
         $("#amenityform").validate({
             rules: {
                 amenity: {
                     required: true,
                     alphanumeric: true
+                },
+                price:{
+                    required: true,
+                    positiveNumber:true
                 },
                 status: {
                     required: true
@@ -162,6 +176,10 @@
                 amenity: {
                     required: "Amenity Name is required.",
                     alphanumeric: "Must be alphabets or alphanumeric"
+                },
+                price:{
+                    required: "Price is required.",
+                    positiveNumber: "Please enter a valid price, Price cannot -ve"
                 },
                 status: {
                     required: "Status is required."
@@ -241,6 +259,7 @@
                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
                 myModal.show();
                 document.getElementById("amenity").value = data.amenity['amenities'];
+                document.getElementById("price").value = data.amenity['price'];
                 document.getElementById("status").value = data.amenity['status'];
                 document.getElementById("narration").value = data.amenity['narration'];
             },

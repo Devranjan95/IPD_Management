@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\WardType;
+use App\Models\Ward;
 
 class WardTypeController extends Controller
 {
@@ -68,10 +69,25 @@ class WardTypeController extends Controller
                                               "narration"=>$request->narration,
                                               "updated_by"=>1,
                                               "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updatewardtype){
-                    return response()->json(['status'=>true,'message'=>'Wardtype updated successfully']);
-                }else{
-                    return response()->json(['status'=>false,'message'=>'Wardtype could not be updated']);
+                // if($updatewardtype){
+                //     return response()->json(['status'=>true,'message'=>'Wardtype updated successfully']);
+                // }else{
+                //     return response()->json(['status'=>false,'message'=>'Wardtype could not be updated']);
+                // }
+                if ($updatewardtype) {
+                    // Update cabin status if necessary
+                    if ($request->status == "Inactive") {
+                        Ward::where("ward_type_id", $request->recordid)->update([
+                            "status" => "Inactive"
+                        ]);
+                    } else {
+                        Ward::where("ward_type_id", $request->recordid)->update([
+                            "status" => "Active"
+                        ]);
+                    }
+                    return response()->json(['status' => true, 'message' => 'Wardtype updated successfully']);
+                } else {
+                    return response()->json(['status' => false, 'message' => 'Wardtype could not be updated'], 500);
                 }
                 
             }
@@ -91,48 +107,33 @@ class WardTypeController extends Controller
     }
     public function deleteData(string $id)
     {
-        $wardtype = WardType::find($id);
+        $ward = Ward::where('ward_type_id',$id)->exists();
+        if(!$ward){
+            $wardtype = WardType::find($id);
 
-        // Check if the floor record exists
-        if (!$wardtype) {
-            return response()->json(['message' => 'Wardtype not found'], 404);
-        }
+            // Check if the floor record exists
+            if (!$wardtype) {
+                return response()->json(['message' => 'Wardtype not found'], 404);
+            }
 
-        // Attempt to delete the floor record
-        if ($wardtype->delete()) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Wardtype Deleted',
-            ]);
+            // Attempt to delete the floor record
+            if ($wardtype->delete()) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Wardtype Deleted',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Wardtype could not be deleted.',
+                ]);
+            }
         } else {
+            // Associated records found, cannot delete floor
             return response()->json([
                 'status' => false,
-                'message' => 'Wardtype could not be deleted.',
+                'message' => 'Cannot delete Wardtype. Associated records exist in  ward',
             ]);
-        }
-        //dd($id);
-        // $floor = CabinType::find($id);
-        // if(!$floor){
-        //     return response()->json(['message'=>'Cabintype Not Found']);
-        // }
-
-        // $update = CabinType::where('id',$id)
-        //     ->update([
-        //         'updated_at'  => date('Y-m-d H:i:s'),
-        //         'updated_by'  => "1",
-        //         'status'      => 'Deleted'
-        //     ]);
-
-        //     if($update){
-        //         return response()->json([
-        //             'status' => true,
-        //             'message' => 'Cabintype deleted',
-        //         ]);
-        //     }else{
-        //         return response()->json([
-        //             'status' => false,
-        //             'message' => "CabinType could not be deleted.",
-        //         ]);
-        // }
+        }  
     }
 }

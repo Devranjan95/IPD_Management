@@ -13,6 +13,7 @@ class Block extends Model
         'block_name',
         'block_code',
         'floor_count',
+        'floor_id',
         'status',
         'narration',
         'created_by',

@@ -109,7 +109,7 @@
                         </div>
                         <div class='col-lg-12'>
                             <div class="table-responsive" style="height: 400px; overflow-y: auto;">
-                                <table class="table table-hover">
+                            <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
@@ -118,8 +118,8 @@
                                             <th>Floor</th>
                                             <th>Block</th>
                                             <th style="text-align:center">Occupancy</th>
-                                            <th style="text-align:center">Assigned</th>
-                                            <th style="text-align:center">Available</th>
+                                            <th style="text-align:center">Beds Assigned</th>
+                                            <th style="text-align:center">Beds Available</th>
                                             <th>Amenities</th>
                                             <th>Price</th>
                                             <th>Status</th>
@@ -127,44 +127,46 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                            @php 
-                                                $sl = 1;
-                                            @endphp
-                                            @foreach($icus as $index => $icu)
+                                        @php 
+                                            $sl = 1;
+                                        @endphp
+                                        @foreach($icus as $index => $icu)
                                             @php 
                                                 $available = $icu->total_occupancy - $icu->assigned;
                                             @endphp
                                             <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$icu->icu_name}}</td>
-                                                <td>{{$icuDetails[$index]['icu_type']}}</td>
-                                                <td>{{$icuDetails[$index]['floor_no']}}</td>
-                                                <td>{{$icuDetails[$index]['block_name']}}</td>
-                                                <td style="text-align:center">{{$icu->total_occupancy}}</td>
-                                                <td style="text-align:center">{{$icu->assigned}}</td>
-                                                <td style="text-align:center">{{$available}}</td>
-                                                <td>{{$icu->amenities}}</td>
-                                                <td style="text-align:center">{{$icu->price}}</td>
+                                                <td style="text-align:center">{{ $sl++ }}</td>
+                                                <td>{{ $icu->icu_name }}</td>
+                                                <td>{{ $icuDetails[$index]['icu_type'] }}</td>
+                                                <td>{{ $icuDetails[$index]['floor_no'] }}</td>
+                                                <td>{{ $icuDetails[$index]['block_name'] }}</td>
+                                                <td style="text-align:center">{{ $icu->total_occupancy }}</td>
+                                                <td style="text-align:center">{{ $icu->assigned }}</td>
+                                                <td style="text-align:center">{{ $available }}</td>
+                                                <td>{{ $icu->amenities }}</td>
+                                                <td style="text-align:center">{{ $icu->price }}</td> 
                                                 <td>
-                                                        @if($icu->status=="Active")
+                                                    @if($icu->status == "Active")
                                                         <label class="badge badge-success">Active</label>
-                                                        @else 
-                                                        <label class="badge badge-danger">In Active</label>
-                                                        @endif
+                                                    @else 
+                                                        <label class="badge badge-danger">Inactive</label>
+                                                    @endif
                                                 </td>
                                                 <td>
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $icu->id }})'
-                                                            title='Edit'><img src='assets/previous/user.svg'
-                                                                style='height:20px; width:20px' /></a>&nbsp&nbsp
-                                                        <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('icu/deleteData') }}/{{ $icu->id }}')"
-                                                            title='Delete'><img src='assets/previous/delete.svg'
-                                                                style='height:23px; width:23px' /></a>
+                                                    @if($icuDetails[$index]['floor_status'] == 'Active' && $icuDetails[$index]['block_status'] == 'Active'  && $icuDetails[$index]['icutype_status'] == 'Active')
+                                                        <a href='#' class='editbtn' onclick='showEdit({{ $icu->id }})' title='Edit'>
+                                                            <img src='assets/previous/user.svg' style='height:20px; width:20px' />
+                                                        </a>&nbsp&nbsp
+                                                        <a href='javascript:void(0)' onclick="deleteData('{{ url('icus/deleteData') }}/{{ $icu->id }}')" title='Delete'>
+                                                            <img src='assets/previous/delete.svg' style='height:23px; width:23px' />
+                                                        </a>
+                                                    @else
+                                                        Sorry, Parent Inactive
+                                                    @endif
                                                 </td>
                                             </tr>
-                                            @endforeach
+                                        @endforeach
                                     </tbody>
-
                                 </table>
                             </div>
                         </div>

@@ -43,6 +43,7 @@ class AmenityController extends Controller
                 }
                 $saveAmenity = Amenity::create([
                     "amenities"=>ucwords($request->amenity),
+                    "price"=>$request->price,
                     "status"=>$request->status,
                     "narration"=>$request->narration,
                     "created_by"=>1,
@@ -67,6 +68,7 @@ class AmenityController extends Controller
                 }
                 $updateamenity = Amenity::where('id',$request->recordid)
                                     ->update(["amenities"=>ucwords($request->amenity),
+                                              "price"=>$request->price,
                                               "status"=>$request->status,
                                               "narration"=>$request->narration,
                                               "updated_by"=>1,

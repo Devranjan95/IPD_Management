@@ -104,39 +104,38 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php 
-                                            $sl = 1;
-                                            $c = 0;
-                                        @endphp
-                                        @foreach($blocks as $block)
+                                        @php $sl = 1; @endphp
+                                        @foreach($blocks as $key => $block)
                                             <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$block->block_name}}</td>
-                                                <td>{{$block->block_code}}</td>
-                                                <td>{{$floorno[$c]}}</td>
+                                                <td style="text-align:center">{{ $sl++ }}</td>
+                                                <td>{{ $block->block_name }}</td>
+                                                <td>{{ $block->block_code }}</td>
+                                                <td>{{ $floors[$block->floor_count] ?? '' }}</td>
                                                 <td>
-                                                        @if($block->status=="Active")
-                                                        <label class="badge badge-success">Active</label>
-                                                        @else 
-                                                        <label class="badge badge-danger">In Active</label>
-                                                        @endif
+                                                    @if($block->status == "Active")
+                                                        <span class="badge badge-success">Active</span>
+                                                    @else 
+                                                        <span class="badge badge-danger">Inactive</span>
+                                                    @endif
                                                 </td>
                                                 <td>
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $block->id }})'
-                                                            title='Edit'><img src='assets/previous/user.svg'
-                                                                style='height:20px; width:20px' /></a>&nbsp&nbsp
-                                                        <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('blocks/deleteData') }}/{{ $block->id }}')"
-                                                            title='Delete'><img src='assets/previous/delete.svg'
-                                                                style='height:23px; width:23px' /></a>
+                                                    @if($floorStatuses[$block->id] != "Active")
+                                                        Sorry, Parent Inactive
+                                                    @else
+                                                        <a href='#' class='editbtn' onclick='showEdit({{ $block->id }})' title='Edit'>
+                                                            <img src='assets/previous/user.svg' style='height:20px; width:20px' />
+                                                        </a>&nbsp;
+                                                        <a href='javascript:void(0)' onclick="deleteData('{{ url('blocks/deleteData') }}/{{ $block->id }}')" title='Delete'>
+                                                            <img src='assets/previous/delete.svg' style='height:23px; width:23px' />
+                                                        </a>
+                                                    @endif
                                                 </td>
                                             </tr>
-                                            @php 
-                                                $c++;
-                                            @endphp
                                         @endforeach
                                     </tbody>
                                 </table>
+
+
                                 </div>
                                 
                                 <!-- </div> -->
@@ -306,7 +305,12 @@
                 // Form submission via AJAX
                 var formData = new FormData(form);
                 formData.append('_token', '{{ csrf_token() }}');
-
+                var status = $("#status").val();
+                if (status == 'Inactive') {
+                    if (!confirm('Changing the status to inactive will affect cabins, wards and icus, Do you still want to proceed ?')) {
+                        return false;
+                    }
+                }
                 $.ajax({
                     url: $("#saveurl").val(),
                     type: "POST",

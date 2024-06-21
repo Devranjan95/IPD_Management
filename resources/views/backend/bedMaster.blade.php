@@ -26,17 +26,6 @@
                                         <input type="text" class="form-control" placeholder="Enter Bed Name" id="bedname" name="bedname">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="bed_type_id" class="form-label">Bed Type<span style="color:red" title="Mandatory">*</span></label>
-                                        <select class="form-control" id="bed_type_id" name="bed_type_id">
-                                            <option value="" selected disabled>Please select bed type</option>
-                                            @foreach($bedtype as $key=>$value)
-                                            <option value="{{$key}}">{{$value}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row pb-3">
-                                    <div class="col-md-6">
                                         <label for="bed_category_id" class="form-label">Bed Category<span style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="bed_category_id" name="bed_category_id">
                                             <option value="" selected disabled>Please select bed category</option>
@@ -45,12 +34,12 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                </div>
+                                <div class="row pb-3">     
                                     <div class="col-md-6">
                                         <label for="bed_count" class="form-label">No. of beds<span style="color:red" title="Mandatory">*</span></label>
                                         <input type="text" class="form-control" placeholder="Enter no of beds" id="no_of_beds" name="no_of_beds">
                                     </div>
-                                </div>
-                                <div class="row pb-3">
                                     <div class="col-md-6">
                                         <label for="status" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="status" name="status">
@@ -60,7 +49,10 @@
                                             
                                         </select>
                                     </div>
-                                    <div class="col-md-6">
+                                </div>
+                                <div class="row pb-3">
+                                    
+                                    <div class="col-md-12">
                                         <label for="narration" class="form-label">Narration</label>
                                         <textarea class="form-control" placeholder="Narration" id="narration" name="narration" rows="4"></textarea>
                                     </div>
@@ -134,7 +126,7 @@
                                     </nav>
                                 </div>
                                 <div class='col-lg-6 pb-2'>
-                                    <a type="button" href="{{url('bedassign')}}" class="btn btn-rounded btn-fw btn-info" style="float:right;">Assign Bed</a>
+                                    <a type="button" href="{{url('bedassignvisual')}}" class="btn btn-rounded btn-fw btn-info" style="float:right;">Assign Bed</a>
                                     <button type="button" class="btn btn-rounded btn-fw btn-success" style="float:right;margin-right:10px;" data-bs-toggle="modal" onclick="showAdd()" data-bs-target="#staticBackdrop">Add New</button>
                                 </div>
 
@@ -146,7 +138,6 @@
                                         <tr>
                                             <th style="text-align:center">SL</th>
                                             <th>Bed Name</th>
-                                            <th>Bed Type</th>
                                             <th>Bed Category</th>
                                             <th style="text-align:center">No. Of Beds</th>
                                             <th style="text-align:center">Assigned</th>
@@ -163,28 +154,23 @@
                                         @php 
                                             $available = $bed->no_of_beds - $bed->assigned_no;
                                         @endphp
-                                            <tr>
-                                                <td style="text-align:center">{{ $sl++ }}</td>
-                                                <td>{{ $bed->bed_name }}</td>
-                                                <td>{{ $bedtypename[$loop->index] }}</td>
-                                                <td>{{ $bedcategoryname[$loop->index] }}</td>
-                                                <td style="text-align:center">{{ $bed->no_of_beds }}</td>
-                                                <td style="text-align:center">{{ $bed->assigned_no }}</td>
-                                                <td style="text-align:center">{{ $available }}</td>
-                                                <td>
-                                                    @if($bed->status == 'Active')
-                                                        <label class="badge badge-success">Active</label>
-                                                    @elseif($bed->status == 'Inactive')
-                                                        <label class="badge badge-warning">Inactive</label>
-                                                    @else
-                                                        <label class="badge badge-danger">Deleted</label>
-                                                    @endif
-                                                </td>
-                                                <td>
+                                        <tr>
+                                            <td style="text-align:center">{{ $sl++ }}</td>
+                                            <td>{{ $bed->bed_name }}</td>
+                                            <td>{{ $bedcategoryname[$loop->index] }}</td>
+                                            <td style="text-align:center">{{ $bed->no_of_beds }}</td>
+                                            <td style="text-align:center">{{ $bed->assigned_no }}</td>
+                                            <td style="text-align:center">{{ $available }}</td>
+                                            <td>
+                                                @if($bed->status == 'Active')
+                                                    <label class="badge badge-success">Active</label>
+                                                @else
+                                                    <label class="badge badge-danger">Inactive</label>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($bedcategorystatus[$loop->index] == 'Active')
                                                     <div class="btn-group">
-                                                        <a href='javascript:void(0)' onclick="showBed({{$bed->id}})" data-bs-toggle="modal" data-bs-target="#assignmodal"  title='Assign Bed'>
-                                                            <img src='assets/previous/assignbed.svg' style='height:23px; width:23px' />
-                                                        </a>&nbsp;&nbsp;&nbsp;
                                                         <a href='#' class='editbtn' onclick='showEdit({{ $bed->id }})' title='Edit'>
                                                             <img src='assets/previous/user.svg' style='height:20px; width:20px' />
                                                         </a>&nbsp;&nbsp;
@@ -192,11 +178,17 @@
                                                             <img src='assets/previous/delete.svg' style='height:23px; width:23px' />
                                                         </a>
                                                     </div>
-                                                </td>
-                                            </tr>
+                                                @else
+                                                    <div>
+                                                        Sorry, Parent Inactive
+                                                    </div>
+                                                @endif
+                                            </td>
+                                        </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
+
                             </div>
                             
                         </div>
@@ -360,7 +352,6 @@
                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
                 myModal.show();
                 document.getElementById("bedname").value = data.bed['bed_name'];
-                document.getElementById("bed_type_id").value = data.bed['bed_type_id'];
                 document.getElementById("bed_category_id").value = data.bed['bed_category_id'];
                 document.getElementById("no_of_beds").value = data.bed['no_of_beds'];
                 document.getElementById("status").value = data.bed['status'];

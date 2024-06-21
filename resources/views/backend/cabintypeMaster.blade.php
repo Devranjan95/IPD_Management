@@ -180,7 +180,12 @@
                 // Form submission via AJAX
                 var formData = new FormData(form);
                 formData.append('_token', '{{ csrf_token() }}');
-
+                var status = $("#status").val();
+                if (status == 'Inactive') {
+                    if (!confirm('Changing the status to inactive will affect cabins. Do you still want to proceed ?')) {
+                        return false;
+                    }
+                }
                 $.ajax({
                     url: $("#saveurl").val(),
                     type: "POST",

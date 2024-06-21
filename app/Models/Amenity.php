@@ -11,6 +11,7 @@ class Amenity extends Model
     protected $table = "amenities";
     protected $fillable = [
         'amenities',
+        'price',
         'status',
         'narration',
         'created_by',

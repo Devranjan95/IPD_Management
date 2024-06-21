@@ -109,6 +109,7 @@
                         </div>
                         <div class='col-lg-12'>
                             <div class="table-responsive">
+                               
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
@@ -127,45 +128,46 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                            <!-- Content dynamically loaded here -->
-                                            @php 
-                                                $sl = 1;
-                                            @endphp
-                                            @foreach($wards as $index => $ward)
+                                        @php 
+                                            $sl = 1;
+                                        @endphp
+                                        @foreach($wards as $index => $ward)
                                             @php 
                                                 $available = $ward->total_occupancy - $ward->assigned;
                                             @endphp
                                             <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$ward->ward_name}}</td>
-                                                <td>{{$wardDetails[$index]['ward_type']}}</td>
-                                                <td>{{$wardDetails[$index]['floor_no']}}</td>
-                                                <td>{{$wardDetails[$index]['block_name']}}</td>
-                                                <td style="text-align:center">{{$ward->total_occupancy}}</td>
-                                                <td style="text-align:center">{{$ward->assigned}}</td>
-                                                <td style="text-align:center">{{$available}}</td>
-                                                <td>{{$ward->amenities}}</td>
-                                                <td style="text-align:center">{{$ward->price}}</td>
+                                                <td style="text-align:center">{{ $sl++ }}</td>
+                                                <td>{{ $ward->ward_name }}</td>
+                                                <td>{{ $wardDetails[$index]['ward_type'] }}</td>
+                                                <td>{{ $wardDetails[$index]['floor_no'] }}</td>
+                                                <td>{{ $wardDetails[$index]['block_name'] }}</td>
+                                                <td style="text-align:center">{{ $ward->total_occupancy }}</td>
+                                                <td style="text-align:center">{{ $ward->assigned }}</td>
+                                                <td style="text-align:center">{{ $available }}</td>
+                                                <td>{{ $ward->amenities }}</td>
+                                                <td style="text-align:center">{{ $ward->price }}</td> 
                                                 <td>
-                                                        @if($ward->status=="Active")
+                                                    @if($ward->status == "Active")
                                                         <label class="badge badge-success">Active</label>
-                                                        @else 
-                                                        <label class="badge badge-danger">In Active</label>
-                                                        @endif
+                                                    @else 
+                                                        <label class="badge badge-danger">Inactive</label>
+                                                    @endif
                                                 </td>
                                                 <td>
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $ward->id }})'
-                                                            title='Edit'><img src='assets/previous/user.svg'
-                                                                style='height:20px; width:20px' /></a>&nbsp&nbsp
-                                                        <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('wards/deleteData') }}/{{ $ward->id }}')"
-                                                            title='Delete'><img src='assets/previous/delete.svg'
-                                                                style='height:23px; width:23px' /></a>
+                                                    @if($wardDetails[$index]['floor_status'] == 'Active' && $wardDetails[$index]['block_status'] == 'Active'  && $wardDetails[$index]['wardtype_status'] == 'Active')
+                                                        <a href='#' class='editbtn' onclick='showEdit({{ $ward->id }})' title='Edit'>
+                                                            <img src='assets/previous/user.svg' style='height:20px; width:20px' />
+                                                        </a>&nbsp&nbsp
+                                                        <a href='javascript:void(0)' onclick="deleteData('{{ url('wards/deleteData') }}/{{ $ward->id }}')" title='Delete'>
+                                                            <img src='assets/previous/delete.svg' style='height:23px; width:23px' />
+                                                        </a>
+                                                    @else
+                                                        Sorry, Parent Inactive
+                                                    @endif
                                                 </td>
                                             </tr>
-                                            @endforeach
+                                        @endforeach
                                     </tbody>
-
                                 </table>
                             </div>
                         </div>

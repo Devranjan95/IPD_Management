@@ -15,19 +15,78 @@ use App\Models\Amenity;
 class IcuController extends Controller
 {
     //
+    // public function index(){
+    //     $icutypes = IcuType::where('status','Active')->pluck('icu_type','id');
+    //     $floors = Floor::where('status','Active')->pluck('floor_no','count');
+    //     $amenities = Amenity::where('status','Active')->pluck('amenities','id');
+    //     $icus = Icu::where('status','!=','Deleted')->get();
+    
+    //     $icuDetails = []; // Array to store cabin details
+    
+    //     foreach($icus as $icu){
+    //         $icuDetails[] = [
+    //             'icu_type' => IcuType::where('id',$icu->icu_type_id)->value('icu_type'),
+    //             'floor_no' => Floor::where('count',$icu->floor_count)->value('floor_no'),
+    //             'block_name' => Block::where('id',$icu->block_id)->value('block_name'),
+    //         ];
+    //     }
+    
+    //     return view('backend.icuMaster', [
+    //         'icutypes' => $icutypes,
+    //         'floors' => $floors,
+    //         'amenities' => $amenities,
+    //         'icus' => $icus,
+    //         'icuDetails' => $icuDetails, // Pass the details to the view
+    //     ]);
+    // }
+
+    // public function index(){
+    //     $icutypes = IcuType::where('status', 'Active')->pluck('icu_type', 'id');
+    //     $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
+    //     $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+    //     $icus = Icu::where('status', '!=', 'Deleted')->get();
+    
+    //     $IcuDetails = []; // Array to store cabin details
+        
+    //     foreach ($icus as $icu) {
+    //         $floor = Floor::where('count', $icu->floor_count)->first(); // Get floor details
+    //         $block = Block::where('id', $icu->block_id)->first(); // Get block details
+    //         $icuDetails[] = [
+    //             'icu_type' => IcuType::where('id', $icu->icu_type_id)->value('icu_type'),
+    //             'floor_no' => $floor ? $floor->floor_no : null,
+    //             'block_name' => $block ? $block->block_name : null,
+    //             'floor_status' => $floor ? $floor->status : null, // Add floor status
+    //             'block_status' => $block ? $block->status : null  // Add block status
+    //         ];
+    //     }
+    
+    //     return view('backend.icuMaster', [
+    //         'icutypes' => $icutypes,
+    //         'floors' => $floors,
+    //         'amenities' => $amenities,
+    //         'icus' => $icus,
+    //         'icuDetails' => $icuDetails, // Pass the details to the view
+    //     ]);
+    // }
     public function index(){
-        $icutypes = IcuType::where('status','Active')->pluck('icu_type','id');
-        $floors = Floor::where('status','Active')->pluck('floor_no','count');
-        $amenities = Amenity::where('status','Active')->pluck('amenities','id');
-        $icus = Icu::where('status','!=','Deleted')->get();
+        $icutypes = IcuType::where('status', 'Active')->pluck('icu_type', 'id');
+        $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
+        $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+        $icus = Icu::where('status', '!=', 'Deleted')->get();
     
-        $icuDetails = []; // Array to store cabin details
+        $icuDetails = []; // Corrected variable name
     
-        foreach($icus as $icu){
+        foreach ($icus as $icu) {
+            $floor = Floor::where('count', $icu->floor_count)->first(); // Get floor details
+            $block = Block::where('id', $icu->block_id)->first(); // Get block details
+            $icutype = Icu::where('id',$icu->icu_type_id)->first();
             $icuDetails[] = [
-                'icu_type' => IcuType::where('id',$icu->icu_type_id)->value('icu_type'),
-                'floor_no' => Floor::where('count',$icu->floor_count)->value('floor_no'),
-                'block_name' => Block::where('id',$icu->block_id)->value('block_name'),
+                'icu_type' => IcuType::where('id', $icu->icu_type_id)->value('icu_type'),
+                'floor_no' => $floor ? $floor->floor_no : null,
+                'block_name' => $block ? $block->block_name : null,
+                'floor_status' => $floor ? $floor->status : null, // Add floor status
+                'block_status' => $block ? $block->status : null,  // Add block status
+                'icutype_status'=>$icutype ? $icutype->status : null
             ];
         }
     
@@ -39,6 +98,7 @@ class IcuController extends Controller
             'icuDetails' => $icuDetails, // Pass the details to the view
         ]);
     }
+    
     
 
     public function showBlocks(Request $request){

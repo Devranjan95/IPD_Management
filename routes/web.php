@@ -40,8 +40,8 @@ Route::get('/masters', function () {
 
 Route::get('floors/',[FloorController::class,'index']);
 Route::post('floors/saveData',[FloorController::class,'saveFloor']);
-Route::get('floors/editData/{id}',[FloorController::class,'getData']);
-Route::get('floors/deleteData/{id}',[FloorController::class,'deleteData']);
+Route::get('floors/editData/{count}',[FloorController::class,'getData']);
+Route::get('floors/deleteData/{id}/{count}',[FloorController::class,'deleteData']);
 
 Route::get('blocks/',[BlockController::class,'index']);
 Route::post('blocks/saveData',[BlockController::class,'saveBlock']);
@@ -102,11 +102,6 @@ Route::post('beds/saveData',[BedController::class,'saveBed']);
 Route::get('beds/editData/{id}',[BedController::class,'getData']);
 Route::get('beds/deleteData/{id}',[BedController::class,'deleteData']);
 
-Route::get('bedassign/',[BedAssignController::class,'index']);
 Route::get('bedassignvisual/',[BedAssignController::class,'newIndex']);
 Route::post('bedform/getalldata',[BedAssignController::class,'getDataval']);
-Route::post('getblockdetails/bedassignment',[BedAssignController::class,'getblockDetails']);
-Route::post('getdetails/block',[BedAssignController::class,'getRoomDetails']);
-Route::post('bedassign/loadblocks', [BedAssignController::class, 'showBlocks']);
-Route::post('bedassign/typevalue', [BedAssignController::class, 'typeAvailable']);
-Route::get('bedassign/assigning/{id}/{flag}', [BedAssignController::class, 'showOccupancy']);
+Route::post('bedassign/assign',[BedAssignController::class,'assignBed']);

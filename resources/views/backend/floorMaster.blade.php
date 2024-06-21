@@ -11,6 +11,7 @@
                             <form enctype="multipart/form-data" name="floorform" id="floorform">
                                 <input type="hidden" id="saveurl" value="{{ url('floors/saveData') }}" />
                                 <input type="hidden" id="recordid" name="recordid" value="" />
+                                <input type="hidden" id="floorcount" name="floorcount" value="" />
                                 <input type="hidden" id="mode" name="mode">
                                 <div class="modal-header">
                                     <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Floors</h1>
@@ -104,11 +105,11 @@
                                                 <td>
                                                     <div class="btn-group">
                                    
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $floor->id }})'
+                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $floor->count }})'
                                                             title='Edit'><img src='assets/previous/user.svg'
                                                                 style='height:20px; width:20px' /></a>&nbsp&nbsp
                                                         <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('floors/deleteData') }}/{{ $floor->id }}')"
+                                                            onclick="deleteData('{{ url('floors/deleteData') }}/{{ $floor->id }}/{{ $floor->count }}')"
                                                             title='Delete'><img src='assets/previous/delete.svg'
                                                                 style='height:23px; width:23px' /></a>
                                   
@@ -278,7 +279,12 @@
                 // Form submission via AJAX
                 var formData = new FormData(form);
                 formData.append('_token', '{{ csrf_token() }}');
-
+                var status = $("#status").val();
+                if (status == 'Inactive') {
+                    if (!confirm('Changing the status to inactive will affect blocks, cabins, wards and icus, Do you still want to proceed ?')) {
+                        return false;
+                    }
+                }
                 $.ajax({
                     url: $("#saveurl").val(),
                     type: "POST",
@@ -323,12 +329,13 @@
         document.getElementById("recordid").value = "";
     }
 
-    function showEdit(id) {
+    function showEdit(count) {
         document.getElementById("floorform").reset();
         document.getElementById("mode").value = "edit";
-        document.getElementById("recordid").value = id;
+        document.getElementById("recordid").value = count;
+        
         $.ajax({
-            url: "{{ url('floors/editData') }}/" + id,
+            url: "{{ url('floors/editData') }}/" + count,
             headers: {
                 '_token': '{{ csrf_token() }}'
             },

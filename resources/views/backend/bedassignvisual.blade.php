@@ -23,124 +23,151 @@
                     <div class="row mb-4">
                         <div class="col-md-12">
                             @foreach($floors as $floor)
-                                <div class="floor-card mb-3">
+                                <div class="floor-card mb-3 @if($floor->status != 'Active') bg-danger text-white @endif">
                                     <div class="card-body text-center">
-                                        <h5 class="card-title">{{ $floor->floor_no }}</h5>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="card inner-card mb-3">
-                                                    <div class="card-body scrollable">
-                                                        <h5 class="card-title">Cabins</h5>
-                                                        <div class="cabins-content d-flex flex-wrap">
-                                                            @if(isset($cabindetails[$floor->count]) && count($cabindetails[$floor->count]) > 0)
-                                                                @foreach($cabindetails[$floor->count] as $cabin)
-                                                                    @php 
-                                                                        $occupancu = $cabin->total_occupancy;
-                                                                        $assigned = $cabin->assigned;
-                                                                        $available = $occupancu - $assigned;
-                                                                    @endphp
-                                                                    @if($available === 0)
-                                                                        <div class="cabin-card bg-danger text-white">
-                                                                            <h6>{{ $cabin->cabin_name }}</h6>
-                                                                            <p style="font-size:12px">Not available</p>
-                                                                        </div>
-                                                                    @else
-                                                                        <div class="cabin-card">
-                                                                            <a href="#" style="text-decoration:none" onclick="takeValue({{$cabin->id}}, 'cabin')">
-                                                                                <h6 style="color:#006400">{{ $cabin->cabin_name }}</h6>
-                                                                                <p style="font-size:12px; color:red">Total:{{$cabin->total_occupancy}}</p>
-                                                                                <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
-                                                                            </a>
-                                                                        </div>
-                                                                    @endif
-                                                                @endforeach
-                                                            @else
-                                                                <div class="no-cabins">
-                                                                    <p class="card-text">No cabins available on this floor.</p>
-                                                                </div>
-                                                            @endif
+                                        @if($floor->status != 'Active')
+                                            <h6>{{$floor->floor_no}}</h6>
+                                            <p>Floor is inactive</p>
+                                        @else
+                                            <h5 class="card-title">{{ $floor->floor_no }}</h5>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="card inner-card mb-3">
+                                                        <div class="card-body scrollable">
+                                                            <h5 class="card-title">Cabins</h5>
+                                                            <div class="cabins-content d-flex flex-wrap">
+                                                                @if(isset($cabindetails[$floor->count]) && count($cabindetails[$floor->count]) > 0)
+                                                                    @foreach($cabindetails[$floor->count] as $cabin)
+                                                                        @php 
+                                                                            $occupancy = $cabin->total_occupancy;
+                                                                            $assigned = $cabin->assigned;
+                                                                            $available = $occupancy - $assigned;
+                                                                        @endphp
+                                                                        @if($available === 0)
+                                                                            <div class="cabin-card bg-danger">
+                                                                                <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$cabin->id}}, 'cabin')">
+                                                                                    <h6>{{ $cabin->cabin_name }}</h6>
+                                                                                    <p style="font-size:12px">Available 0</p>
+                                                                                </a>
+                                                                            </div>
+                                                                        @elseif($cabin->status != "Active")
+                                                                            <div class="cabin-card bg-danger text-white">
+                                                                                <h6>{{ $cabin->cabin_name }}</h6>
+                                                                                <p style="font-size:12px">Cabin Not Active</p>
+                                                                            </div>
+                                                                        @else
+                                                                            <div class="cabin-card">
+                                                                                <a href="#" style="text-decoration:none" onclick="takeValue({{$cabin->id}}, 'cabin')">
+                                                                                    <h6 style="color:#006400">{{ $cabin->cabin_name }}</h6>
+                                                                                    <p style="font-size:12px; color:red">Total:{{$cabin->total_occupancy}}</p>
+                                                                                    <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
+                                                                                </a>
+                                                                            </div>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @else
+                                                                    <div class="no-cabins">
+                                                                        <p class="card-text">No cabins available on this floor.</p>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card inner-card mb-3">
+                                                        <div class="card-body scrollable">
+                                                            <h5 class="card-title">Wards</h5>
+                                                            <div class="wards-content d-flex flex-wrap">
+                                                                @if(isset($warddetails[$floor->count]) && count($warddetails[$floor->count]) > 0)
+                                                                    @foreach($warddetails[$floor->count] as $ward)
+                                                                        @php 
+                                                                            $occupancy = $ward->total_occupancy;
+                                                                            $assigned = $ward->assigned;
+                                                                            $available = $occupancy - $assigned;
+                                                                        @endphp
+                                                                        @if($available === 0)
+                                                                            <div class="ward-card bg-danger text-white">
+                                                                                <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$ward->id}}, 'ward')">
+                                                                                    <h6>{{ $ward->ward_name }}</h6>
+                                                                                    <p style="font-size:12px">Available 0</p>
+                                                                                </a>
+                                                                            </div>
+                                                                        @elseif($ward->status != "Active")
+                                                                            <div class="cabin-card bg-danger text-white">
+                                                                                <h6>{{ $ward->ward_name }}</h6>
+                                                                                <p style="font-size:12px">Ward Not Active</p>
+                                                                            </div>
+                                                                        @else
+                                                                            <div class="ward-card">
+                                                                                <a href="#" style="text-decoration:none" onclick="takeValue({{$ward->id}}, 'ward')">
+                                                                                    <h6 style="color:#dc143c">{{ $ward->ward_name }}</h6>
+                                                                                    <p style="font-size:12px; color:red">Total:{{$ward->total_occupancy}}</p>
+                                                                                    <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
+                                                                                </a>
+                                                                            </div>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @else
+                                                                    <div class="no-cabins">
+                                                                        <p class="card-text">No wards available on this floor.</p>
+                                                                    </div>       
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card inner-card mb-3">
+                                                        <div class="card-body scrollable">
+                                                            <h5 class="card-title">ICUs</h5>
+                                                            <div class="icus-content d-flex flex-wrap">
+                                                                @if(isset($icudetails[$floor->count]) && count($icudetails[$floor->count]) > 0)
+                                                                    @foreach($icudetails[$floor->count] as $icu)
+                                                                        @php 
+                                                                            $occupancy = $icu->total_occupancy;
+                                                                            $assigned = $icu->assigned;
+                                                                            $available = $occupancy - $assigned;
+                                                                        @endphp
+                                                                        @if($available === 0)
+                                                                            <div class="icu-card bg-danger text-white">
+                                                                                <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$icu->id}}, 'icu')">
+                                                                                    <h6>{{ $icu->icu_name }}</h6>
+                                                                                    <p style="font-size:12px">Available 0</p>
+                                                                                </a>
+                                                                            </div>
+                                                                        @elseif($icu->status != "Active")
+                                                                            <div class="cabin-card bg-danger text-white">
+                                                                                <h6>{{ $icu->icu_name }}</h6>
+                                                                                <p style="font-size:12px">Icu Not Active</p>
+                                                                            </div>
+                                                                        @else
+                                                                            <div class="icu-card">
+                                                                                <a href="#" style="text-decoration:none" onclick="takeValue({{$icu->id}}, 'icu')">
+                                                                                    <h6 style="color:#0000cd">{{ $icu->icu_name }}</h6>
+                                                                                    <p style="font-size:12px; color:red">Total:{{$icu->total_occupancy}}</p>
+                                                                                    <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
+                                                                                </a>
+                                                                            </div>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @else
+                                                                    <div class="no-cabins">
+                                                                        <p class="card-text">No ICUs available on this floor.</p>
+                                                                    </div>  
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <div class="card inner-card mb-3">
-                                                    <div class="card-body scrollable">
-                                                        <h5 class="card-title">Wards</h5>
-                                                        <div class="wards-content d-flex flex-wrap">
-                                                            @if(isset($warddetails[$floor->count]) && count($warddetails[$floor->count]) > 0)
-                                                                @foreach($warddetails[$floor->count] as $ward)
-                                                                    @php 
-                                                                        $occupancu = $ward->total_occupancy;
-                                                                        $assigned = $ward->assigned;
-                                                                        $available = $occupancu - $assigned;
-                                                                    @endphp
-                                                                    @if($available === 0)
-                                                                        <div class="ward-card bg-danger text-white">
-                                                                            <h6>{{ $ward->ward_name }}</h6>
-                                                                            <p style="font-size:12px">Not available</p>
-                                                                        </div>
-                                                                    @else
-                                                                        <div class="ward-card">
-                                                                            <a href="#" style="text-decoration:none" onclick="takeValue({{$ward->id}}, 'ward')">
-                                                                                <h6 style="color:#dc143c">{{ $ward->ward_name }}</h6>
-                                                                                <p style="font-size:12px; color:red">Total:{{$ward->total_occupancy}}</p>
-                                                                                <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
-                                                                            </a>
-                                                                        </div>
-                                                                    @endif
-                                                                @endforeach
-                                                            @else
-                                                                <div class="no-cabins">
-                                                                    <p class="card-text">No wards available on this floor.</p>
-                                                                </div>       
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="card inner-card mb-3">
-                                                    <div class="card-body scrollable">
-                                                        <h5 class="card-title">ICUs</h5>
-                                                        <div class="icus-content d-flex flex-wrap">
-                                                            @if(isset($icudetails[$floor->count]) && count($icudetails[$floor->count]) > 0)
-                                                                @foreach($icudetails[$floor->count] as $icu)
-                                                                    @php 
-                                                                        $occupancu = $icu->total_occupancy;
-                                                                        $assigned = $icu->assigned;
-                                                                        $available = $occupancu - $assigned;
-                                                                    @endphp
-                                                                    @if($available === 0)
-                                                                        <div class="icu-card bg-danger text-white">
-                                                                            <h6>{{ $icu->icu_name }}</h6>
-                                                                            <p style="font-size:12px">Not available</p>
-                                                                        </div>
-                                                                    @else
-                                                                        <div class="icu-card">
-                                                                            <a href="#" style="text-decoration:none" onclick="takeValue({{$icu->id}}, 'icu')">
-                                                                                <h6 style="color:#0000cd">{{ $icu->icu_name }}</h6>
-                                                                                <p style="font-size:12px; color:red">Total:{{$icu->total_occupancy}}</p>
-                                                                                <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
-                                                                            </a>
-                                                                        </div>
-                                                                    @endif
-                                                                @endforeach
-                                                            @else
-                                                                <div class="no-cabins">
-                                                                    <p class="card-text">No ICUs available on this floor.</p>
-                                                                </div>  
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     </div>
+
                 </div>
             </div>
             <!-- Card End -->
@@ -159,14 +186,16 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Cabin and Bed Details</h5>
+        <h5 class="modal-title" id="staticBackdropLabel">Details / Bed Assign</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- Content will be dynamically inserted here -->
+         <div class="modalbodycontainer"></div>
+                
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="reload()">Close</button>
       </div>
     </div>
   </div>
@@ -177,148 +206,7 @@
 
 @section('scripts')
 <script>
-// function takeValue(id, flag) {
-//     if (id) {
-//         $.ajax({
-//             type: 'POST',
-//             url: '{{url("bedform/getalldata")}}',
-//             data: {
-//                 _token: "{{ csrf_token() }}",
-//                 id: id,
-//                 flag: flag
-//             },
-//             success: function(response) {
-//                 let myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
-//                 myModal.show();
 
-//                 // Construct beds HTML with improved styling
-//                 let bedsHtml = '<div class="row justify-content-center mb-3">';
-//                 response.beds.forEach(function(bed) {
-//                     bedsHtml += `
-//                         <div class="col-md-4 mb-3">
-//                             <div class="card border-primary shadow">
-//                                 <div class="card-body">
-//                                     <h5 class="card-title text-primary">${bed.bed_name}</h5>
-//                                     <p class="card-text"><strong>No of Beds:</strong> ${bed.no_of_beds}</p>
-//                                     <p class="card-text"><strong>Assigned:</strong> ${bed.assigned_no}</p>
-//                                     <p class="card-text"><strong>Available:</strong> ${bed.no_of_beds-bed.assigned_no}</p>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     `;
-//                 });
-//                 bedsHtml += '</div>';
-
-//                 // Construct dynamic bed input fields based on cabin occupancy
-//                 let bedInputFields = '';
-//                 for (let i = 1; i <= response.cabininfo.total_occupancy; i++) {
-//                     bedInputFields += `
-//                     <div class="row">
-//                         <div class="col-md-5">
-//                             <div class="mb-3">
-//                                 <label for="bedNumber" class="form-label">Bed Number</label>
-//                                 <input type="number" class="form-control" id="bedNumber" name="bedNumber[]" placeholder="Enter Bed Number">
-//                             </div>
-//                         </div>
-//                         <div class="col-md-5">
-//                             <div class="mb-3">
-//                                 <label for="bedName" class="form-label">Bed Name </label>
-//                                 <select class="form-select" id="bedname" name="bedName[]">
-//                                     ${response.beds.map(bed => `<option value="${bed.id}">${bed.bed_name}</option>`).join('')}
-//                                 </select>
-//                             </div>
-//                         </div>
-//                         <div class="col-md-2 mt-4">
-//                             <a type="button" class="btn btn-sm btn-success">Save</a>
-//                         </div>
-//                     </div>
-//                     `;
-//                 }
-
-//                 // Construct cabin info HTML inside an accordion with custom background
-//                 let cabinInfoHtml = `
-//                     <div class="accordion pb-3" id="cabinInfoAccordion">
-//                         <div class="accordion-item">
-//                             <h2 class="accordion-header" id="headingOne">
-//                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-//                                     Cabin Information
-//                                 </button>
-//                             </h2>
-//                             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#cabinInfoAccordion">
-//                                 <div class="accordion-body bg-light">
-//                                     <table class="table table-bordered table-responsive">
-//                                         <tbody>
-//                                             <tr>
-//                                                 <th>Cabin Name</th>
-//                                                 <td>${response.cabininfo.cabin_name}</td>
-//                                             </tr>
-//                                             <tr>
-//                                                 <th>Cabin Type</th>
-//                                                 <td>${response.cabintype}</td>
-//                                             </tr>
-//                                             <tr>
-//                                                 <th>Floor</th>
-//                                                 <td>${response.floor}</td>
-//                                             </tr>
-//                                             <tr>
-//                                                 <th>Block</th>
-//                                                 <td>${response.block}</td>
-//                                             </tr>
-//                                             <tr>
-//                                                 <th>Total Occupancy</th>
-//                                                 <td>${response.cabininfo.total_occupancy}</td>
-//                                             </tr>
-//                                             <tr>
-//                                                 <th>Assigned</th>
-//                                                 <td>${response.cabininfo.assigned}</td>
-//                                             </tr>
-//                                             <tr>
-//                                                 <th>Available</th>
-//                                                 <td>${response.cabininfo.available}</td>
-//                                             </tr>
-//                                             <tr>
-//                                                 <th>Amenities</th>
-//                                                 <td>${response.cabininfo.amenities}</td>
-//                                             </tr>
-//                                             <tr>
-//                                                 <th>Price</th>
-//                                                 <td>${response.cabininfo.price}</td>
-//                                             </tr>
-//                                         </tbody>
-//                                     </table>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 `;
-
-//                 // Construct bed input fields inside an accordion with a custom background
-//                 let bedInputHtml = `
-//                     <div class="accordion" id="bedInputAccordion">
-//                         <div class="accordion-item">
-//                             <h2 class="accordion-header" id="headingTwo">
-//                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-//                                     Bed Assign Form
-//                                 </button>
-//                             </h2>
-//                             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#bedInputAccordion">
-//                                 <div class="accordion-body">
-//                                     ${bedInputFields}
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 `;
-
-//                 // Update modal body with constructed HTML
-//                 $('.modal-body').html(cabinInfoHtml + bedsHtml + bedInputHtml);
-//             },
-//             error: function(response) {
-//                 console.log(response);
-//             }
-//         });
-//     }
-// }
 function takeValue(id, flag) {
     if (id) {
         $.ajax({
@@ -332,6 +220,11 @@ function takeValue(id, flag) {
             success: function(response) {
                 let myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
                 myModal.show();
+
+                $('#staticBackdrop').data('flag', flag);
+                $('#staticBackdrop').data('id', id);
+                $('#staticBackdrop').data('floor', response.floor);
+                $('#staticBackdrop').data('block', response.block);
 
                 // Construct beds HTML with improved styling
                 let bedsHtml = '<div class="row justify-content-center mb-3">';
@@ -351,38 +244,58 @@ function takeValue(id, flag) {
                 });
                 bedsHtml += '</div>';
 
-                // Construct dynamic bed input fields
-                let bedInputFields = '';
-                let totalOccupancy;
-                if (flag === 'cabin') {
-                    totalOccupancy = response.cabininfo.total_occupancy;
-                } else if (flag === 'ward') {
-                    totalOccupancy = response.wardinfo.total_occupancy;
-                } else if (flag === 'icu') {
-                    totalOccupancy = response.icuinfo.total_occupancy;
-                }
+                let bedInputFields = '<form enctype="multipart/form-data" name="bedAssignForm" id="bedAssignForm">';
 
-                for (let i = 1; i <= totalOccupancy; i++) {
-                    bedInputFields += `
-                    <div class="row">
-                        <div class="col-md-6">
+                // Single bed name select element outside the loop
+                bedInputFields += `
+                    <div class="row mb-3">
+                        <div class="col-md-12">
                             <div class="mb-3">
-                                <label for="bedNumber" class="form-label">Bed Number</label>
-                                <input type="number" class="form-control" id="bedNumber" name="bedNumber[]" placeholder="Enter Bed Number">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="bedName" class="form-label">Bed Name </label>
-                                <select class="form-select" id="bedname" name="bedName[]">
-                                 <option value="" disabled selected>Please select a bed</option>
-                                    ${response.beds.map(bed => `<option value="${bed.id}">${bed.bed_name}</option>`).join('')}
+                                <label for="bedname" class="form-label">Bed Name</label>
+                                <select class="form-select" id="bedname" name="bedname">
+                                    <option value="" selected disabled>Please select a bed</option>
+                                   ${response.beds.map(bed => `<option value="${bed.id}">${bed.bed_name}</option>`).join('')}
                                 </select>
                             </div>
                         </div>
                     </div>
+                `;
+
+                // Loop for bed number input fields based on flag
+                let totalOccupancy;
+                let bedNumberPrefix = '';
+
+                if (flag === 'cabin') {
+                    totalOccupancy = response.cabininfo.total_occupancy;
+                    bedNumberPrefix = `${response.cabininfo.cabin_name}/${response.floor}/${response.block}/`;
+                } else if (flag === 'ward') {
+                    totalOccupancy = response.wardinfo.total_occupancy;
+                    bedNumberPrefix = `${response.wardinfo.ward_name}/${response.floor}/${response.block}/`;
+                } else if (flag === 'icu') {
+                    totalOccupancy = response.icuinfo.total_occupancy;
+                    bedNumberPrefix = `${response.icuinfo.icu_name}/${response.floor}/${response.block}/`;
+                }
+
+                for (let i = 1; i <= totalOccupancy; i++) {
+                    bedInputFields += `
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="bedNumber${i}" class="form-label">Bed Number ${i}</label>
+                                    <input type="text" class="form-control" id="bedNumber" name="bedNumber[]" placeholder="Enter Bed Number" value="${bedNumberPrefix}${i}" readonly>
+                                </div>
+                            </div>
+                        </div>
                     `;
                 }
+
+                bedInputFields += `
+                    <div class="row justify-content-center">
+                        <div class="col-md-4">
+                            <button class="btn btn-success w-100" type="submit">Save</button>
+                        </div>
+                    </div>
+                </form>`;
 
                 // Construct information HTML inside an accordion with custom background
                 let infoHtml = '';
@@ -425,7 +338,7 @@ function takeValue(id, flag) {
                                                 </tr>
                                                 <tr>
                                                     <th>Available</th>
-                                                    <td>${response.cabininfo.available}</td>
+                                                    <td>${response.cabininfo.total_occupancy - response.cabininfo.assigned}</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Amenities</th>
@@ -481,7 +394,7 @@ function takeValue(id, flag) {
                                                 </tr>
                                                 <tr>
                                                     <th>Available</th>
-                                                    <td>${response.wardinfo.available}</td>
+                                                    <td>${response.wardinfo.total_occupancy - response.wardinfo.assigned}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -529,7 +442,7 @@ function takeValue(id, flag) {
                                                 </tr>
                                                 <tr>
                                                     <th>Available</th>
-                                                    <td>${response.icuinfo.available}</td>
+                                                    <td>${response.icuinfo.total_occupancy - response.icuinfo.assigned}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -540,7 +453,6 @@ function takeValue(id, flag) {
                     `;
                 }
 
-                // Construct bed input fields inside an accordion with a custom background
                 let bedInputHtml = `
                     <div class="accordion" id="bedInputAccordion">
                         <div class="accordion-item">
@@ -552,13 +464,6 @@ function takeValue(id, flag) {
                             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#bedInputAccordion">
                                 <div class="accordion-body">
                                     ${bedInputFields}
-                                    <div class="row justify-content-center">
-                                        <div class="col-md-4 d-flex justify-content-center">
-                                            <div class="d-grid gap-2 col-6 mx-auto">
-                                                <button class="btn btn-success" type="button">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -566,7 +471,11 @@ function takeValue(id, flag) {
                 `;
 
                 // Update modal body with constructed HTML
-                $('.modal-body').html(bedsHtml + infoHtml + bedInputHtml);
+                $('.modalbodycontainer').html(bedsHtml + infoHtml + bedInputHtml);
+
+                // Debugging: Check if form is in the DOM
+                console.log("Form added to DOM");
+
             },
             error: function(response) {
                 console.log(response);
@@ -574,6 +483,49 @@ function takeValue(id, flag) {
         });
     }
 }
+
+// Attach the submit event listener using event delegation
+$(document).on('submit', '#bedAssignForm', function(event) {
+    event.preventDefault();
+    let formdata = new FormData(document.getElementById('bedAssignForm'));
+    let flag = $('#staticBackdrop').data('flag');
+    let id = $('#staticBackdrop').data('id');
+    let floor = $('#staticBackdrop').data('floor');
+    let block = $('#staticBackdrop').data('block');
+    formdata.append('_token', '{{ csrf_token() }}');
+    formdata.append('flag', flag);
+    formdata.append('id', id);
+    formdata.append('floor', floor);
+    formdata.append('block', block);
+    if (formdata.has('bedname')) {
+        console.log("bedname included in FormData");
+    } else {
+        console.log("bedname not found in FormData");
+    }
+    for (let pair of formdata.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+    $.ajax({
+        type:"POST",
+        url:"{{url('bedassign/assign')}}",
+        data:formdata,
+        processData: false,
+        contentType: false,
+        success:function(response){
+            alert(response.message);
+            console.log(response.message);
+        },
+        error:function(response){
+            
+        }
+    })
+});
+
+
+
+
+
+
 
 
 

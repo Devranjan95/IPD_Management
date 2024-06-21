@@ -41,6 +41,18 @@
     <link rel="icon"  type="image/png" href="{{asset('assets/previous/Hospyllum.svg')}}">
    
     <style>
+      #preloader {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #fff; /* You can change the background color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
       .breadcrumb {
     border: 1px solid #fff;
     padding-left:2px
@@ -158,6 +170,9 @@
     </style>
   </head>
   <body class="with-welcome-text">
+  <!-- <div id="preloader">
+    <img src="{{ asset('assets/images/loader.gif') }}" alt="Loading...">
+  </div> -->
     <div class="container-scroller">
       <!-- <div class="row p-0 m-0 proBanner" id="proBanner">
         <div class="col-md-12 p-0 m-0">
@@ -408,6 +423,10 @@
   </body>
 </html>
 <script>
+ window.addEventListener('load', function() {
+    var preloader = document.getElementById('preloader');
+    preloader.style.display = 'none';
+  });
 
 new DataTable('.table');
 
@@ -432,6 +451,7 @@ document.getElementById('confirmDelete').addEventListener('click', function() {
         type: "GET",
         dataType: "json",
         success: function (data) {
+            alert(data.message);
             console.log(data);
             location.reload();
         },

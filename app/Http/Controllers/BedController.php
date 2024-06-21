@@ -5,70 +5,59 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BedCategory;
-use App\Models\BedType;
 use App\Models\Bed;
 use App\Models\Floor;
 use App\Models\Block;
 use App\Models\Cabin;
 use App\Models\Ward;
 use App\Models\Icu;
+use App\Models\BedAssign;
 
 class BedController extends Controller
 {
     //
-    public function index(){
-        $bedcategory = BedCategory::where('status','Active')->pluck('bed_category','id');
-        $bedtype = BedType::where('status','Active')->pluck('bed_type','id');
-        $beds = Bed::where('status','!=','Deleted')->get();
-        $bedtypename = []; // Initialize the array
-        $bedcategoryname = []; // Initialize the array
-        $floors = Floor::where('status','Active')->pluck('floor_no','id');
-    //    **************************************************************************
-//     $floorDetails = [];
+    // public function index(){
+    //     $bedcategory = BedCategory::where('status','Active')->pluck('bed_category','id');
+    //     $beds = Bed::where('status','!=','Deleted')->get();
+    //     $bedtypename = []; // Initialize the array
+    //     $bedcategoryname = []; 
+    //     $bedcatstatus = [];// Initialize the array
+    //     $floors = Floor::where('status','Active')->pluck('floor_no','id');
+    //     foreach($beds as $bed){
+    //         $bedcategoryname[] = BedCategory::where('id',$bed->bed_category_id)->value('bed_category');
+    //         $bedcatstaus[] = BedCategory::where('id',$bed->bed_category_id)->value('status');
+    //     }
+    //     return view("backend.bedMaster",['bedcategory'=>$bedcategory,
+    //                                      'beds'=>$beds,
+    //                                      'bedtypename'=>$bedtypename,
+    //                                      'bedcategoryname'=>$bedcategoryname,
+    //                                      'floors'=>$floors,
+    //                                      ]);
+    // }
+    public function index()
+{
+    $bedcategory = BedCategory::where('status', 'Active')->pluck('bed_category', 'id');
+    $beds = Bed::where('status', '!=', 'Deleted')->get();
+    $bedcategoryname = [];
+    $bedcategorystatus = [];
 
-//     foreach ($floors as $floorId => $floorNo) {
-//         $cabinOccupancy = Cabin::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
-//         $cabinAssigned = Cabin::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
-
-//         $wardOccupancy = Ward::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
-//         $wardAssigned = Ward::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
-
-//         $icuOccupancy = Icu::where('status', 'Active')->where('floor_id', $floorId)->sum('total_occupancy');
-//         $icuAssigned = Icu::where('status', 'Active')->where('floor_id', $floorId)->sum('assigned');
-
-//         $floorDetails[$floorId] = [
-//             'floor_no' => $floorNo,
-//             'cabin' => [
-//                 'total_occupancy' => $cabinOccupancy,
-//                 'total_assigned' => $cabinAssigned,
-//                 'available' => $cabinOccupancy - $cabinAssigned
-//             ],
-//             'ward' => [
-//                 'total_occupancy' => $wardOccupancy,
-//                 'total_assigned' => $wardAssigned,
-//                 'available' => $wardOccupancy - $wardAssigned
-//             ],
-//             'icu' => [
-//                 'total_occupancy' => $icuOccupancy,
-//                 'total_assigned' => $icuAssigned,
-//                 'available' => $icuOccupancy - $icuAssigned
-//             ]
-//         ];
-//     }
-// dd($floorDetails);
-    // ********************************************************************************
-        
-        foreach($beds as $bed){
-            $bedtypename[] = BedType::where('id',$bed->bed_type_id)->value('bed_type');
-            $bedcategoryname[] = BedCategory::where('id',$bed->bed_category_id)->value('bed_category');
-        }
-        return view("backend.bedMaster",['bedcategory'=>$bedcategory,'bedtype'=>$bedtype,
-                                         'beds'=>$beds,
-                                         'bedtypename'=>$bedtypename,
-                                         'bedcategoryname'=>$bedcategoryname,
-                                         'floors'=>$floors,
-                                         ]);
+    foreach ($beds as $bed) {
+        $bedCategory = BedCategory::where('id', $bed->bed_category_id)->first();
+        $bedcategoryname[] = $bedCategory->bed_category;
+        $bedcategorystatus[] = $bedCategory->status;
     }
+
+    $floors = Floor::where('status', 'Active')->pluck('floor_no', 'id');
+
+    return view("backend.bedMaster", [
+        'bedcategory' => $bedcategory,
+        'beds' => $beds,
+        'bedcategoryname' => $bedcategoryname,
+        'bedcategorystatus' => $bedcategorystatus,
+        'floors' => $floors,
+    ]);
+}
+
 
     public function showBlocks(Request $request){
         //dd($request);
@@ -90,7 +79,7 @@ class BedController extends Controller
            // dd($request->all());
             if($request->mode == "add"){
                 //dd($request->all());
-                $bedexist = Bed::where('bed_name',$request->bedname)->where('bed_type_id',$request->bed_type_id)->where('bed_category_id',$request->bed_category_id)->first();
+                $bedexist = Bed::where('bed_name',$request->bedname)->where('bed_category_id',$request->bed_category_id)->first();
                 if($bedexist){
                     //dd($amenityexist);
                     if($bedexist->status == "Deleted"){
@@ -110,7 +99,6 @@ class BedController extends Controller
                 $assigned = 0;
                 $saveBed = Bed::create([
                     "bed_name"=>ucwords($request->bedname),
-                    "bed_type_id"=>$request->bed_type_id,
                     "bed_category_id"=>$request->bed_category_id,
                     "no_of_beds"=>$request->no_of_beds,
                     "assigned_no"=>$assigned,
@@ -127,7 +115,7 @@ class BedController extends Controller
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $bedexists = Bed::where('status','!=','Deleted')->where('bed_name', $request->bedname)->where('bed_type_id',$request->bed_type_id)->where('bed_category_id',$request->bed_category_id)->get();
+                $bedexists = Bed::where('status','!=','Deleted')->where('bed_name', $request->bedname)->where('bed_category_id',$request->bed_category_id)->get();
                 if($bedexists){
                     foreach($bedexists as $ex){
                         if($request->recordid != $ex->id){
@@ -136,21 +124,27 @@ class BedController extends Controller
     
                     }
                 }
-                $updatebed = Bed::where('id',$request->recordid)
-                                    ->update(["bed_name"=>ucwords($request->bedname),
-                                              "bed_type_id"=>$request->bed_type_id,
-                                              "bed_category_id"=>$request->bed_category_id,
-                                              "no_of_beds"=>$request->no_of_beds,
-                                              "status"=>$request->status,
-                                              "narration"=>$request->narration,
-                                              "updated_by"=>1,
-                                              "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updatebed){
-                    return response()->json(['status'=>true,'message'=>'Bed updated successfully']);
+                $check = BedAssign::where('bed_name',$request->recordid)->exists();
+                if(!$check){
+                    $updatebed = Bed::where('id',$request->recordid)
+                    ->update(["bed_name"=>ucwords($request->bedname),
+                              "bed_category_id"=>$request->bed_category_id,
+                              "no_of_beds"=>$request->no_of_beds,
+                              "status"=>$request->status,
+                              "narration"=>$request->narration,
+                              "updated_by"=>1,
+                              "updated_at"=>date('Y-m-d H:i:s')]);
+                    if($updatebed){
+                        return response()->json(['status'=>true,'message'=>'Bed updated successfully']);
+                    }else{
+                        return response()->json(['status'=>false,'message'=>'Bed could not be updated']);
+                    }
                 }else{
-                    return response()->json(['status'=>false,'message'=>'Bed could not be updated']);
-                }
-                
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Cannot update status. Bed in use',
+                    ]);
+                }  
             }
         }catch (ValidationException $e){
             return response()->json([

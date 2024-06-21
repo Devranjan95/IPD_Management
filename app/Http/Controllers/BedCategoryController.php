@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BedCategory;
-
+use App\Models\Bed;
 class BedCategoryController extends Controller
 {
     //
@@ -71,10 +71,25 @@ class BedCategoryController extends Controller
                                               "narration"=>$request->narration,
                                               "updated_by"=>1,
                                               "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updatebedcategory){
-                    return response()->json(['status'=>true,'message'=>'Bed category updated successfully']);
-                }else{
-                    return response()->json(['status'=>false,'message'=>'Bed category could not be updated']);
+                // if($updatebedcategory){
+                //     return response()->json(['status'=>true,'message'=>'Bed category updated successfully']);
+                // }else{
+                //     return response()->json(['status'=>false,'message'=>'Bed category could not be updated']);
+                // }
+                if ($updatebedcategory ) {
+                    // Update cabin status if necessary
+                    if ($request->status == "Inactive") {
+                        Bed::where("bed_category_id", $request->recordid)->update([
+                            "status" => "Inactive"
+                        ]);
+                    } else {
+                        Bed::where("bed_category_id", $request->recordid)->update([
+                            "status" => "Active"
+                        ]);
+                    }
+                    return response()->json(['status' => true, 'message' => 'Bed category updated successfully']);
+                } else {
+                    return response()->json(['status' => false, 'message' => 'Bed category could not be updated'], 500);
                 }
                 
             }
@@ -94,25 +109,33 @@ class BedCategoryController extends Controller
     }
     public function deleteData(string $id)
     {
-        $bedcategory = BedCategory::find($id);
+        $bed = Bed::where('bed_category_id',$id)->exists();
+        if(!$bed){
+            $bedcategory = BedCategory::find($id);
 
-        // Check if the floor record exists
-        if (!$bedcategory) {
-            return response()->json(['message' => 'Bed category not found'], 404);
-        }
-
-        // Attempt to delete the floor record
-        if ($bedcategory->delete()) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Bed category Deleted',
-            ]);
-        } else {
+            // Check if the floor record exists
+            if (!$bedcategory) {
+                return response()->json(['message' => 'Bed category not found'], 404);
+            }
+    
+            // Attempt to delete the floor record
+            if ($bedcategory->delete()) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Bed category Deleted',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bed category could not be deleted.',
+                ]);
+            }
+        }else {
+            // Associated records found, cannot delete floor
             return response()->json([
                 'status' => false,
-                'message' => 'Bed category could not be deleted.',
+                'message' => 'Cannot delete Bed Category. Associated records exist in  beds',
             ]);
-        }
-    
+        }  
     }
 }

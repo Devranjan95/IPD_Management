@@ -15,19 +15,50 @@ use App\Models\Amenity;
 class WardController extends Controller
 {
     //
+    // public function index(){
+    //     $wardtypes = WardType::where('status','Active')->pluck('ward_type','id');
+    //     $floors = Floor::where('status','Active')->pluck('floor_no','count');
+    //     $amenities = Amenity::where('status','Active')->pluck('amenities','id');
+    //     $wards = Ward::where('status','!=','Deleted')->get();
+    
+    //     $wardDetails = []; // Array to store cabin details
+    
+    //     foreach($wards as $ward){
+    //         $wardDetails[] = [
+    //             'ward_type' => WardType::where('id',$ward->ward_type_id)->value('ward_type'),
+    //             'floor_no' => Floor::where('count',$ward->floor_count)->value('floor_no'),
+    //             'block_name' => Block::where('id',$ward->block_id)->value('block_name'),
+    //         ];
+    //     }
+    
+    //     return view('backend.wardMaster', [
+    //         'wardtypes' => $wardtypes,
+    //         'floors' => $floors,
+    //         'amenities' => $amenities,
+    //         'wards' => $wards,
+    //         'wardDetails' => $wardDetails, // Pass the details to the view
+    //     ]);
+    // }
+
     public function index(){
-        $wardtypes = WardType::where('status','Active')->pluck('ward_type','id');
-        $floors = Floor::where('status','Active')->pluck('floor_no','count');
-        $amenities = Amenity::where('status','Active')->pluck('amenities','id');
-        $wards = Ward::where('status','!=','Deleted')->get();
+        $wardtypes = WardType::where('status', 'Active')->pluck('ward_type', 'id');
+        $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
+        $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+        $wards = Ward::where('status', '!=', 'Deleted')->get();
     
         $wardDetails = []; // Array to store cabin details
-    
-        foreach($wards as $ward){
+        
+        foreach ($wards as $ward) {
+            $floor = Floor::where('count', $ward->floor_count)->first(); // Get floor details
+            $block = Block::where('id', $ward->block_id)->first(); // Get block details
+            $wardtype = WardType::where('id',$ward->ward_type_id)->first();
             $wardDetails[] = [
-                'ward_type' => WardType::where('id',$ward->ward_type_id)->value('ward_type'),
-                'floor_no' => Floor::where('count',$ward->floor_count)->value('floor_no'),
-                'block_name' => Block::where('id',$ward->block_id)->value('block_name'),
+                'ward_type' => WardType::where('id', $ward->ward_type_id)->value('ward_type'),
+                'floor_no' => $floor ? $floor->floor_no : null,
+                'block_name' => $block ? $block->block_name : null,
+                'floor_status' => $floor ? $floor->status : null, // Add floor status
+                'block_status' => $block ? $block->status : null,  // Add block status
+                'wardtype_status'=>$wardtype ? $wardtype->status : null
             ];
         }
     
@@ -68,7 +99,7 @@ class WardController extends Controller
             //dd($request->cabintype);
             if($request->mode == "add"){
                 //dd($request->all());
-                $wardexist = Ward::where('ward_name',$request->wardname)->where('floor_count',$request->floor)->first();
+                $wardexist = Ward::where('ward_name',$request->wardname)->first();
                 //dd($cabinexist);
                 if($wardexist){
                     //dd(1);
@@ -97,7 +128,7 @@ class WardController extends Controller
             }
             if($request->mode == "edit"){
                 //dd($request->recordid);
-                $wardexists =  Ward::where('ward_name',$request->wardname)->where('floor_count',$request->floor)->get();
+                $wardexists =  Ward::where('ward_name',$request->wardname)->get();
                 if($wardexists){
                     foreach($wardexists as $ex){
                         if($request->recordid != $ex->id){

@@ -134,45 +134,46 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                            <!-- Content dynamically loaded here -->
-                                            @php 
-                                                $sl = 1;
-                                            @endphp
-                                            @foreach($cabins as $index => $cabin)
+                                        @php 
+                                            $sl = 1;
+                                        @endphp
+                                        @foreach($cabins as $index => $cabin)
                                             @php 
                                                 $available = $cabin->total_occupancy - $cabin->assigned;
                                             @endphp
                                             <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$cabin->cabin_name}}</td>
-                                                <td>{{$cabinDetails[$index]['cabin_type']}}</td>
-                                                <td>{{$cabinDetails[$index]['floor_no']}}</td>
-                                                <td>{{$cabinDetails[$index]['block_name']}}</td>
-                                                <td style="text-align:center">{{$cabin->total_occupancy}}</td>
-                                                <td style="text-align:center">{{$cabin->assigned}}</td>
-                                                <td style="text-align:center">{{$available}}</td>
-                                                <td>{{$cabin->amenities}}</td>
-                                                <td style="text-align:center">{{$cabin->price}}</td> 
+                                                <td style="text-align:center">{{ $sl++ }}</td>
+                                                <td>{{ $cabin->cabin_name }}</td>
+                                                <td>{{ $cabinDetails[$index]['cabin_type'] }}</td>
+                                                <td>{{ $cabinDetails[$index]['floor_no'] }}</td>
+                                                <td>{{ $cabinDetails[$index]['block_name'] }}</td>
+                                                <td style="text-align:center">{{ $cabin->total_occupancy }}</td>
+                                                <td style="text-align:center">{{ $cabin->assigned }}</td>
+                                                <td style="text-align:center">{{ $available }}</td>
+                                                <td>{{ $cabin->amenities }}</td>
+                                                <td style="text-align:center">{{ $cabin->price }}</td> 
                                                 <td>
-                                                        @if($cabin->status=="Active")
+                                                    @if($cabin->status == "Active")
                                                         <label class="badge badge-success">Active</label>
-                                                        @else 
-                                                        <label class="badge badge-danger">In Active</label>
-                                                        @endif
+                                                    @else 
+                                                        <label class="badge badge-danger">Inactive</label>
+                                                    @endif
                                                 </td>
                                                 <td>
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $cabin->id }})'
-                                                            title='Edit'><img src='assets/previous/user.svg'
-                                                                style='height:20px; width:20px' /></a>&nbsp&nbsp
-                                                        <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('cabins/deleteData') }}/{{ $cabin->id }}')"
-                                                            title='Delete'><img src='assets/previous/delete.svg'
-                                                                style='height:23px; width:23px' /></a>
+                                                    @if($cabinDetails[$index]['floor_status'] == 'Active' && $cabinDetails[$index]['block_status'] == 'Active' && $cabinDetails[$index]['cabintype_status'] == 'Active')
+                                                        <a href='#' class='editbtn' onclick='showEdit({{ $cabin->id }})' title='Edit'>
+                                                            <img src='assets/previous/user.svg' style='height:20px; width:20px' />
+                                                        </a>&nbsp&nbsp
+                                                        <a href='javascript:void(0)' onclick="deleteData('{{ url('cabins/deleteData') }}/{{ $cabin->id }}')" title='Delete'>
+                                                            <img src='assets/previous/delete.svg' style='height:23px; width:23px' />
+                                                        </a>
+                                                    @else
+                                                        Sorry, Parent Inactive
+                                                    @endif
                                                 </td>
                                             </tr>
-                                            @endforeach
+                                        @endforeach
                                     </tbody>
-
                                 </table>
                             </div>
                         </div>

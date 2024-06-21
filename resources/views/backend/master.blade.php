@@ -114,7 +114,7 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <!-- <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('bedtypes')}}" class="card-link">
                                                 <div class="card-body text-center">
@@ -123,7 +123,7 @@
                                                 </div>
                                             </a>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('bedcategories')}}" class="card-link">

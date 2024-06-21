@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\IcuType;
-
+use App\Models\Icu;
 class IcuTypeController extends Controller
 {
     //
@@ -68,10 +68,25 @@ class IcuTypeController extends Controller
                                               "narration"=>$request->narration,
                                               "updated_by"=>1,
                                               "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updateicutype){
-                    return response()->json(['status'=>true,'message'=>'ICU type updated successfully']);
-                }else{
-                    return response()->json(['status'=>false,'message'=>'ICU type could not be updated']);
+                // if($updateicutype){
+                //     return response()->json(['status'=>true,'message'=>'ICU type updated successfully']);
+                // }else{
+                //     return response()->json(['status'=>false,'message'=>'ICU type could not be updated']);
+                // }
+                if ($updateicutype) {
+                    // Update cabin status if necessary
+                    if ($request->status == "Inactive") {
+                        Icu::where("icu_type_id", $request->recordid)->update([
+                            "status" => "Inactive"
+                        ]);
+                    } else {
+                        Icu::where("icu_type_id", $request->recordid)->update([
+                            "status" => "Active"
+                        ]);
+                    }
+                    return response()->json(['status' => true, 'message' => 'Icutype updated successfully']);
+                } else {
+                    return response()->json(['status' => false, 'message' => 'Icutype could not be updated'], 500);
                 }
                 
             }
@@ -91,48 +106,33 @@ class IcuTypeController extends Controller
     }
     public function deleteData(string $id)
     {
-        $icutype = IcuType::find($id);
+        $icu = Icu::where('icu_type_id',$id)->exists();
+        if(!$icu){
+            $icutype = IcuType::find($id);
 
-        // Check if the floor record exists
-        if (!$icutype) {
-            return response()->json(['message' => 'Wardtype not found'], 404);
-        }
+            // Check if the floor record exists
+            if (!$icutype) {
+                return response()->json(['message' => 'Wardtype not found'], 404);
+            }
 
-        // Attempt to delete the floor record
-        if ($icutype->delete()) {
-            return response()->json([
-                'status' => true,
-                'message' => 'ICU type Deleted',
-            ]);
+            // Attempt to delete the floor record
+            if ($icutype->delete()) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'ICU type Deleted',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'ICU type could not be deleted.',
+                ]);
+            }
         } else {
+            // Associated records found, cannot delete floor
             return response()->json([
                 'status' => false,
-                'message' => 'ICU type could not be deleted.',
+                'message' => 'Cannot delete icutype. Associated records exist in  icu.',
             ]);
         }
-        //dd($id);
-        // $floor = CabinType::find($id);
-        // if(!$floor){
-        //     return response()->json(['message'=>'Cabintype Not Found']);
-        // }
-
-        // $update = CabinType::where('id',$id)
-        //     ->update([
-        //         'updated_at'  => date('Y-m-d H:i:s'),
-        //         'updated_by'  => "1",
-        //         'status'      => 'Deleted'
-        //     ]);
-
-        //     if($update){
-        //         return response()->json([
-        //             'status' => true,
-        //             'message' => 'Cabintype deleted',
-        //         ]);
-        //     }else{
-        //         return response()->json([
-        //             'status' => false,
-        //             'message' => "CabinType could not be deleted.",
-        //         ]);
-        // }
     }
 }

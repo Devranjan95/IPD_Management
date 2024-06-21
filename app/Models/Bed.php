@@ -11,7 +11,6 @@ class Bed extends Model
     protected $table = "beds";
     protected $fillable = [
         'bed_name',
-        'bed_type_id',
         'bed_category_id',
         'no_of_beds',
         'assigned_no',
