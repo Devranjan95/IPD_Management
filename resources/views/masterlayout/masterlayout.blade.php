@@ -63,6 +63,8 @@
     padding-right: 12px;
     font-size:12px
 }
+
+
       .table thead{
             /* background-color: green;  */
            
@@ -149,6 +151,10 @@
       }
       .form-control, .typeahead, .tt-query, .tt-hint, .select2-container--default .select2-selection--single .select2-search__field, .select2-container--default .select2-selection--single, .form-select {
         height: 2.4rem;
+      }
+      .form-check .form-check-input {
+        float: left;
+       margin-left: 0px;
       }
       @media (min-width: 992px) {
         .sidebar-icon-only .sidebar {

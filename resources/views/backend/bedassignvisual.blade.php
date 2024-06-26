@@ -45,10 +45,11 @@
                                                                         @endphp
                                                                         @if($available === 0)
                                                                             <div class="cabin-card bg-danger">
-                                                                                <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$cabin->id}}, 'cabin')">
-                                                                                    <h6>{{ $cabin->cabin_name }}</h6>
-                                                                                    <p style="font-size:12px">Available 0</p>
-                                                                                </a>
+                                                                                
+                                                                                    <h6 style="color:#fff">{{ $cabin->cabin_name }}</h6>
+                                                                                    <p style="font-size:12px;color:#fff">Available 0</p>
+                                                                                
+                                                                                <button class="edit-btn" onclick="editBed({{$cabin->id}}, 'cabin')">Edit</button>
                                                                             </div>
                                                                         @elseif($cabin->status != "Active")
                                                                             <div class="cabin-card bg-danger text-white">
@@ -191,7 +192,29 @@
       </div>
       <div class="modal-body">
         <!-- Content will be dynamically inserted here -->
-         <div class="modalbodycontainer"></div>
+         <div class="modalbodycontainer">
+                <div id="bedInformation"></div>
+                <div id="informationContainer"></div>
+                <div id="bedAssignFormContainer"></div>
+         </div>
+                
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="reload()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="editmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editmodalLabel">Details / Bed Assign</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Content will be dynamically inserted here -->
+         
                 
       </div>
       <div class="modal-footer">
@@ -201,325 +224,497 @@
   </div>
 </div>
 
-
 @endsection
 
 @section('scripts')
 <script>
 
-function takeValue(id, flag) {
+function takeValue(id,flag){
     if (id) {
         $.ajax({
-            type: 'POST',
-            url: '{{url("bedform/getalldata")}}',
+            type: 'GET',
+            url: '{{url("bedform/getalldata")}}/'+id+'/'+flag,
             data: {
                 _token: "{{ csrf_token() }}",
                 id: id,
                 flag: flag
             },
-            success: function(response) {
-                let myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
-                myModal.show();
-
-                $('#staticBackdrop').data('flag', flag);
-                $('#staticBackdrop').data('id', id);
-                $('#staticBackdrop').data('floor', response.floor);
-                $('#staticBackdrop').data('block', response.block);
-
-                // Construct beds HTML with improved styling
-                let bedsHtml = '<div class="row justify-content-center mb-3">';
-                response.beds.forEach(function(bed) {
-                    bedsHtml += `
-                        <div class="col-md-4 mb-3">
-                            <div class="card border-primary shadow">
-                                <div class="card-body">
-                                    <h5 class="card-title text-primary">${bed.bed_name}</h5>
-                                    <p class="card-text"><strong>No of Beds:</strong> ${bed.no_of_beds}</p>
-                                    <p class="card-text"><strong>Assigned:</strong> ${bed.assigned_no}</p>
-                                    <p class="card-text"><strong>Available:</strong> ${bed.no_of_beds - bed.assigned_no}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                bedsHtml += '</div>';
-
-                let bedInputFields = '<form enctype="multipart/form-data" name="bedAssignForm" id="bedAssignForm">';
-
-                // Single bed name select element outside the loop
-                bedInputFields += `
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <label for="bedname" class="form-label">Bed Name</label>
-                                <select class="form-select" id="bedname" name="bedname">
-                                    <option value="" selected disabled>Please select a bed</option>
-                                   ${response.beds.map(bed => `<option value="${bed.id}">${bed.bed_name}</option>`).join('')}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Loop for bed number input fields based on flag
-                let totalOccupancy;
-                let bedNumberPrefix = '';
-
-                if (flag === 'cabin') {
-                    totalOccupancy = response.cabininfo.total_occupancy;
-                    bedNumberPrefix = `${response.cabininfo.cabin_name}/${response.floor}/${response.block}/`;
-                } else if (flag === 'ward') {
-                    totalOccupancy = response.wardinfo.total_occupancy;
-                    bedNumberPrefix = `${response.wardinfo.ward_name}/${response.floor}/${response.block}/`;
-                } else if (flag === 'icu') {
-                    totalOccupancy = response.icuinfo.total_occupancy;
-                    bedNumberPrefix = `${response.icuinfo.icu_name}/${response.floor}/${response.block}/`;
-                }
-
-                for (let i = 1; i <= totalOccupancy; i++) {
-                    bedInputFields += `
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label for="bedNumber${i}" class="form-label">Bed Number ${i}</label>
-                                    <input type="text" class="form-control" id="bedNumber" name="bedNumber[]" placeholder="Enter Bed Number" value="${bedNumberPrefix}${i}" readonly>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                bedInputFields += `
-                    <div class="row justify-content-center">
-                        <div class="col-md-4">
-                            <button class="btn btn-success w-100" type="submit">Save</button>
-                        </div>
-                    </div>
-                </form>`;
-
-                // Construct information HTML inside an accordion with custom background
-                let infoHtml = '';
-                if (flag === 'cabin') {
-                    infoHtml = `
-                        <div class="accordion pb-3" id="infoAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        Cabin Information
-                                    </button>
-                                </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#infoAccordion">
-                                    <div class="accordion-body bg-light">
-                                        <table class="table table-bordered table-responsive">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Cabin Name</th>
-                                                    <td>${response.cabininfo.cabin_name}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Cabin Type</th>
-                                                    <td>${response.cabintype}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Floor</th>
-                                                    <td>${response.floor}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Block</th>
-                                                    <td>${response.block}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Total Occupancy</th>
-                                                    <td>${response.cabininfo.total_occupancy}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Assigned</th>
-                                                    <td>${response.cabininfo.assigned}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Available</th>
-                                                    <td>${response.cabininfo.total_occupancy - response.cabininfo.assigned}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Amenities</th>
-                                                    <td>${response.cabininfo.amenities}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Price</th>
-                                                    <td>${response.cabininfo.price}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } else if (flag === 'ward') {
-                    infoHtml = `
-                        <div class="accordion pb-3" id="infoAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        Ward Information
-                                    </button>
-                                </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#infoAccordion">
-                                    <div class="accordion-body bg-light">
-                                        <table class="table table-bordered table-responsive">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Ward Name</th>
-                                                    <td>${response.wardinfo.ward_name}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Ward Type</th>
-                                                    <td>${response.wardtype}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Floor</th>
-                                                    <td>${response.floor}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Block</th>
-                                                    <td>${response.block}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Total Occupancy</th>
-                                                    <td>${response.wardinfo.total_occupancy}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Assigned</th>
-                                                    <td>${response.wardinfo.assigned}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Available</th>
-                                                    <td>${response.wardinfo.total_occupancy - response.wardinfo.assigned}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } else if (flag === 'icu') {
-                    infoHtml = `
-                        <div class="accordion pb-3" id="infoAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        ICU Information
-                                    </button>
-                                </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#infoAccordion">
-                                    <div class="accordion-body bg-light">
-                                        <table class="table table-bordered table-responsive">
-                                            <tbody>
-                                                <tr>
-                                                    <th>ICU Name</th>
-                                                    <td>${response.icuinfo.icu_name}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>ICU Type</th>
-                                                    <td>${response.icutype}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Floor</th>
-                                                    <td>${response.floor}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Block</th>
-                                                    <td>${response.block}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Total Occupancy</th>
-                                                    <td>${response.icuinfo.total_occupancy}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Assigned</th>
-                                                    <td>${response.icuinfo.assigned}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Available</th>
-                                                    <td>${response.icuinfo.total_occupancy - response.icuinfo.assigned}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                let bedInputHtml = `
-                    <div class="accordion" id="bedInputAccordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingTwo">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Bed Assign Form
-                                </button>
-                            </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#bedInputAccordion">
-                                <div class="accordion-body">
-                                    ${bedInputFields}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Update modal body with constructed HTML
-                $('.modalbodycontainer').html(bedsHtml + infoHtml + bedInputHtml);
-
-                // Debugging: Check if form is in the DOM
-                console.log("Form added to DOM");
-
+            success:function(response){
+                let urll = '{{url("bedform/getalldata")}}/'+id+'/'+flag;
+                window.open(urll);
             },
-            error: function(response) {
-                console.log(response);
+            error:function(){
+                alert('Error!!')
             }
-        });
+        })
     }
 }
 
-// Attach the submit event listener using event delegation
-$(document).on('submit', '#bedAssignForm', function(event) {
-    event.preventDefault();
-    let formdata = new FormData(document.getElementById('bedAssignForm'));
-    let flag = $('#staticBackdrop').data('flag');
-    let id = $('#staticBackdrop').data('id');
-    let floor = $('#staticBackdrop').data('floor');
-    let block = $('#staticBackdrop').data('block');
-    formdata.append('_token', '{{ csrf_token() }}');
-    formdata.append('flag', flag);
-    formdata.append('id', id);
-    formdata.append('floor', floor);
-    formdata.append('block', block);
-    if (formdata.has('bedname')) {
-        console.log("bedname included in FormData");
-    } else {
-        console.log("bedname not found in FormData");
-    }
-    for (let pair of formdata.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-    $.ajax({
-        type:"POST",
-        url:"{{url('bedassign/assign')}}",
-        data:formdata,
-        processData: false,
-        contentType: false,
-        success:function(response){
-            alert(response.message);
-            console.log(response.message);
-        },
-        error:function(response){
-            
-        }
-    })
-});
+// function takeValue(id, flag) {
+//     if (id) {
+//         $.ajax({
+//             type: 'POST',
+//             url: '{{url("bedform/getalldata")}}',
+//             data: {
+//                 _token: "{{ csrf_token() }}",
+//                 id: id,
+//                 flag: flag
+//             },
+//             success: function(response) {
+//                 let myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+//                 myModal.show();
+
+//                 $('#staticBackdrop').data('flag', flag);
+//                 $('#staticBackdrop').data('id', id);
+                
+//                 let xdata;
+//                 if (flag === 'cabin') {
+//                     xdata = response.cabininfo;
+//                 } else if (flag === 'ward') {
+//                     xdata = response.wardinfo;
+//                 } else if (flag === 'icu') {
+//                     xdata = response.icuinfo;
+//                 }
+
+//                 $('#staticBackdrop').data('floor', xdata.floor.count);
+//                 $('#staticBackdrop').data('block', xdata.block.id);
+
+//                 // Construct beds HTML
+//                 let bedsHtml = '<div class="row justify-content-center mb-3">';
+//                 response.beds.forEach(function(bed) {
+//                     bedsHtml += `
+//                         <div class="col-md-4 mb-3">
+//                             <div class="card border-primary shadow">
+//                                 <div class="card-body">
+//                                     <h5 class="card-title text-primary">${bed.bed_name}</h5>
+//                                     <p class="card-text"><strong>No of Beds:</strong> ${bed.no_of_beds}</p>
+//                                     <p class="card-text"><strong>Assigned:</strong> ${bed.assigned_no}</p>
+//                                     <p class="card-text"><strong>Available:</strong> ${bed.no_of_beds - bed.assigned_no}</p>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     `;
+//                 });
+//                 bedsHtml += '</div>';
+
+//                 // Construct the form inside an accordion
+//                 let bedInputFields = `
+//                     <div class="accordion pb-3" id="bedAssignAccordion">
+//                         <div class="accordion-item">
+//                             <h2 class="accordion-header" id="headingForm">
+//                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseForm" aria-expanded="true" aria-controls="collapseForm">
+//                                     Bed Assignment Form
+//                                 </button>
+//                             </h2>
+//                             <div id="collapseForm" class="accordion-collapse collapse" aria-labelledby="headingForm" data-bs-parent="#bedAssignAccordion">
+//                                 <div class="accordion-body">
+//                                     <form enctype="multipart/form-data" name="bedAssignForm" id="bedAssignForm">
+//                 `;
+
+//                 // Determine bed number prefix and total occupancy based on flag
+//                 let totalOccupancy;
+//                 let bedNumberPrefix = '';
+//                 let infoData;
+
+//                 if (flag === 'cabin') {
+//                     infoData = response.cabininfo;
+//                     totalOccupancy = infoData.total_occupancy;
+//                     bedNumberPrefix = `${infoData.cabin_name}/${infoData.floor.floor_no}/${infoData.block.block_name}/`;
+//                 } else if (flag === 'ward') {
+//                     infoData = response.wardinfo;
+//                     totalOccupancy = infoData.total_occupancy;
+//                     bedNumberPrefix = `${infoData.ward_name}/${infoData.floor.floor_no}/${infoData.block.block_name}/`;
+//                 } else if (flag === 'icu') {
+//                     infoData = response.icuinfo;
+//                     totalOccupancy = infoData.total_occupancy;
+//                     bedNumberPrefix = `${infoData.icu_name}/${infoData.floor.floor_no}/${infoData.block.block_name}/`;
+//                 }
+
+//                 // Create a dropdown for bed names
+//                 let bedAssignInputs = `
+//                     <div class="row mb-3">
+//                         <div class="col-md-6">
+//                             <div class="mb-3">
+//                                 <label for="bedNameDropdown" class="form-label">Bed Name</label>
+//                                 <select class="form-select" id="bedNameDropdown" name="bedNameDropdown">
+//                 `;
+//                 response.beds.forEach(function(bed) {
+//                     bedAssignInputs += `<option value="${bed.bed_name}">${bed.bed_name}</option>`;
+//                 });
+//                 bedAssignInputs += `
+//                                 </select>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 `;
+//                 bedInputFields += bedAssignInputs;
+
+//                 // Create checkboxes for bed numbers in row-column format
+//                 bedInputFields += '<div class="row">';
+//                 for (let i = 1; i <= totalOccupancy; i++) {
+//                     bedInputFields += `
+//                         <div class="col-md-3">
+//                             <div class="form-check">
+//                                 <input class="form-check-input" type="checkbox" id="bedNumber${i}" name="bedNumber[]" value="${bedNumberPrefix}${i}">
+//                                 <label class="form-check-label" for="bedNumber${i}">
+//                                     ${bedNumberPrefix}${i}
+//                                 </label>
+//                             </div>
+//                         </div>
+//                     `;
+//                 }
+//                 bedInputFields += '</div>';
+
+//                 bedInputFields += `
+//                     <div class="row justify-content-center mt-3">
+//                         <div class="col-md-4">
+//                             <button class="btn btn-success w-100" type="submit">Save</button>
+//                         </div>
+//                     </div>
+//                 </form>
+//                 </div>
+//                 </div>
+//                 </div>
+//                 </div>`;
+
+//                 // Construct information HTML inside another accordion item
+//                 let infoHtml = '';
+//                 if (flag === 'cabin') {
+//                     infoHtml = `
+//                         <div class="accordion pb-3" id="infoAccordion">
+//                             <div class="accordion-item">
+//                                 <h2 class="accordion-header" id="headingInfo">
+//                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfo" aria-expanded="false" aria-controls="collapseInfo">
+//                                         Cabin Information
+//                                     </button>
+//                                 </h2>
+//                                 <div id="collapseInfo" class="accordion-collapse collapse" aria-labelledby="headingInfo" data-bs-parent="#infoAccordion">
+//                                     <div class="accordion-body bg-light">
+//                                         <table class="table table-bordered table-responsive">
+//                                             <tbody>
+//                                                 <tr>
+//                                                     <th>Cabin Name</th>
+//                                                     <td>${infoData.cabin_name}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Cabin Type</th>
+//                                                     <td>${infoData.cabintype.cabin_type}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Floor</th>
+//                                                     <td>${infoData.floor.floor_no}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Block</th>
+//                                                     <td>${infoData.block.block_name}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Total Occupancy</th>
+//                                                     <td>${infoData.total_occupancy}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Assigned</th>
+//                                                     <td>${infoData.assigned}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Available</th>
+//                                                     <td>${infoData.total_occupancy - infoData.assigned}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Amenities</th>
+//                                                     <td>${infoData.amenities}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Price</th>
+//                                                     <td>${infoData.price}</td>
+//                                                 </tr>
+//                                             </tbody>
+//                                         </table>
+//                                     </div>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     `;
+//                 } else if (flag === 'ward') {
+//                     infoHtml = `
+//                         <div class="accordion pb-3" id="infoAccordion">
+//                             <div class="accordion-item">
+//                                 <h2 class="accordion-header" id="headingInfo">
+//                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfo" aria-expanded="false" aria-controls="collapseInfo">
+//                                         Ward Information
+//                                     </button>
+//                                 </h2>
+//                                 <div id="collapseInfo" class="accordion-collapse collapse" aria-labelledby="headingInfo" data-bs-parent="#infoAccordion">
+//                                     <div class="accordion-body bg-light">
+//                                         <table class="table table-bordered table-responsive">
+//                                             <tbody>
+//                                                 <tr>
+//                                                     <th>Ward Name</th>
+//                                                     <td>${infoData.ward_name}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Ward Type</th>
+//                                                     <td>${infoData.wardtype.ward_type}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Floor</th>
+//                                                     <td>${infoData.floor.floor_no}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Block</th>
+//                                                     <td>${infoData.block.block_name}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Total Occupancy</th>
+//                                                     <td>${infoData.total_occupancy}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Assigned</th>
+//                                                     <td>${infoData.assigned}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Available</th>
+//                                                     <td>${infoData.total_occupancy - infoData.assigned}</td>
+//                                                 </tr>
+//                                             </tbody>
+                                       
+//                                         </tbody>
+//                                         </table>
+//                                     </div>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     `;
+//                 } else if (flag === 'icu') {
+//                     infoHtml = `
+//                         <div class="accordion pb-3" id="infoAccordion">
+//                             <div class="accordion-item">
+//                                 <h2 class="accordion-header" id="headingInfo">
+//                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfo" aria-expanded="false" aria-controls="collapseInfo">
+//                                         ICU Information
+//                                     </button>
+//                                 </h2>
+//                                 <div id="collapseInfo" class="accordion-collapse collapse" aria-labelledby="headingInfo" data-bs-parent="#infoAccordion">
+//                                     <div class="accordion-body bg-light">
+//                                         <table class="table table-bordered table-responsive">
+//                                             <tbody>
+//                                                 <tr>
+//                                                     <th>ICU Name</th>
+//                                                     <td>${infoData.icu_name}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>ICU Type</th>
+//                                                     <td>${infoData.icutype.icu_type}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Floor</th>
+//                                                     <td>${infoData.floor.floor_no}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Block</th>
+//                                                     <td>${infoData.block.block_name}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Total Occupancy</th>
+//                                                     <td>${infoData.total_occupancy}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Assigned</th>
+//                                                     <td>${infoData.assigned}</td>
+//                                                 </tr>
+//                                                 <tr>
+//                                                     <th>Available</th>
+//                                                     <td>${infoData.total_occupancy - infoData.assigned}</td>
+//                                                 </tr>
+//                                             </tbody>
+//                                         </table>
+//                                     </div>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     `;
+//                 }
+
+//                 // Update the modal content
+//                 $('#bedInformation').html(bedsHtml);
+//                 $('#bedAssignFormContainer').html(bedInputFields);
+//                 $('#informationContainer').html(infoHtml);
+//             },
+//             error: function(response) {
+//                 console.error('An error occurred while fetching data:', response);
+//                 alert('An error occurred while fetching the data. Please try again.');
+//             }
+//         });
+//     }
+// }
+
+// Handle form submission
+// $(document).on('submit', '#bedAssignForm', function(event) {
+//     event.preventDefault();
+//     let formdata = new FormData(document.getElementById('bedAssignForm'));
+//     let flag = $('#staticBackdrop').data('flag');
+//     let id = $('#staticBackdrop').data('id');
+//     let floor = $('#staticBackdrop').data('floor');
+//     let block = $('#staticBackdrop').data('block');
+//     formdata.append('_token', '{{ csrf_token() }}');
+//     formdata.append('flag', flag);
+//     formdata.append('id', id);
+//     formdata.append('floor', floor);
+//     formdata.append('block', block);
+
+//     // Log the form data for debugging
+//     for (let pair of formdata.entries()) {
+//         console.log(pair[0] + ': ' + pair[1]);
+//     }
+    
+//     $.ajax({
+//         type: "POST",
+//         url: "{{url('bedassign/assign')}}",
+//         data: formdata,
+//         processData: false,
+//         contentType: false,
+//         success: function(response) {
+//             alert(response.message);
+//             console.log(response.message);
+//         },
+//         error: function(response) {
+//             console.error('An error occurred while assigning the bed:', response);
+//             alert('An error occurred while assigning the bed. Please try again.');
+//         }
+//     });
+// });
+
+
+
+// function editBed(id, type) {
+//     console.log(`Edit ${type} with ID: ${id}`);
+
+//     $.ajax({
+//         type: "GET",
+//         url: "{{ url('editassignbed') }}/" + id + "/" + type,
+//         headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         },
+//         dataType: "json",
+//         success: function(response) {
+//             console.log(response);
+
+//             // Clear previous modal content
+//             $('#editmodal .modal-body').empty();
+
+//             // Insert dynamic content into modal body
+//             var modalBody = $('#editmodal .modal-body');
+
+//             // Iterate over bedNames and bednumbers based on count
+//             for (var i = 0; i < response.data.count; i++) 
+//             {
+//                 // Create row div
+//                 var rowDiv = $('<div class="row"></div>');
+
+//                 // Create first column for bed name
+//                 var bedNameCol = $('<div class="col-md-6 mb-3"></div>');
+//                 bedNameCol.append('<label for="bedNameSelect' + i + '" class="form-label">Bed Name ' + (i + 1) + '</label>');
+//                 var bedNameSelect = $('<select class="form-select" id="bedNameSelect' + i + '" name="bed_name[]"></select>');
+//                 $.each(response.data.beds, function(index, bed) {
+//                     var option = $('<option>', {
+//                         value: bed.id,
+//                         text: bed.bed_name
+//                     });
+//                     // Check if bed.id exists in response.data.bedNames (IDs)
+//                     if ($.inArray(bed.id.toString(), response.data.bedNames) !== -1) {
+//                         option.attr('selected', 'selected');
+//                     }
+//                     bedNameSelect.append(option);
+//                 });
+//                 bedNameCol.append(bedNameSelect);
+//                 rowDiv.append(bedNameCol);
+
+//                 // Create second column for bed number
+//                 var bedNumberCol = $('<div class="col-md-6 mb-3"></div>');
+//                 bedNumberCol.append('<label for="bedNumber' + i + '" class="form-label">Bed Number ' + (i + 1) + '</label>');
+//                 bedNumberCol.append('<input type="text" class="form-control" id="bedNumber' + i + '" name="bed_number[]" value="' + response.data.bednumber[i] + '">');
+//                 rowDiv.append(bedNumberCol);
+
+//                 // Append row to modal body
+//                 modalBody.append(rowDiv);
+//             }
+
+//                 // Show the modal using Bootstrap
+//                 let myModal = new bootstrap.Modal(document.getElementById('editmodal'));
+//                 myModal.show();
+//             },
+//     });
+// }
+
+// function editBed(id, type) {
+//     console.log(`Edit ${type} with ID: ${id}`);
+
+//     $.ajax({
+//         type: "GET",
+//         url: "{{ url('editassignbed') }}/" + id + "/" + type,
+//         headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         },
+//         dataType: "json",
+//         success: function(response) {
+//             console.log(response);
+
+//             // Clear previous modal content
+//             $('#editmodal .modal-body').empty();
+
+//             // Insert dynamic content into modal body
+//             var modalBody = $('#editmodal .modal-body');
+
+//             // Iterate over bedNames and bednumbers based on count
+//             for (var i = 0; i < response.data.count; i++) {
+//                 // Create row div
+//                 var rowDiv = $('<div class="row"></div>');
+
+//                 // Create first column for bed name
+//                 var bedNameCol = $('<div class="col-md-6 mb-3"></div>');
+//                 bedNameCol.append('<label for="bedNameSelect' + i + '" class="form-label">Bed Name ' + (i + 1) + '</label>');
+//                 var bedNameSelect = $('<select class="form-select" id="bedNameSelect' + i + '" name="bed_name[]"></select>');
+//                 $.each(response.data.beds, function(index, bed) {
+//                     var option = $('<option>', {
+//                         value: bed.id,
+//                         text: bed.bed_name
+//                     });
+//                     // Check if bed.id exists in response.data.bedNames (IDs)
+//                     if ($.inArray(bed.id.toString(), response.data.bedNames) !== -1) {
+//                         option.attr('selected', 'selected');
+//                     }
+//                     bedNameSelect.append(option);
+//                 });
+//                 bedNameCol.append(bedNameSelect);
+//                 rowDiv.append(bedNameCol);
+
+//                 // Create second column for bed number
+//                 var bedNumberCol = $('<div class="col-md-6 mb-3"></div>');
+//                 bedNumberCol.append('<label for="bedNumber' + i + '" class="form-label">Bed Number ' + (i + 1) + '</label>');
+//                 bedNumberCol.append('<input type="text" class="form-control" id="bedNumber' + i + '" name="bed_number[]" value="' + response.data.bednumber[i] + '">');
+//                 rowDiv.append(bedNumberCol);
+
+//                 // Append row to modal body
+//                 modalBody.append(rowDiv);
+//             }
+
+//             // Append update button
+//             var updateButton = $('<button>', {
+//                 text: 'Update',
+//                 class: 'btn btn-primary',
+//                 click: function() {
+//                     updateBedAssignment(id, type);
+//                 }
+//             });
+//             modalBody.append(updateButton);
+
+//             // Show the modal using Bootstrap
+//             let myModal = new bootstrap.Modal(document.getElementById('editmodal'));
+//             myModal.show();
+//         }
+//     });
+// }
+
 
 
 
@@ -536,7 +731,7 @@ $(document).on('submit', '#bedAssignForm', function(event) {
     /* background-color: rgb(166,214,8); Light grey background */
     border-radius: 5px; /* Rounded corners */
     padding: 15px; /* Padding inside the accordion body */
-}
+    }
 
 .accordion-button {
     /* background-color: rgb(166,214,8,0.7); Primary color background */
@@ -660,6 +855,30 @@ $(document).on('submit', '#bedAssignForm', function(event) {
     }
 }
 
+.edit-btn {
+    display: none;
+    background-color: #dc075e; /* Blue background */
+    color: #fff; /* White text */
+    border: none;
+    padding: 2px 15px; /* Increased padding for better look */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; /* Slightly larger font size */
+    font-weight: bold; /* Bold text */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0; /* Start with hidden */
+    margin-top: 10px;
+    transform: translateY(20px); /* Start with button moved down */
+}
+
+.cabin-card.bg-danger:hover .edit-btn,
+.ward-card.bg-danger:hover .edit-btn,
+.icu-card.bg-danger:hover .edit-btn {
+    display: block;
+    transform: translateY(0); /* Move to original position */
+    opacity: 1; /* Fully visible */
+}
 </style>
 
 

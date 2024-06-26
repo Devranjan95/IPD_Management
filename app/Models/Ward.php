@@ -31,14 +31,18 @@ class Ward extends Model
 	}
     public function floor()
 	{
-		return $this->belongsTo(Floor::class);
+		return $this->belongsTo(Floor::class,'floor_count','count');
 	}
     public function block()
 	{
-		return $this->belongsTo(Block::class);
+		return $this->belongsTo(Block::class,'block_id','id');
 	}
-    public function cabintype()
+    public function wardtype()
 	{
-		return $this->belongsTo(CabinType::class);
+		return $this->belongsTo(WardType::class,'ward_type_id','id');
+	}
+    public function bedAssign()
+	{
+		return $this->belongsTo(BedAssign::class);
 	}
 }

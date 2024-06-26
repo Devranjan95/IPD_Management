@@ -12,8 +12,9 @@ class BedAssign extends Model
     protected $fillable = [
         'type',
         'type_name',
-        'floor',
-        'block',
+        'type_id',
+        'floor_count',
+        'block_id',
         'bed_no',
         'bed_name',
     ];
