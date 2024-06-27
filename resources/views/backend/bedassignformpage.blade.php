@@ -13,10 +13,10 @@
                             <h3 class="headingcolor">Bed Assign Form</h3>
                             <nav>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ url('masters') }}" class="text-decoration-none text-secondary">Masters</a></li>
-                                    <li class="breadcrumb-item"><a href="{{ url('beds') }}" class="text-decoration-none text-secondary">Beds</a></li>
-                                    <li class="breadcrumb-item"><a href="{{ url('bedassignvisual') }}" class="text-decoration-none text-primary">Bed Assign</a></li>
-                                    <li class="breadcrumb-item active text-primary" aria-current="page">Bed Assign</li>
+                                    <li class="breadcrumb-item"><a href="{{ url('masters') }}" class="text-decoration-none text-primary">Masters</a></li>
+                                    <li class="breadcrumb-item"><a href="{{ url('beds') }}" class="text-decoration-none text-primary">Beds</a></li>
+                                    <li class="breadcrumb-item"><a href="{{ url('bedassignvisual') }}" class="text-decoration-none text-primary">Choose type</a></li>
+                                    <li class="breadcrumb-item active text-warning" aria-current="page">Assign Bed</li>
                                 </ol>
                             </nav>
                         </div>
@@ -78,33 +78,35 @@
                                         </h2>
                                         <div id="collapseCabin" class="accordion-collapse collapse" aria-labelledby="headingCabin" data-bs-parent="#infoAccordion">
                                             <div class="accordion-body" style="background:rgb(60,179,113,0.8)">
-                                                <table class="table table-bordered table-striped">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">Cabin Type:</th>
-                                                            <td>{{ $cabininfo->cabintype->cabin_type }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Block:</th>
-                                                            <td>{{ $cabininfo->block->block_name }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Floor:</th>
-                                                            <td>{{ $cabininfo->floor->floor_no }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Total Occupancy</th>
-                                                            <td>{{ $cabininfo->total_occupancy }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            @php 
-                                                            $available = ($cabininfo->total_occupancy) - ($cabininfo->assigned)
-                                                            @endphp
-                                                            <th scope="row">Available</th>
-                                                            <td>{{ $available }}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row">Cabin Type:</th>
+                                                                <td>{{ $cabininfo->cabintype->cabin_type }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Block:</th>
+                                                                <td>{{ $cabininfo->block->block_name }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Floor:</th>
+                                                                <td>{{ $cabininfo->floor->floor_no }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Total Occupancy</th>
+                                                                <td>{{ $cabininfo->total_occupancy }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                @php 
+                                                                $available = ($cabininfo->total_occupancy) - ($cabininfo->assigned)
+                                                                @endphp
+                                                                <th scope="row">Available</th>
+                                                                <td>{{ $available }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -268,13 +270,16 @@
                             </div> -->
                             <div class="row">
                                 <div class="col-lg-6 mb-3" style="border-right: 1px solid #ccc;">
-                                    <h4 class="pb-2">Assign a bed</h4>
+                                    <h4 class="pb-4">Assign a bed</h4>
                                     <form enctype="multipart/form-data" name="bedAssignForm" id="bedAssignForm">
                                         <div class="form-group">
                                             <label for="bed_name">Select Bed Name</label>
                                             <select class="form-control" id="bed_name" name="bed_name">
+                                                <option value="" selected disabled>Please select bed name</option>
                                                 @foreach($beds as $bed)
+                                                    @if($bed->status == 'Active')
                                                     <option value="{{ $bed->bed_name }}">{{ $bed->bed_name }}</option>
+                                                    @endif
                                                 @endforeach
                                             </select>
                                         </div>
@@ -291,12 +296,23 @@
                                                         $occu = $cabininfo->total_occupancy;
                                                     @endphp
                                                     @for($i = 1; $i <= $occu; $i++)
+                                                        @php 
+                                                          $bednumber = $prefix.$i;
+                                                            if(isset($bedassigned)){
+                                                              $assigned = [];
+                                                              foreach($bedassigned as $bedName => $assignedGroup){
+                                                                foreach($assignedGroup as $assign){
+                                                                    $assigned[] = $assign->bed_no;
+                                                                }
+                                                              }
+                                                            }
+                                                            $isAssigned = in_array($bednumber, $assigned);
+                                                        @endphp
                                                         <div class="col-lg-4">
                                                             <div class="form-check">
-                                                            
-                                                                <input class="form-check-input" type="checkbox" name="bed_numbers[]" value="{{$prefix}}{{ $i }}" id="bedNumber{{ $i }}">
-                                                                <label class="form-check-label" for="bedNumber{{ $i }}">
-                                                                    {{$prefix}} {{ $i }}
+                                                                <input class="form-check-input" type="checkbox" name="bed_numbers[]" value="{{$bednumber}}" id="bedNumber{{ $i }}" {{ $isAssigned ? 'disabled' : '' }}>
+                                                                <label class="form-check-label" for="bedNumber{{ $i }}" style="{{ $isAssigned ? 'color: red;' : '' }}">
+                                                                    {{$bednumber}}
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -311,11 +327,23 @@
                                                         $occu = $wardinfo->total_occupancy;
                                                     @endphp
                                                     @for($i = 1; $i <= $occu; $i++)
+                                                        @php 
+                                                          $bednumber = $prefix.$i;
+                                                            if(isset($bedassigned)){
+                                                              $assigned = [];
+                                                              foreach($bedassigned as $bedName => $assignedGroup){
+                                                                foreach($assignedGroup as $assign){
+                                                                    $assigned[] = $assign->bed_no;
+                                                                }
+                                                              }
+                                                            }
+                                                            $isAssigned = in_array($bednumber, $assigned);
+                                                        @endphp
                                                         <div class="col-lg-4">
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox" name="bed_numbers[]" value="{{$prefix}}{{ $i }}" id="bedNumber{{ $i }}">
-                                                                <label class="form-check-label" for="bedNumber{{ $i }}">
-                                                                    {{$prefix}} {{ $i }}
+                                                                <input class="form-check-input" type="checkbox" name="bed_numbers[]" value="{{$bednumber}}" id="bedNumber{{ $i }}" {{ $isAssigned ? 'disabled' : '' }}>
+                                                                <label class="form-check-label" for="bedNumber{{ $i }}" style="{{ $isAssigned ? 'color: red;' : '' }}">
+                                                                    {{$bednumber}}
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -330,11 +358,23 @@
                                                         $occu = $icuinfo->total_occupancy;
                                                     @endphp
                                                     @for($i = 1; $i <= $occu; $i++)
+                                                        @php 
+                                                          $bednumber = $prefix.$i;
+                                                            if(isset($bedassigned)){
+                                                              $assigned = [];
+                                                              foreach($bedassigned as $bedName => $assignedGroup){
+                                                                foreach($assignedGroup as $assign){
+                                                                    $assigned[] = $assign->bed_no;
+                                                                }
+                                                              }
+                                                            }
+                                                            $isAssigned = in_array($bednumber, $assigned);
+                                                        @endphp
                                                         <div class="col-lg-4">
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox" name="bed_numbers[]" value="{{$prefix}}{{ $i }}" id="bedNumber{{ $i }}">
-                                                                <label class="form-check-label" for="bedNumber{{ $i }}">
-                                                                    {{$prefix}} {{ $i }}
+                                                                <input class="form-check-input" type="checkbox" name="bed_numbers[]" value="{{$bednumber}}" id="bedNumber{{ $i }}" {{ $isAssigned ? 'disabled' : '' }}>
+                                                                <label class="form-check-label" for="bedNumber{{ $i }}" style="{{ $isAssigned ? 'color: red;' : '' }}">
+                                                                    {{$bednumber}}
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -348,21 +388,26 @@
                                     </form>
                                 </div>
                                 <div class="col-lg-6 mb-3">
-                                    <h4>Assigned Details</h4>
-                                    @if(isset($bedassigned))
-                                        @foreach($bedassigned as $assigned)
-                                            {{$assigned->bed_name}}
-                                            <div class="col-lg-4">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="bed_numbers_assigned[]" value="{{$assigned->bed_no }}" id="bedNumberassign{{ $i }}">
-                                                    <label class="form-check-label" for="bedNumber{{ $assigned->bed_no }}">
-                                                        {{$assigned->bed_no}}  
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @endif
+                                    <h4 class="pb-4">Assigned Details</h4>
+                                    <div class="row">
+                                        @if(isset($bedassigned))
+                                            @foreach($bedassigned as $bedName => $assignedGroup)
+                                                <p style="font-size:14px">{{ $bedName }}</p>
+                                                @foreach($assignedGroup as $assigned)
+                                                    <div class="col-lg-4 pb-2">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="bed_numbers_assigned[]" value="{{ $assigned->bed_no }}" id="bedNumberassign{{ $loop->parent->index }}-{{ $loop->index }}" onclick="delBedNum('{{$assigned->bed_no}}','{{$bedName}}','{{$assigned->type}}')">
+                                                            <label class="form-check-label" for="bedNumberassign{{ $loop->parent->index }}-{{ $loop->index }}">
+                                                                {{ $assigned->bed_no }}  
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @endforeach
+                                        @endif
+                                    </div>
                                 </div>
+
                             </div>
 
                         </div>
@@ -399,7 +444,7 @@ $(document).on('submit', '#bedAssignForm', function(event) {
         contentType: false,
         success: function(response) {
             alert(response.message);
-            console.log(response.message);
+            location.reload();
         },
         error: function(response) {
             console.error('An error occurred while assigning the bed:', response);
@@ -407,5 +452,26 @@ $(document).on('submit', '#bedAssignForm', function(event) {
         }
     });
 });
+function delBedNum(bedNum,bedName,type){
+    // alert(bedNum);
+    // alert(bedName);
+    // alert(type);
+    if(bedNum && bedName){
+        if(confirm("Do you want to remove the bed number ?")){
+            $.ajax({
+                type:"POST",
+                url:"{{url('bednumber/delete')}}",
+                data:{_token:"{{csrf_token()}}",bedNum:bedNum,bedName:bedName,type:type},
+                success:function(response){
+                    alert(response.message);
+                    location.reload();
+                },
+                error:function(){
+                    alert("Error!!!");
+                }
+            })
+        }
+    }
+}
 </script>
 @endsection

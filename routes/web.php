@@ -107,3 +107,4 @@ Route::get('bedassignvisual/',[BedAssignController::class,'newIndex']);
 Route::get('bedform/getalldata/{id}/{flag}',[BedAssignController::class,'getDataval']);
 Route::post('bedassign/assign',[BedAssignController::class,'assignBed']);
 Route::get('editassignbed/{id}/{type}',[BedAssignController::class,'getDataValues']);
+Route::post('bednumber/delete',[BedAssignController::class,'removeBed']);

@@ -97,8 +97,8 @@
                                     <h3 class="headingcolor">ICU's</h3>
                                     <nav>
                                         <ol class="breadcrumb">
-                                            <li class="breadcrumb-item text-secondary"><a href="{{url('masters')}}">Masters</a></li>
-                                            <li class="breadcrumb-item active text-primary" aria-current="page">ICU's</li>
+                                            <li class="breadcrumb-item text-primary"><a class="text-decoration-none text-primary" href="{{url('masters')}}">Masters</a></li>
+                                            <li class="breadcrumb-item active text-warning" aria-current="page">ICU's</li>
                                         </ol>
                                     </nav>
                                 </div>

@@ -13,9 +13,9 @@
                             <h3 class="headingcolor">Bed Assign Form</h3>
                             <nav>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item text-secondary"><a href="{{url('masters')}}">Masters</a></li>
-                                    <li class="breadcrumb-item text-secondary"><a href="{{url('beds')}}">Beds</a></li>
-                                    <li class="breadcrumb-item active text-primary" aria-current="page">Bed Assign</li>
+                                    <li class="breadcrumb-item text-primary"><a class="text-decoration-none text-primary" href="{{url('masters')}}">Masters</a></li>
+                                    <li class="breadcrumb-item text-primary"><a class="text-decoration-none text-primary" href="{{url('beds')}}">Beds</a></li>
+                                    <li class="breadcrumb-item active text-warning" aria-current="page">Bed Assign</li>
                                 </ol>
                             </nav>
                         </div>
@@ -49,7 +49,6 @@
                                                                                     <h6 style="color:#fff">{{ $cabin->cabin_name }}</h6>
                                                                                     <p style="font-size:12px;color:#fff">Available 0</p>
                                                                                 
-                                                                                <button class="edit-btn" onclick="editBed({{$cabin->id}}, 'cabin')">Edit</button>
                                                                             </div>
                                                                         @elseif($cabin->status != "Active")
                                                                             <div class="cabin-card bg-danger text-white">
@@ -241,7 +240,8 @@ function takeValue(id,flag){
             },
             success:function(response){
                 let urll = '{{url("bedform/getalldata")}}/'+id+'/'+flag;
-                window.open(urll);
+                window.location.href = urll;
+                //window.open(urll);
             },
             error:function(){
                 alert('Error!!')

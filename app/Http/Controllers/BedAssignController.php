@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Floor;
@@ -25,6 +25,7 @@ class BedAssignController extends Controller
         $warddetails = [];
         $icudetails = [];
         $beds = Bed::where('status','Active')->get();
+        //$beds = Bed::all();
         foreach ($floors as $floor) {
             $cabins = Cabin::where('floor_count', $floor->count) 
                             ->select('id','cabin_name', 'total_occupancy', 'assigned','status')
@@ -67,24 +68,26 @@ class BedAssignController extends Controller
     // }
 
     public function getDataval($id,$flag) {
-        $beds = Bed::where('status', 'Active')->get();
+        //$beds = Bed::where('status', 'Active')->get();
+        $beds = Bed::all();
         if ($flag == "cabin") {
             $cabininfo = Cabin::where('id', $id)->with('cabintype','block','floor','bedAssign')->first();
-            $bedassigned = BedAssign::where('type_id',$id)->where('type','cabin')->select('bed_no','bed_name')->get();
+            $bedassigned = BedAssign::where('type_id',$id)->where('type','cabin')->select('bed_no','bed_name','type')->get()->groupBy('bed_name');
             if($bedassigned){
                 return view("backend.bedassignformpage",['beds' => $beds, 'cabininfo' => $cabininfo,'bedassigned'=>$bedassigned]);
             }
             return view("backend.bedassignformpage",['beds' => $beds, 'cabininfo' => $cabininfo]);
         } else if ($flag == "ward") {
             $wardinfo = Ward::where('id', $id)->with('wardtype','block','floor','bedAssign')->first();
-            $bedassigned = BedAssign::where('type_id',$id)->where('type','ward')->select('bed_no','bed_name')->get();
+            $bedassigned = BedAssign::where('type_id',$id)->where('type','ward')->select('bed_no','bed_name','type')->get()->groupBy('bed_name');
+            //dd($bedassigned);
             if($bedassigned){
                 return view("backend.bedassignformpage",['beds' => $beds, 'wardinfo' => $wardinfo, 'bedassigned'=>$bedassigned]);
             }
             return view("backend.bedassignformpage",['beds' => $beds, 'wardinfo' => $wardinfo]);
         } else if ($flag == "icu") {
             $icuinfo = Icu::where('id', $id)->with('icutype','block','floor','bedAssign')->first();
-            $bedassigned = BedAssign::where('type_id',$id)->where('type','icu')->select('bed_no','bed_name')->get();
+            $bedassigned = BedAssign::where('type_id',$id)->where('type','icu')->select('bed_no','bed_name','type')->get()->groupBy('bed_name');
             if($bedassigned){
                 return view("backend.bedassignformpage",['beds' => $beds, 'icuinfo' => $icuinfo, 'bedassigned'=>$bedassigned]);
             }
@@ -112,7 +115,6 @@ public function assignBed(Request $request)
 
         $bedNumbers = $request->input('bed_numbers'); // Assumes bedNumber is an array from the form
         $bedName = $request->input('bed_name'); // Assumes a single bed name selected from the dropdown
-
         foreach ($bedNumbers as $bedNumber) {
             $assignbed = BedAssign::create([
                 "type" => $type,
@@ -124,13 +126,56 @@ public function assignBed(Request $request)
                 "bed_name" => $bedName
             ]);
         }
-
-        return response()->json(["message" => "Beds assigned successfully"]);
+        $bedassign = BedAssign::where('type_id',$id)->select('bed_no')->get();
+        $bednameassign = BedAssign::where('bed_name',$bedName)->get();
+        $countbeds = count($bedassign);
+        $countbedname = count($bednameassign);
+        if($bedassign){
+            $updateBedAssign = Bed::where('bed_name',$bedName)->update(["assigned_no"=>$countbedname]);
+            $updatetype = $class::where('id',$id)->update(["assigned"=>$countbeds]);
+            if($updateBedAssign && $updatetype){
+                return response()->json(["message" => "Beds assigned successfully"]);
+            }else{
+                return response()->json(["message" => "Something went wrong"]);
+            }
+        }
     } else {
         return response()->json(["message" => "INVALID!!"]);
     }
 }
 
+
+    public function removeBed(Request $request){
+        $type = $request->type;
+        $typeClasses = [
+            'cabin' => Cabin::class,
+            'ward' => Ward::class,
+            'icu' => Icu::class
+        ];
+        if (isset($typeClasses[$type])){
+            $class = $typeClasses[$type];
+            $bednumId = BedAssign::where('bed_no',$request->bedNum)->select('id','type_id')->first();
+            $id = BedAssign::find($bednumId->id);
+            //$bednumId = intval($bednumId);
+            if($id->delete()){
+                $bedassignvalue = Bed::where("bed_name",$request->bedName)->value("assigned_no");
+                $bedclassUpdate = $class::where('id',$bednumId->type_id)->value("assigned");
+                $bedassignvalue = $bedassignvalue - 1;
+                $bedclassUpdate = $bedclassUpdate - 1;
+                $updatebed = Bed::where("bed_name",$request->bedName)->update(["assigned_no"=>$bedassignvalue]);
+                $updateclass = $class::where('id',$bednumId->type_id)->update(["assigned"=>$bedclassUpdate]);
+                if($updatebed && $updateclass){
+                    return response()->json(['status'=>true,"message"=>"The bed number removed successfully"]);
+                }else{
+                    return response()->json(['status'=>false,"message"=>"Something went wrong"]);
+                }
+                
+            }else{
+                return response()->json(['status'=>false,"message"=>"The bed number could not be removed"]);
+            }
+            //dd($bednumId);
+        }
+    }
 
     public function getDataValues($id, $type) {
         $beds = Bed::where('status', 'Active')->get();
