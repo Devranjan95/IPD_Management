@@ -424,34 +424,102 @@
 
 @section('scripts')
 <!-- Bootstrap JS and dependencies -->
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script>
-$(document).on('submit', '#bedAssignForm', function(event) {
-    event.preventDefault();
-    let formdata = new FormData(document.getElementById('bedAssignForm'));
-    formdata.append('_token','{{csrf_token()}}');
+    // *********************************************************************
+    $(document).ready(function() {
+        // Add custom validation method for letters only
+        // $.validator.addMethod("lettersonly", function(value, element) {
+        //     return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+        // }, "Only letters and spaces are allowed.");
+        // $.validator.addMethod("alphanumeric", function(value, element) {
+        // return this.optional(element) || /^[a-zA-Z0-9\s]+$/.test(value);
+        // }, "Only letters, numbers, and spaces are allowed.");
+        // $.validator.addMethod("alphanumeric", function(value, element) {
+        //     return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
+        // }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
 
-    // Log the form data for debugging
-    for (let pair of formdata.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-    
-    $.ajax({
-        type: "POST",
-        url: "{{url('bedassign/assign')}}",
-        data: formdata,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            alert(response.message);
-            location.reload();
-        },
-        error: function(response) {
-            console.error('An error occurred while assigning the bed:', response);
-            alert('An error occurred while assigning the bed. Please try again.');
-        }
+
+        // Form validation rules
+        $("#bedAssignForm").validate({
+            rules: {
+                bed_name: {
+                    required: true,
+                },
+                
+            },
+            messages: {
+                bed_name: {
+                    required: "Please select a bed name.",
+                },
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                error.insertAfter(element);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass('is-invalid').removeClass('is-valid');
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).addClass('is-valid').removeClass('is-invalid');
+            },
+            submitHandler: function(form) {
+                let formdata = new FormData(document.getElementById('bedAssignForm'));
+                formdata.append('_token','{{csrf_token()}}');
+
+                // Log the form data for debugging
+                for (let pair of formdata.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+                
+                $.ajax({
+                    type: "POST",
+                    url: "{{url('bedassign/assign')}}",
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function(response) {
+                        console.error('An error occurred while assigning the bed:', response);
+                        alert('An error occurred while assigning the bed. Please try again.');
+                    }
+                });
+
+            }
+        });
+
     });
-});
+    // *********************************************************************
+// $(document).on('submit', '#bedAssignForm', function(event) {
+//     event.preventDefault();
+//     let formdata = new FormData(document.getElementById('bedAssignForm'));
+//     formdata.append('_token','{{csrf_token()}}');
+
+//     // Log the form data for debugging
+//     for (let pair of formdata.entries()) {
+//         console.log(pair[0] + ': ' + pair[1]);
+//     }
+    
+//     $.ajax({
+//         type: "POST",
+//         url: "{{url('bedassign/assign')}}",
+//         data: formdata,
+//         processData: false,
+//         contentType: false,
+//         success: function(response) {
+//             alert(response.message);
+//             location.reload();
+//         },
+//         error: function(response) {
+//             console.error('An error occurred while assigning the bed:', response);
+//             alert('An error occurred while assigning the bed. Please try again.');
+//         }
+//     });
+// });
 function delBedNum(bedNum,bedName,type){
     // alert(bedNum);
     // alert(bedName);

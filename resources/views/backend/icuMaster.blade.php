@@ -109,7 +109,7 @@
                         </div>
                         <div class='col-lg-12'>
                             <div class="table-responsive" style="height: 400px; overflow-y: auto;">
-                            <table class="table table-hover">
+                                <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
