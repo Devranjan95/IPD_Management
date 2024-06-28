@@ -14,7 +14,7 @@ use App\Http\Controllers\BedTypeController;
 use App\Http\Controllers\BedCategoryController;
 use App\Http\Controllers\BedController;
 use App\Http\Controllers\BedAssignController;
-
+use App\Http\Controllers\RegistrationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,3 +108,5 @@ Route::get('bedform/getalldata/{id}/{flag}',[BedAssignController::class,'getData
 Route::post('bedassign/assign',[BedAssignController::class,'assignBed']);
 Route::get('editassignbed/{id}/{type}',[BedAssignController::class,'getDataValues']);
 Route::post('bednumber/delete',[BedAssignController::class,'removeBed']);
+
+Route::get('registration/',[RegistrationController::class,'index']);
