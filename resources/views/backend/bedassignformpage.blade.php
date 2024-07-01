@@ -292,7 +292,10 @@
                                                             <input type="hidden" id="floor" name="floor" value="{{$cabininfo->floor->count}}">
                                                             <input type="hidden" id="flag" name="flag" value="cabin">
                                                     @php
-                                                        $prefix = $cabininfo->cabin_name."/".$cabininfo->block->block_name."/".$cabininfo->floor->floor_no."/";
+                                                        //$prefix = $cabininfo->cabin_name."/".$cabininfo->block->block_name."/".$cabininfo->floor->floor_no."/";
+                                                        $prefix = str_replace(' ', '', $cabininfo->cabin_name) . "/" . 
+                                                                  str_replace(' ', '', $cabininfo->block->block_name) . "/" . 
+                                                                  str_replace(' ', '', $cabininfo->floor->floor_no) . "/";
                                                         $occu = $cabininfo->total_occupancy;
                                                     @endphp
                                                     @for($i = 1; $i <= $occu; $i++)
@@ -323,7 +326,10 @@
                                                             <input type="hidden" id="floor" name="floor" value="{{$wardinfo->floor->count}}">
                                                             <input type="hidden" id="flag" name="flag" value="ward">
                                                     @php
-                                                        $prefix = $wardinfo->ward_name."/".$wardinfo->block->block_name."/".$wardinfo->floor->floor_no."/";
+                                                        //$prefix = $wardinfo->ward_name."/".$wardinfo->block->block_name."/".$wardinfo->floor->floor_no."/";
+                                                        $prefix = str_replace(' ', '', $wardinfo->ward_name) . "/" . 
+                                                                  str_replace(' ', '', $wardinfo->block->block_name) . "/" . 
+                                                                  str_replace(' ', '', $wardinfo->floor->floor_no) . "/";
                                                         $occu = $wardinfo->total_occupancy;
                                                     @endphp
                                                     @for($i = 1; $i <= $occu; $i++)
@@ -354,7 +360,10 @@
                                                             <input type="hidden" id="floor" name="floor" value="{{$icuinfo->floor->count}}">
                                                             <input type="hidden" id="flag" name="flag" value="icu">
                                                     @php
-                                                        $prefix = $icuinfo->icu_name."/".$icuinfo->block->block_name."/".$icuinfo->floor->floor_no."/";
+                                                        //$prefix = $icuinfo->icu_name."/".$icuinfo->block->block_name."/".$icuinfo->floor->floor_no."/";
+                                                        $prefix = str_replace(' ', '', $icuinfo->icu_name) . "/" . 
+                                                                     str_replace(' ', '', $icuinfo->block->block_name) . "/" . 
+                                                                     str_replace(' ', '', $icuinfo->floor->floor_no) . "/";
                                                         $occu = $icuinfo->total_occupancy;
                                                     @endphp
                                                     @for($i = 1; $i <= $occu; $i++)

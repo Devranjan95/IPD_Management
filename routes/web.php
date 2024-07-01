@@ -110,3 +110,4 @@ Route::get('editassignbed/{id}/{type}',[BedAssignController::class,'getDataValue
 Route::post('bednumber/delete',[BedAssignController::class,'removeBed']);
 
 Route::get('registration/',[RegistrationController::class,'index']);
+Route::get('getbedinfo/{bednum}',[RegistrationController::class,'getBedData']);

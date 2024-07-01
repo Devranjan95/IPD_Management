@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use App\Models\Floor;
 use App\Models\Block;
 use App\Models\Cabin;
+use App\Models\CabinType;
+use App\Models\WardType;
+use App\Models\IcuType;
 use App\Models\Ward;
 use App\Models\Icu;
 use App\Models\BedAssign;
@@ -78,5 +81,33 @@ class RegistrationController extends Controller
         }
         //dd($floorOccupancy);
         return view('backend.registration',['floor'=>$floor,'floorOccupancy'=>$floorOccupancy]);
+    }
+
+    public function getBedData($bednum){
+        $bednum = str_replace('-', '/', $bednum);
+        //dd($bednum);
+        $beddata = BedAssign::where('bed_no',$bednum)->first();
+        $floor = Floor::where('count',$beddata->floor_count)->value('floor_no');
+        $block = Block::where('id',$beddata->block_id)->value('block_name');
+        if($beddata->type == "cabin"){
+            $cabininfo = Cabin::where('id',$beddata->type_id)->first();
+            $type = CabinType::where('id',$cabininfo->cabin_type_id)->value('cabin_type');
+            $bedinfo = [$beddata,$floor,$block,$cabininfo,$type];
+        }elseif($beddata->type == "ward"){
+            $wardinfo = Ward::where('id',$beddata->type_id)->first();
+            $type = WardType::where('id',$wardinfo->ward_type_id)->value('ward_type');
+            $bedinfo = [$beddata,$floor,$block,$wardinfo,$type];
+        }else{
+            $icuinfo = Icu::where('id',$beddata->type_id)->first();
+            $type = IcuType::where('id',$icuinfo->icu_type_id)->value('icu_type');
+            $bedinfo = [$beddata,$floor,$block,$icuinfo,$type];
+        }
+        
+        //dd($bedinfo);
+        if($bedinfo){
+            return response()->json(["message"=>"Bed found","bedinfo"=>$bedinfo]);
+        }else{
+            return response()->json(["message"=>"Sorry no such bed found","bedinfo"=>$bedinfo]);
+        }
     }
 }

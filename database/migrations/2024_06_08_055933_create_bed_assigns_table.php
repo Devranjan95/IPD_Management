@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade');;
             $table->string('bed_no',30);  // Changed to JSON type
             $table->string('bed_name',70);
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

@@ -123,7 +123,8 @@ public function assignBed(Request $request)
                 "floor_count" => $request->floor,
                 "block_id" => $request->block,
                 "bed_no" => $bedNumber,
-                "bed_name" => $bedName
+                "bed_name" => $bedName,
+                "status" => "Vacant"
             ]);
         }
         $bedassign = BedAssign::where('type_id',$id)->select('bed_no')->get();

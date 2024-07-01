@@ -17,5 +17,6 @@ class BedAssign extends Model
         'block_id',
         'bed_no',
         'bed_name',
+        'status'
     ];
 }
