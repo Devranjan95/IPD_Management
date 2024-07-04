@@ -8,13 +8,13 @@
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-xl">
                         <div class="modal-content">
-                            <form enctype="multipart/form-data" name="floorform" id="floorform">
-                                <input type="hidden" id="saveurl" value="{{ url('floors/saveData') }}" />
+                            <form enctype="multipart/form-data" name="idproofform" id="idproofform">
+                                <input type="hidden" id="saveurl" value="{{ url('idproof/saveData') }}" />
                                 <input type="hidden" id="recordid" name="recordid" value="" />
-                                <!-- <input type="hidden" id="floorcount" name="floorcount" value="" /> -->
+                                <!-- <input type="hidden" id="floorcoun" name="floorcount" value="" /> -->
                                 <input type="hidden" id="mode" name="mode">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Floors</h1>
+                                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Manage Id Proof</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         style="color:rgb(250,235,215)" aria-label="Close"></button>
                                 </div>
@@ -23,15 +23,19 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Insert Floor<span style="color:red" title="Mandatory">*</span></label>
-                                            <input type="text" class="form-control" placeholder="Mention Floor" id="floorNo" name="floorNo">
+                                            <label for="floor" class="form-label">ID Name<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Mention ID Name" id="idname" name="idname">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Insert Floor Count<span style="color:red" title="Mandatory">*</span></label>
-                                            <input type="text" class="form-control" placeholder="Mention Floor count" id="floorcount" name="floorcount">
+                                            <label for="floor" class="form-label">ID Code<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Mention ID Code" id="idcode" name="idcode" maxlength="5">
                                         </div>
                                     </div>
                                     <div class="row pb-3">
+                                        <div class="col-md-6">
+                                            <label for="floor" class="form-label">Id Validation Length<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Mention Length For Validation" id="vallength" name="vallength">
+                                        </div>
                                         <div class="col-md-6">
                                             <label for="floor" class="form-label">Status<span style="color:red" title="Mandatory">*</span></label>
                                             <select class="form-control" id="status" name="status">
@@ -40,7 +44,9 @@
                                                 <option value="Inactive">Inactive</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-6">
+                                    </div>
+                                    <div class="row pb-3">
+                                        <div class="col-md-12">
                                             <label for="floor" class="form-label">Narration</label>
                                             <textarea class="form-control" placeholder="Narration" id="narration" name="narration" rows="10"></textarea>
                                         </div>
@@ -64,11 +70,11 @@
                             <div class="col-lg-12">
                                 <div class='row pb-2'>
                                     <div class='col-lg-6'>
-                                        <h3 class="headingcolor">Floors</h3>
+                                        <h3 class="headingcolor">ID Proof</h3>
                                         <nav>
                                         <ol class="breadcrumb">
                                             <li class="breadcrumb-item text-primary"><a class="text-decoration-none text-primary" href="{{url('masters')}}">Masters</a></li>
-                                            <li class="breadcrumb-item active text-warning" aria-current="page">Floors</li>
+                                            <li class="breadcrumb-item active text-warning" aria-current="page">ID Proof</li>
                                         </ol>
                                     </nav>
                                     </div>
@@ -86,43 +92,40 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
-                                            <th>Floor No</th>
-                                            <th style="text-align:center">No</th>
+                                            <th>Id Name</th>
+                                            <th>Id Code</th>
+                                            <th style="text-align:center">Validation Length</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $sl = 1; 
-                                        @endphp
-                                        @foreach($floordata as $floor)
+                                      @php 
+                                        $sl = 1;
+                                      @endphp
+                                      @foreach($iddatas as $id)
                                             <tr>
                                                 <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$floor->floor_no}}</td>
-                                                <td style="text-align:center">{{$floor->count}}</td>
-                                                <td>
-                                                        @if($floor->status=="Active")
-                                                        <label class="badge badge-success">Active</label>
-                                                        @else 
-                                                        <label class="badge badge-danger">In Active</label>
-                                                        @endif
-                                                </td>
+                                                <td>{{$id->id_name}}</td>
+                                                <td>{{$id->id_code}}</td>
+                                                <td style="text-align:center">{{$id->id_val_length}}</td>
+                                                <td>{{$id->status}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                   
-                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $floor->id }})'
+                                    
+                                                        <a href='#' class='editbtn'  onclick='showEdit({{ $id->id }})'
                                                             title='Edit'><img src='assets/previous/user.svg'
                                                                 style='height:20px; width:20px' /></a>&nbsp&nbsp
                                                         <a href='javascript:void(0)'
-                                                            onclick="deleteData('{{ url('floors/deleteData') }}/{{ $floor->id }}/{{ $floor->count }}')"
+                                                            onclick="deleteData('{{ url('idproof/deleteData') }}/{{ $id->id }}')"
                                                             title='Delete'><img src='assets/previous/delete.svg'
                                                                 style='height:23px; width:23px' /></a>
-                                  
+                                    
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
+                                       
+                                      @endforeach
                                     </tbody>
                                 </table>
                                 </div>
@@ -140,13 +143,12 @@
 
 @endsection
 @section('scripts')
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script><script>
     $(document).ready(function() {
         // Add custom validation method for letters only
-        // $.validator.addMethod("lettersonly", function(value, element) {
-        //     return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
-        // }, "Only letters and spaces are allowed.");
+        $.validator.addMethod("lettersonly", function(value, element) {
+            return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+        }, "Only letters and spaces are allowed.");
         $.validator.addMethod("numsonly", function(value, element) {
             return this.optional(element) || /^[0-9]+$/.test(value);
         }, "Only numbers are allowed.");
@@ -155,13 +157,17 @@
         }, "Only letters, numbers, and spaces are allowed.");
 
         // Form validation rules
-        $("#floorform").validate({
+        $("#idproofform").validate({
             rules: {
-                floorNo: {
+                idname: {
+                    required: true,
+                    lettersonly: true
+                },
+                idcode: {
                     required: true,
                     alphanumeric: true
                 },
-                floorcount: {
+                vallength: {
                     required: true,
                     numsonly: true
                 },
@@ -170,13 +176,17 @@
                 }
             },
             messages: {
-                floorNo: {
-                    required: "Floor No is required.",
+                idname: {
+                    required: "ID name is required.",
+                    lettersonly: "No digits or special characters allowed."
+                },
+                idcode: {
+                    required: "ID code is required.",
                     alphanumeric: "Only letters, numbers, and spaces are allowed."
                 },
-                floorcount: {
-                    required: "Floor count is required.",
-                    numsonly: "Only digits allowed."
+                vallength: {
+                    required: "Floor No is required.",
+                    numsonly: "Only digits allowed"
                 },
                 status: {
                     required: "Status is required."
@@ -197,12 +207,15 @@
                 // Form submission via AJAX
                 var formData = new FormData(form);
                 formData.append('_token', '{{ csrf_token() }}');
-                var status = $("#status").val();
-                if (status == 'Inactive') {
-                    if (!confirm('Changing the status to inactive will affect blocks, cabins, wards and icus, Do you still want to proceed ?')) {
-                        return false;
-                    }
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
                 }
+                //var status = $("#status").val();
+                // if (status == 'Inactive') {
+                //     if (!confirm('Changing the status to inactive will affect blocks, cabins, wards and icus, Do you still want to proceed ?')) {
+                //         return false;
+                //     }
+                // }
                 $.ajax({
                     url: $("#saveurl").val(),
                     type: "POST",
@@ -242,72 +255,37 @@
     });
 
     function showAdd() {
-        document.getElementById("floorform").reset();
+        document.getElementById("idproofform").reset();
         document.getElementById("mode").value = "add";
         document.getElementById("recordid").value = "";
     }
 
-    // function showEdit(id) {
-    //     document.getElementById("floorform").reset();
-    //     document.getElementById("mode").value = "edit";
-    //     document.getElementById("recordid").value = id;
-        
-    //     $.ajax({
-    //         url: "{{ url('floors/editData') }}/" + id,
-    //         headers: {
-    //             '_token': '{{ csrf_token() }}'
-    //         },
-    //         type: "GET",
-    //         dataType: "json",
-    //         success: function(data) {
-    //             console.log(data); // Add this line
-    //             if (data.floor) {
-    //                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
-    //                 myModal.show();
-    //                 document.getElementById("floorNo").value = data.floor.floor_no;
-    //                 document.getElementById("floorcount").value = data.floor.count;
-    //                 document.getElementById("status").value = data.floor.status;
-    //                 document.getElementById("narration").value = data.floor.narration;
-    //             } else {
-    //                 console.error('Floor data not found');
-    //             }
-    //         },
-
-    //         error: function() {
-    //             return false;
-    //         }
-    //     });
-    // }
     function showEdit(id) {
-    document.getElementById("floorform").reset();
-    document.getElementById("mode").value = "edit";
-    document.getElementById("recordid").value = id;
-    
-    $.ajax({
-        url: "{{ url('floors/editData') }}/" + id,
-        headers: {
-            '_token': '{{ csrf_token() }}'
-        },
-        type: "GET",
-        dataType: "json",
-        success: function(data) {
-            if (data.floor) {
+        document.getElementById("idproofform").reset();
+        document.getElementById("mode").value = "edit";
+        document.getElementById("recordid").value = id;
+        
+        $.ajax({
+            url: "{{ url('idproof/editData') }}/" + id,
+            headers: {
+                '_token': '{{ csrf_token() }}'
+            },
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
                 let myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop'));
                 myModal.show();
-                document.getElementById("floorNo").value = data.floor.floor_no;
-                document.getElementById("floorcount").value = data.floor.count;
-                document.getElementById("status").value = data.floor.status;
-                document.getElementById("narration").value = data.floor.narration;
-            } else {
-                console.error('Floor data not found');
+                document.getElementById("idname").value = data.iddata['id_name'];
+                document.getElementById("idcode").value = data.iddata['id_code'];
+                document.getElementById("vallength").value = data.iddata['id_val_length'];
+                document.getElementById("status").value = data.iddata['status'];
+                document.getElementById("narration").value = data.iddata['narration'];
+            },
+            error: function() {
+                return false;
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error:', error);
-        }
-    });
-}
-
+        });
+    }
 
     function deleteData(url) {
         if (confirm('Are you sure you want to delete this record?')) {
@@ -315,5 +293,4 @@
         }
     }
 </script>
-
 @endsection

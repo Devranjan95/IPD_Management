@@ -20,153 +20,11 @@ class FloorController extends Controller
         return view("backend.floorMaster",['floordata'=>$floordata]);
     }
 
-    // public function saveFloor(Request $request){
-    //     //dd($request->all());
-    //     // Define the path to the floor count file
-    //     $counterFile = storage_path('app/floorcount.txt');
-    //     $counter = intval(file_get_contents($counterFile));
-
-    //     try{
-    //         $request->validate([
-    //             'floorNo' => 'required|string|max:15',
-    //             'status' => 'required',
-    //         ]);
-    //         if($request->mode == "add"){
-    //             $floorexist = Floor::where('floor_no',$request->floorNo)->first();
-    //             if($floorexist){
-    //                 if($floorexist->status == "Deleted"){
-    //                     $updatefloor = Floor::where('id',$floorexist->id)
-    //                                         ->update([
-    //                                             "updated_by"=>1,
-    //                                             "updated_at"=>date("Y-m-d H:i:s"),
-    //                                             "status"=>$request->status
-    //                                         ]);
-    //                     if($updatefloor){
-    //                         return response()->json(["message"=>"Error!! Sorry floor already exists"]);
-    //                     }
-    //                 }else{
-    //                     return response()->json(["message"=>"Error!! Sorry floor already exists"]);
-    //                 }
-    //             }
-    //             $saveFloor = Floor::create([
-    //                 "count" => $counter,
-    //                 "floor_no"=>ucwords($request->floorNo),
-    //                 "status"=>$request->status,
-    //                 "narration"=>$request->narration,
-    //                 "created_by"=>1,
-    //                 "updated_by"=>1
-    //             ]);
-    //             if($saveFloor){
-    //                 // Increment the counter
-    //                 $counter++;
-
-    //                 // Write the updated counter value back to the file
-    //                 file_put_contents($counterFile, $counter);
-    //                 return response()->json(['status'=>true,'message'=>'Floor saved successfully']);
-    //             }else{
-    //                 return response()->json(['status'=>true,'message'=>'Floor could not be saved']);
-    //             }
-    //         }
-    //         if($request->mode == "edit"){
-    //             //dd($request->mode);
-    //             $floorexists = Floor::where('status','!=','Deleted')->where('floor_no', $request->floorNo)->get();
-    //             if($floorexists){
-    //                 foreach($floorexists as $ex){
-    //                     //dd($ex->count);//1
-    //                     if($request->recordid != $ex->count){
-    //                         return response()->json(['status' => false, 'message' => "Error!! Sorry floor already exists"]);
-    //                     }
     
-    //                 }
-    //             }
-                
-    //             $updatefloor = Floor::where('count',$request->recordid)
-    //                                 ->update(["floor_no"=>ucwords($request->floorNo),
-    //                                           "status"=>$request->status,
-    //                                           "narration"=>$request->narration,
-    //                                           "updated_by"=>1,
-    //                                           "updated_at"=>date('Y-m-d H:i:s')]);
-    //             if($updatefloor){
-                    
-    //                 if($request->status == 'Inactive'){
-    //                     $associatedBlocks = Block::where('floor_count', $request->recordid)->get();
-    //                     $associatedCabins = Cabin::where('floor_count',$request->recordid)->get();
-    //                     $associatedWards = Ward::where('floor_count',$request->recordid)->get();
-    //                     $associatedIcus = Icu::where('floor_count',$request->recordid)->get();
-    //                     if($associatedBlocks->isEmpty() || $associatedCabins->isEmpty() ||  $associatedWards->isEmpty()
-    //                      || $associatedIcus->isEmpty()){
-    //                         return response()->json(['status' => true, 'message' => 'Floor updated successfully']);
-    //                     } else {
-    //                         Block::where('floor_count', $request->recordid)
-    //                              ->update([
-    //                                  'status' => 'Inactive',
-    //                                  'updated_by' => 1,
-    //                                  'updated_at' => date('Y-m-d H:i:s')
-    //                              ]);
-    //                         Cabin::where('floor_count', $request->recordid)
-    //                         ->update([
-    //                             'status' => 'Inactive',
-    //                             'updated_by' => 1,
-    //                             'updated_at' => date('Y-m-d H:i:s')
-    //                         ]);
-    //                         Ward::where('floor_count', $request->recordid)
-    //                         ->update([
-    //                             'status' => 'Inactive',
-    //                             'updated_by' => 1,
-    //                             'updated_at' => date('Y-m-d H:i:s')
-    //                         ]);
-    //                         Icu::where('floor_count', $request->recordid)
-    //                         ->update([
-    //                             'status' => 'Inactive',
-    //                             'updated_by' => 1,
-    //                             'updated_at' => date('Y-m-d H:i:s')
-    //                         ]);
-    //                         return response()->json(['status' => true, 'message' => 'Floor updated successfully']);
-    //                     }
-    //                 }else{
-    //                     Block::where('floor_count', $request->recordid)
-    //                              ->update([
-    //                                  'status' => 'Active',
-    //                                  'updated_by' => 1,
-    //                                  'updated_at' => date('Y-m-d H:i:s')
-    //                              ]);
-    //                     Cabin::where('floor_count', $request->recordid)
-    //                     ->update([
-    //                         'status' => 'Active',
-    //                         'updated_by' => 1,
-    //                         'updated_at' => date('Y-m-d H:i:s')
-    //                     ]);
-    //                     Ward::where('floor_count', $request->recordid)
-    //                     ->update([
-    //                         'status' => 'Active',
-    //                         'updated_by' => 1,
-    //                         'updated_at' => date('Y-m-d H:i:s')
-    //                     ]);
-    //                     Icu::where('floor_count', $request->recordid)
-    //                     ->update([
-    //                         'status' => 'Active',
-    //                         'updated_by' => 1,
-    //                         'updated_at' => date('Y-m-d H:i:s')
-    //                     ]);
-    //                 }
-    //                 return response()->json(['status'=>true,'message'=>'Floor updated successfully']);
-    //             }else{
-    //                 return response()->json(['status'=>false,'message'=>'Floor could not be updated']);
-    //             }
-                
-    //         }
-    //     }catch (ValidationException $e){
-    //         return response()->json([
-    //             'status' => false,
-    //             'errors' => $e->errors()
-    //         ], 422);
-    //     }
-     
-    // }
     public function saveFloor(Request $request){
         // Define the path to the floor count file
-        $counterFile = storage_path('app/floorcount.txt');
-        $counter = intval(file_get_contents($counterFile));
+        // $counterFile = storage_path('app/floorcount.txt');
+        // $counter = intval(file_get_contents($counterFile));
     
         try {
             $request->validate([
@@ -175,7 +33,7 @@ class FloorController extends Controller
             ]);
     
             if ($request->mode == "add") {
-                $floorexist = Floor::where('floor_no', $request->floorNo)->first();
+                $floorexist = Floor::where('floor_no', $request->floorNo)->orWhere('count',$request->floorcount)->first();
                 if ($floorexist) {
                     if ($floorexist->status == "Deleted") {
                         $updatefloor = Floor::where('id', $floorexist->id)
@@ -193,7 +51,7 @@ class FloorController extends Controller
                 }
     
                 $saveFloor = Floor::create([
-                    "count" => $counter,
+                    "count" => $request->floorcount,
                     "floor_no" => ucwords($request->floorNo),
                     "status" => $request->status,
                     "narration" => $request->narration,
@@ -203,9 +61,9 @@ class FloorController extends Controller
     
                 if ($saveFloor) {
                     // Increment the counter
-                    $counter++;
+                    //$counter++;
                     // Write the updated counter value back to the file
-                    file_put_contents($counterFile, $counter);
+                    //file_put_contents($counterFile, $counter);
                     return response()->json(['status' => true, 'message' => 'Floor saved successfully']);
                 } else {
                     return response()->json(['status' => true, 'message' => 'Floor could not be saved']);
@@ -213,7 +71,11 @@ class FloorController extends Controller
             }
     
             if ($request->mode == "edit") {
-                $floorexists = Floor::where('status', '!=', 'Deleted')->where('floor_no', $request->floorNo)->get();
+                //$floorexists = Floor::where('status', '!=', 'Deleted')->where('floor_no', $request->floorNo)->get();
+                $floorexists = Floor::where(function ($query) use ($request) {
+                    $query->where('floor_no', $request->floorNo)
+                        ->orWhere('count', $request->floorcount);
+                })->get();
                 if ($floorexists) {
                     foreach ($floorexists as $ex) {
                         if ($request->recordid != $ex->count) {
@@ -225,8 +87,9 @@ class FloorController extends Controller
                 DB::beginTransaction();
     
                 try {
-                    $updatefloor = Floor::where('count', $request->recordid)
+                    $updatefloor = Floor::where('id', $request->recordid)
                                         ->update([
+                                            "count" => $request->floorcount,
                                             "floor_no" => ucwords($request->floorNo),
                                             "status" => $request->status,
                                             "narration" => $request->narration,
@@ -325,12 +188,19 @@ class FloorController extends Controller
             ], 422);
         }
     }
-    public function getData(string $count)
+    public function getData(string $id)
     {   
-        //dd($id);
-        $floor = Floor::where('count', $count)->first();
-        return response()->json(['floor'=>$floor]);
+        // Ensure the 'count' column is the correct one for fetching the floor data.
+        $floor = Floor::where('id', $id)->first();
+    
+        // Check if the floor data was found
+        if ($floor) {
+            return response()->json(['floor' => $floor]);
+        } else {
+            return response()->json(['message' => 'Floor not found'], 404);
+        }
     }
+    
     // public function deleteData($id,$count)
     // {
     //     // Find the floor record by ID

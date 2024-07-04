@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FloorController;
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\AmenityController;
+use App\Http\Controllers\IDproofController;
 use App\Http\Controllers\CabinTypeController;
 use App\Http\Controllers\WardTypeController;
 use App\Http\Controllers\IcuTypeController;
@@ -40,7 +41,7 @@ Route::get('/masters', function () {
 
 Route::get('floors/',[FloorController::class,'index']);
 Route::post('floors/saveData',[FloorController::class,'saveFloor']);
-Route::get('floors/editData/{count}',[FloorController::class,'getData']);
+Route::get('floors/editData/{id}',[FloorController::class,'getData']);
 Route::get('floors/deleteData/{id}/{count}',[FloorController::class,'deleteData']);
 
 Route::get('blocks/',[BlockController::class,'index']);
@@ -52,6 +53,11 @@ Route::get('amenities/',[AmenityController::class,'index']);
 Route::post('amenities/saveData',[AmenityController::class,'saveAmenity']);
 Route::get('amenities/editData/{id}',[AmenityController::class,'getData']);
 Route::get('amenities/deleteData/{id}',[AmenityController::class,'deleteData']);
+
+Route::get('idproof/',[IDproofController::class,'index']);
+Route::post('idproof/saveData',[IDproofController::class,'saveIDproof']);
+Route::get('idproof/editData/{id}',[IDproofController::class,'getIdproof']);
+Route::get('idproof/deleteData/{id}',[IDproofController::class,'deleteData']);
 
 Route::get('cabintypes/',[CabinTypeController::class,'index']);
 Route::post('cabintypes/saveData',[CabinTypeController::class,'saveCabinType']);
@@ -110,4 +116,7 @@ Route::get('editassignbed/{id}/{type}',[BedAssignController::class,'getDataValue
 Route::post('bednumber/delete',[BedAssignController::class,'removeBed']);
 
 Route::get('registration/',[RegistrationController::class,'index']);
+Route::get('idprooflength/{idproofID}',[RegistrationController::class,'getidproofLength']);
 Route::get('getbedinfo/{bednum}',[RegistrationController::class,'getBedData']);
+Route::get('getpatient/data/{patid}',[RegistrationController::class,'searchPatient']);
+Route::post('registration/saveData',[RegistrationController::class,'saveRegistration']);

@@ -21,150 +21,154 @@
                         </div>
                     </div>
                     <div class="row mb-4">
-                        <div class="col-md-12">
-                            @foreach($floors as $floor)
-                                <div class="floor-card mb-3 @if($floor->status != 'Active') bg-danger text-white @endif">
-                                    <div class="card-body text-center">
-                                        @if($floor->status != 'Active')
-                                            <h6>{{$floor->floor_no}}</h6>
-                                            <p>Floor is inactive</p>
-                                        @else
-                                            <h5 class="card-title">{{ $floor->floor_no }}</h5>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="card inner-card mb-3">
-                                                        <div class="card-body scrollable">
-                                                            <h5 class="card-title">Cabins</h5>
-                                                            <div class="cabins-content d-flex flex-wrap">
-                                                                @if(isset($cabindetails[$floor->count]) && count($cabindetails[$floor->count]) > 0)
-                                                                    @foreach($cabindetails[$floor->count] as $cabin)
-                                                                        @php 
-                                                                            $occupancy = $cabin->total_occupancy;
-                                                                            $assigned = $cabin->assigned;
-                                                                            $available = $occupancy - $assigned;
-                                                                        @endphp
-                                                                        @if($available === 0)
-                                                                            <div class="cabin-card bg-danger">
-                                                                                
-                                                                                    <h6 style="color:#fff">{{ $cabin->cabin_name }}</h6>
-                                                                                    <p style="font-size:12px;color:#fff">Available 0</p>
-                                                                                
-                                                                            </div>
-                                                                        @elseif($cabin->status != "Active")
-                                                                            <div class="cabin-card bg-danger text-white">
-                                                                                <h6>{{ $cabin->cabin_name }}</h6>
-                                                                                <p style="font-size:12px">Cabin Not Active</p>
-                                                                            </div>
+                        <div class="card mb-30">
+                            <div class="card-body">
+                                <div class="col-md-12">
+                                    @foreach($floors as $floor)
+                                        <div class="floor-card mb-3 @if($floor->status != 'Active') bg-danger text-white @endif">
+                                            <div class="card-body text-center">
+                                                @if($floor->status != 'Active')
+                                                    <h6>{{$floor->floor_no}}</h6>
+                                                    <p>Floor is inactive</p>
+                                                @else
+                                                    <h5 class="card-title">{{ $floor->floor_no }}</h5>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="card inner-card mb-3">
+                                                                <div class="card-body scrollable">
+                                                                    <h5 class="card-title">Cabins</h5>
+                                                                    <div class="cabins-content d-flex flex-wrap">
+                                                                        @if(isset($cabindetails[$floor->count]) && count($cabindetails[$floor->count]) > 0)
+                                                                            @foreach($cabindetails[$floor->count] as $cabin)
+                                                                                @php 
+                                                                                    $occupancy = $cabin->total_occupancy;
+                                                                                    $assigned = $cabin->assigned;
+                                                                                    $available = $occupancy - $assigned;
+                                                                                @endphp
+                                                                                @if($available === 0)
+                                                                                    <div class="cabin-card bg-danger">
+                                                                                        
+                                                                                            <h6 style="color:#fff">{{ $cabin->cabin_name }}</h6>
+                                                                                            <p style="font-size:12px;color:#fff">Available 0</p>
+                                                                                        
+                                                                                    </div>
+                                                                                @elseif($cabin->status != "Active")
+                                                                                    <div class="cabin-card bg-danger text-white">
+                                                                                        <h6>{{ $cabin->cabin_name }}</h6>
+                                                                                        <p style="font-size:12px">Cabin Not Active</p>
+                                                                                    </div>
+                                                                                @else
+                                                                                    <div class="cabin-card">
+                                                                                        <a href="#" style="text-decoration:none" onclick="takeValue({{$cabin->id}}, 'cabin')">
+                                                                                            <h6 style="color:#006400">{{ $cabin->cabin_name }}</h6>
+                                                                                            <p style="font-size:12px; color:red">Total:{{$cabin->total_occupancy}}</p>
+                                                                                            <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                @endif
+                                                                            @endforeach
                                                                         @else
-                                                                            <div class="cabin-card">
-                                                                                <a href="#" style="text-decoration:none" onclick="takeValue({{$cabin->id}}, 'cabin')">
-                                                                                    <h6 style="color:#006400">{{ $cabin->cabin_name }}</h6>
-                                                                                    <p style="font-size:12px; color:red">Total:{{$cabin->total_occupancy}}</p>
-                                                                                    <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
-                                                                                </a>
+                                                                            <div class="no-cabins">
+                                                                                <p class="card-text">No cabins available on this floor.</p>
                                                                             </div>
                                                                         @endif
-                                                                    @endforeach
-                                                                @else
-                                                                    <div class="no-cabins">
-                                                                        <p class="card-text">No cabins available on this floor.</p>
                                                                     </div>
-                                                                @endif
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="card inner-card mb-3">
-                                                        <div class="card-body scrollable">
-                                                            <h5 class="card-title">Wards</h5>
-                                                            <div class="wards-content d-flex flex-wrap">
-                                                                @if(isset($warddetails[$floor->count]) && count($warddetails[$floor->count]) > 0)
-                                                                    @foreach($warddetails[$floor->count] as $ward)
-                                                                        @php 
-                                                                            $occupancy = $ward->total_occupancy;
-                                                                            $assigned = $ward->assigned;
-                                                                            $available = $occupancy - $assigned;
-                                                                        @endphp
-                                                                        @if($available === 0)
-                                                                            <div class="ward-card bg-danger text-white">
-                                                                                <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$ward->id}}, 'ward')">
-                                                                                    <h6>{{ $ward->ward_name }}</h6>
-                                                                                    <p style="font-size:12px">Available 0</p>
-                                                                                </a>
-                                                                            </div>
-                                                                        @elseif($ward->status != "Active")
-                                                                            <div class="cabin-card bg-danger text-white">
-                                                                                <h6>{{ $ward->ward_name }}</h6>
-                                                                                <p style="font-size:12px">Ward Not Active</p>
-                                                                            </div>
+                                                        <div class="col-md-4">
+                                                            <div class="card inner-card mb-3">
+                                                                <div class="card-body scrollable">
+                                                                    <h5 class="card-title">Wards</h5>
+                                                                    <div class="wards-content d-flex flex-wrap">
+                                                                        @if(isset($warddetails[$floor->count]) && count($warddetails[$floor->count]) > 0)
+                                                                            @foreach($warddetails[$floor->count] as $ward)
+                                                                                @php 
+                                                                                    $occupancy = $ward->total_occupancy;
+                                                                                    $assigned = $ward->assigned;
+                                                                                    $available = $occupancy - $assigned;
+                                                                                @endphp
+                                                                                @if($available === 0)
+                                                                                    <div class="ward-card bg-danger text-white">
+                                                                                        <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$ward->id}}, 'ward')">
+                                                                                            <h6>{{ $ward->ward_name }}</h6>
+                                                                                            <p style="font-size:12px">Available 0</p>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                @elseif($ward->status != "Active")
+                                                                                    <div class="cabin-card bg-danger text-white">
+                                                                                        <h6>{{ $ward->ward_name }}</h6>
+                                                                                        <p style="font-size:12px">Ward Not Active</p>
+                                                                                    </div>
+                                                                                @else
+                                                                                    <div class="ward-card">
+                                                                                        <a href="#" style="text-decoration:none" onclick="takeValue({{$ward->id}}, 'ward')">
+                                                                                            <h6 style="color:#dc143c">{{ $ward->ward_name }}</h6>
+                                                                                            <p style="font-size:12px; color:red">Total:{{$ward->total_occupancy}}</p>
+                                                                                            <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                @endif
+                                                                            @endforeach
                                                                         @else
-                                                                            <div class="ward-card">
-                                                                                <a href="#" style="text-decoration:none" onclick="takeValue({{$ward->id}}, 'ward')">
-                                                                                    <h6 style="color:#dc143c">{{ $ward->ward_name }}</h6>
-                                                                                    <p style="font-size:12px; color:red">Total:{{$ward->total_occupancy}}</p>
-                                                                                    <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
-                                                                                </a>
-                                                                            </div>
+                                                                            <div class="no-cabins">
+                                                                                <p class="card-text">No wards available on this floor.</p>
+                                                                            </div>       
                                                                         @endif
-                                                                    @endforeach
-                                                                @else
-                                                                    <div class="no-cabins">
-                                                                        <p class="card-text">No wards available on this floor.</p>
-                                                                    </div>       
-                                                                @endif
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="card inner-card mb-3">
-                                                        <div class="card-body scrollable">
-                                                            <h5 class="card-title">ICUs</h5>
-                                                            <div class="icus-content d-flex flex-wrap">
-                                                                @if(isset($icudetails[$floor->count]) && count($icudetails[$floor->count]) > 0)
-                                                                    @foreach($icudetails[$floor->count] as $icu)
-                                                                        @php 
-                                                                            $occupancy = $icu->total_occupancy;
-                                                                            $assigned = $icu->assigned;
-                                                                            $available = $occupancy - $assigned;
-                                                                        @endphp
-                                                                        @if($available === 0)
-                                                                            <div class="icu-card bg-danger text-white">
-                                                                                <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$icu->id}}, 'icu')">
-                                                                                    <h6>{{ $icu->icu_name }}</h6>
-                                                                                    <p style="font-size:12px">Available 0</p>
-                                                                                </a>
-                                                                            </div>
-                                                                        @elseif($icu->status != "Active")
-                                                                            <div class="cabin-card bg-danger text-white">
-                                                                                <h6>{{ $icu->icu_name }}</h6>
-                                                                                <p style="font-size:12px">Icu Not Active</p>
-                                                                            </div>
+                                                        <div class="col-md-4">
+                                                            <div class="card inner-card mb-3">
+                                                                <div class="card-body scrollable">
+                                                                    <h5 class="card-title">ICUs</h5>
+                                                                    <div class="icus-content d-flex flex-wrap">
+                                                                        @if(isset($icudetails[$floor->count]) && count($icudetails[$floor->count]) > 0)
+                                                                            @foreach($icudetails[$floor->count] as $icu)
+                                                                                @php 
+                                                                                    $occupancy = $icu->total_occupancy;
+                                                                                    $assigned = $icu->assigned;
+                                                                                    $available = $occupancy - $assigned;
+                                                                                @endphp
+                                                                                @if($available === 0)
+                                                                                    <div class="icu-card bg-danger text-white">
+                                                                                        <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$icu->id}}, 'icu')">
+                                                                                            <h6>{{ $icu->icu_name }}</h6>
+                                                                                            <p style="font-size:12px">Available 0</p>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                @elseif($icu->status != "Active")
+                                                                                    <div class="cabin-card bg-danger text-white">
+                                                                                        <h6>{{ $icu->icu_name }}</h6>
+                                                                                        <p style="font-size:12px">Icu Not Active</p>
+                                                                                    </div>
+                                                                                @else
+                                                                                    <div class="icu-card">
+                                                                                        <a href="#" style="text-decoration:none" onclick="takeValue({{$icu->id}}, 'icu')">
+                                                                                            <h6 style="color:#0000cd">{{ $icu->icu_name }}</h6>
+                                                                                            <p style="font-size:12px; color:red">Total:{{$icu->total_occupancy}}</p>
+                                                                                            <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                @endif
+                                                                            @endforeach
                                                                         @else
-                                                                            <div class="icu-card">
-                                                                                <a href="#" style="text-decoration:none" onclick="takeValue({{$icu->id}}, 'icu')">
-                                                                                    <h6 style="color:#0000cd">{{ $icu->icu_name }}</h6>
-                                                                                    <p style="font-size:12px; color:red">Total:{{$icu->total_occupancy}}</p>
-                                                                                    <p style="font-size:12px; color:green">Vacant: {{ $available }}</p>
-                                                                                </a>
-                                                                            </div>
+                                                                            <div class="no-cabins">
+                                                                                <p class="card-text">No ICUs available on this floor.</p>
+                                                                            </div>  
                                                                         @endif
-                                                                    @endforeach
-                                                                @else
-                                                                    <div class="no-cabins">
-                                                                        <p class="card-text">No ICUs available on this floor.</p>
-                                                                    </div>  
-                                                                @endif
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                @endif
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endforeach
+                            </div>
                         </div>
                     </div>
 

@@ -14,6 +14,12 @@ use App\Models\IcuType;
 use App\Models\Ward;
 use App\Models\Icu;
 use App\Models\BedAssign;
+use App\Models\Patient;
+use App\Models\Token;
+use App\Models\IdProof;
+use App\Models\SurgeryCount;
+use App\Models\ObservationCount;
+use Carbon\Carbon;
 
 class RegistrationController extends Controller
 {
@@ -24,13 +30,13 @@ class RegistrationController extends Controller
         $floor = Floor::all();
 
         $floorOccupancy = [];
-
         foreach ($floor as $fl) {
             // Calculate for Cabin
+
             $blockinfo = Block::where('floor_count',$fl->count)->get();
             $bedno = [];
             foreach($blockinfo as $blk){
-                    $bedassigninfo = BedAssign::where('block_id',$blk->id)->select('bed_no','type')->get();
+                    $bedassigninfo = BedAssign::where('block_id',$blk->id)->select('bed_no','type','status')->get();
                     $bedno[]=$bedassigninfo;
             }
             //dd($bedno);
@@ -76,7 +82,7 @@ class RegistrationController extends Controller
                 'assigned_sum_icu' => $assigned_sum_icu,
                 'total_available_icu' => $total_available_icu,
                 'blockinfo' => $blockinfo,
-                'bedno'=>$bedno
+                'bedno'=>$bedno,
             ];
         }
         //dd($floorOccupancy);
@@ -85,10 +91,12 @@ class RegistrationController extends Controller
 
     public function getBedData($bednum){
         $bednum = str_replace('-', '/', $bednum);
+        $regnNos = Patient::pluck('patient_regn_no','id');
         //dd($bednum);
         $beddata = BedAssign::where('bed_no',$bednum)->first();
         $floor = Floor::where('count',$beddata->floor_count)->value('floor_no');
         $block = Block::where('id',$beddata->block_id)->value('block_name');
+        $idproof = IdProof::where('status','Active')->pluck('id_name','id');
         if($beddata->type == "cabin"){
             $cabininfo = Cabin::where('id',$beddata->type_id)->first();
             $type = CabinType::where('id',$cabininfo->cabin_type_id)->value('cabin_type');
@@ -102,12 +110,161 @@ class RegistrationController extends Controller
             $type = IcuType::where('id',$icuinfo->icu_type_id)->value('icu_type');
             $bedinfo = [$beddata,$floor,$block,$icuinfo,$type];
         }
-        
+        $bedinfo[] = $regnNos;
+        $bedinfo[] = $idproof;
         //dd($bedinfo);
         if($bedinfo){
             return response()->json(["message"=>"Bed found","bedinfo"=>$bedinfo]);
         }else{
             return response()->json(["message"=>"Sorry no such bed found","bedinfo"=>$bedinfo]);
+        }
+    }
+
+    public function generateRegn(){
+        $regcounterFile = storage_path('app/registrationcounter.txt');
+        $regcounter = intval(file_get_contents($regcounterFile));
+        $formattedCounter = sprintf('%04d', $regcounter);
+        $prefix = "PATCON/" . date('d/m/Y/H/i/s') . "/";
+        if($regcounter){
+            $regn = $prefix.$formattedCounter;
+            return $regn;
+        }else{
+            return response()->json(["message"=>"Sorry regestration number could not be generated"]);
+        }
+    }
+
+    public function tokenGen($treat){
+        $date =  date('Y-m-d');
+        if($treat == "Surgery"){
+            $scount = SurgeryCount::where('date',$date)->first();
+            //dd($scount);
+            if(!is_null($scount)){
+                //dd(1);
+                $countval = $scount->counter;
+                //dd($countval);
+                $countval = $countval + 1;
+                $formattedtoken = sprintf('%02d', $countval);
+                $token = "surg/".$formattedtoken;
+                $upcount = $scount->update(["counter"=>$countval]);
+            }else{
+                //dd(0);
+                $countval = 1;
+                $formattedtoken = sprintf('%02d', $countval);
+                $token = "surg/".$formattedtoken;
+                $upcount = SurgeryCount::create(["counter"=>$countval,"date"=>$date]);
+            }
+            return $token;
+        }else{
+            $ocount = ObservationCount::where('date',$date)->first();
+            if(!is_null($ocount)){
+                $countval = $ocount->counter;
+                $countval = $countval + 1;
+                $formattedtoken = sprintf('%02d', $countval);
+                $token = "obsrv/".$formattedtoken;
+                $upcount = $ocount->update(["counter"=>$countval]);
+            }else{
+                $countval = 1;
+                $formattedtoken = sprintf('%02d', $countval);
+                $token = "obsrv/".$formattedtoken;
+                $upcount = ObservationCount::create(["counter"=>$countval,"date"=>$date]);
+            }
+            return $token;
+        }
+    }
+
+    public function getidproofLength($idproofID){
+        //dd($idproofID);
+        $idproofLength = IdProof::where('id',$idproofID)->value('id_val_length');
+        //dd($idproofLength);
+        if($idproofLength){
+            return response()->json(['idproofLength'=>$idproofLength]);
+        }
+    }
+
+    public function saveRegistration(Request $request){
+        //dd($request);
+        try{
+            $request->validate([
+                'bedno' => 'required',
+                'bedname' => 'required',
+                'type'=>'required',
+                'pname'=>'required',
+                'phone'=>'required',
+                'email'=>'email',
+                'aname'=>'required',
+                'aphone'=>'required'
+            ]);
+            
+            if($request->regno){
+                $regn = $request->regno;
+            }else{
+                $regn = $this->generateRegn();
+            }
+            //dd($regn);
+            $savePatient = Patient::create([
+                        'patient_regn_no'=>$regn,
+                        'patient_name'=>ucwords($request->pname),
+                        'patient_phone'=>$request->phone,
+                        'patient_email'=>$request->email,
+                        'patient_address'=>$request->address,
+                    ]);
+            if($savePatient){
+                $regcounterFile = storage_path('app/registrationcounter.txt');
+                $regcounter = intval(file_get_contents($regcounterFile));
+                $regcounter++;
+                file_put_contents($regcounterFile, $regcounter);
+                $token = $this->tokenGen($request->treattype);
+                //dd($token);
+                $flag = $request->emergency; 
+                if($flag == 1){
+                    $flag = "Yes";
+                }else{
+                    $flag = "No";
+                }
+                $savetoken = Token::create([
+                    'patient_regn_no'=>$regn,
+                    'token_no'=>$token,
+                    'attendant_name'=>ucwords($request->aname),
+                    'attendant_phone'=>$request->aphone,
+                    'bednumber'=>$request->bedno,
+                    'type'=>$request->type,
+                    'type_name'=>$request->typename,
+                    'type_price_24hr'=>$request->price,
+                    'date_of_addmission'=>Carbon::now()->toDateString(),
+                    'time_of_addmission'=>Carbon::now()->toTimeString(),
+                    'emergency'=>$flag,
+                    'treating_type'=>$request->treattype,
+                    'reffered_from'=>$request->reff,
+                    'status'=>"Booked"
+                ]);
+                if($savetoken){
+                    $updatebedstatus = BedAssign::where('bed_no',$request->bedno)->update(["status"=>"Booked"]);
+                    if($updatebedstatus){
+                        return response()->json(["message"=>"Booking completed successfully","regn"=>$regn]);
+                    }else{
+                        return response()->json(["message"=>"Sorry something went wrong"]);
+                    }
+                }else{
+                    return response()->json(["message"=>"Sorry something went wrong"]);
+                }
+                
+            }
+
+        }catch (ValidationException $e){
+            return response()->json([
+                'status' => false,
+                'errors' => $e->errors()
+            ], 422);
+        }
+    }
+
+    public function searchPatient($patid){
+        //dd($patid);
+        $patinfo = Patient::where('id',$patid)->first();
+        if($patinfo){
+            return response()->json(["message"=>"patient found","patinfo"=>$patinfo]);
+        }else{
+            return response()->json(["message"=>"Sorry something went wrong"]);
         }
     }
 }

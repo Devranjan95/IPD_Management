@@ -102,7 +102,8 @@ public function assignBed(Request $request)
     // Decode the bed numbers and bed names JSON
     $type = $request->flag;
     $id = $request->id;
-
+    $typename = $request->tname;
+    //dd($typename);
     $typeClasses = [
         'cabin' => Cabin::class,
         'ward' => Ward::class,
@@ -127,10 +128,11 @@ public function assignBed(Request $request)
                 "status" => "Vacant"
             ]);
         }
-        $bedassign = BedAssign::where('type_id',$id)->select('bed_no')->get();
+        $bedassign = BedAssign::where('type_name',$typename)->select('bed_no')->get();
         $bednameassign = BedAssign::where('bed_name',$bedName)->get();
-        $countbeds = count($bedassign);
-        $countbedname = count($bednameassign);
+        $countbeds = count($bedassign);//errorr in updating
+        //dd($countbeds);
+        $countbedname = count($bednameassign);//error in updating
         if($bedassign){
             $updateBedAssign = Bed::where('bed_name',$bedName)->update(["assigned_no"=>$countbedname]);
             $updatetype = $class::where('id',$id)->update(["assigned"=>$countbeds]);

@@ -105,8 +105,11 @@
                                                                                         <div class="row">
                                                                                             @foreach($occupancy['bedno'][$blockIndex] as $bedIndex => $bed)
                                                                                                 <div class="col-md-3">
+                                                                                                   
                                                                                                     <div class="form-check">
                                                                                                         <label class="form-check-label" for="bed{{$blockIndex}}{{$bedIndex}}">
+                                                                                                        
+                                                                                                            @if($bed->status != "Booked")
                                                                                                             <a href="#" style="margin-left:-20px" onclick="getBedinfo('{{$bed->bed_no}}')">
                                                                                                                 <i class="fa fa-bed bed-icon" style="color:
                                                                                                                     @if($bed->type == 'cabin')
@@ -120,6 +123,9 @@
                                                                                                                     @endif;
                                                                                                                     font-size:25px"></i>
                                                                                                             </a>
+                                                                                                            @else
+                                                                                                                <i class="fa fa-bed bed-icon" style="color:red;font-size:25px"></i>
+                                                                                                            @endif
                                                                                                         </label>
                                                                                                     </div>
                                                                                                 </div>
@@ -232,152 +238,534 @@
     }
 
     
-    function populateModal(bedinfo) {
-        let bedDetails = bedinfo[0];
-        let floor = bedinfo[1];
-        let block = bedinfo[2];
-        let additionalInfo = bedinfo[3]; // This will be either cabininfo, wardinfo, or icuinfo
-        let typeflag = bedinfo[4];
+    // function populateModal(bedinfo) {
+    //     let bedDetails = bedinfo[0];
+    //     let floor = bedinfo[1];
+    //     let block = bedinfo[2];
+    //     let additionalInfo = bedinfo[3]; // This will be either cabininfo, wardinfo, or icuinfo
+    //     let typeflag = bedinfo[4];
 
-        // Determine type-specific data
-        let type = bedDetails.type;
-        let typeName = additionalInfo[type + "_name"]; // assuming the type_name is stored in this format
-        let amenities = additionalInfo.amenities;
-        let price = additionalInfo.price;
+    //     // Determine type-specific data
+    //     let type = bedDetails.type;
+    //     let typeName = additionalInfo[type + "_name"]; // assuming the type_name is stored in this format
+    //     let amenities = additionalInfo.amenities;
+    //     let price = additionalInfo.price;
 
-        let modalBody = document.getElementById('modalBody');
-        modalBody.innerHTML = `
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="accordion" id="accordionExample">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                <button class="accordion-button" style="background:rgb(238,232,170)" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Bed Information
-                                </button>
-                                </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body" style="background: rgb(249,255,227)">
-                                        <h5 class="card-title pb-4">${bedDetails.bed_name}</h5>
-                                        <p class="card-text pb-2"><strong>Bed Number:</strong> ${bedDetails.bed_no}</p>
-                                        <p class="card-text pb-2"><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
-                                        <p class="card-text pb-2"><strong>Type Name:</strong> ${typeName}</p>
-                                        <p class="card-text pb-2"><strong>Flag:</strong> ${typeName}</p>
-                                        <p class="card-text pb-2"><strong>Floor:</strong> ${floor}</p>
-                                        <p class="card-text pb-2"><strong>Block:</strong> ${block}</p>
-                                        <p class="card-text pb-2"><strong>Amenities:</strong> ${amenities}</p>
-                                        <p class="card-text pb-2"><strong>Price 24hrs:</strong> ₹${price}</p>
-                                    </div>
+    //     let modalBody = document.getElementById('modalBody');
+    //     modalBody.innerHTML = `
+    //         <div class="container-fluid">
+    //             <div class="row">
+    //                 <div class="col-md-3">
+    //                     <div class="accordion" id="accordionExample">
+    //                         <div class="accordion-item">
+    //                             <h2 class="accordion-header" id="headingOne">
+    //                             <button class="accordion-button" style="background:rgb(238,232,170)" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+    //                             Bed Information
+    //                             </button>
+    //                             </h2>
+    //                             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+    //                                 <div class="accordion-body" style="background: rgb(249,255,227)">
+    //                                     <h5 class="card-title pb-4">${bedDetails.bed_name}</h5>
+    //                                     <p class="card-text pb-2"><strong>Bed Number:</strong> ${bedDetails.bed_no}</p>
+    //                                     <p class="card-text pb-2"><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+    //                                     <p class="card-text pb-2"><strong>Flag:</strong> ${typeflag}</p>
+    //                                     <p class="card-text pb-2"><strong>Type Name:</strong> ${typeName}</p>
+    //                                     <p class="card-text pb-2"><strong>Floor:</strong> ${floor}</p>
+    //                                     <p class="card-text pb-2"><strong>Block:</strong> ${block}</p>
+    //                                     <p class="card-text pb-2"><strong>Amenities:</strong> ${amenities}</p>
+    //                                     <p class="card-text pb-2"><strong>Price 24hrs:</strong> ₹${price}</p>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //                 <div class="col-md-9">
+    //                     <div class="card">
+    //                             <div class="card-header text-white" style="background:rgb(32,178,170)">
+    //                                 Registration Form
+    //                             </div>
+    //                             <div class="card-body" style="background:rgb(245,255,250)">
+    //                                 <div class="row pb-4">
+    //                                     <div class="col-md-9">
+    //                                         <select id="regn" name="regn[]" class="form-control select2" >
+    //                                         <option value="" slected disabled>Search exisiting patient</option>
+    //                                             <option value="001">ghhjgjgjg001</option>
+    //                                             <option value="002">ghhjgjgjg002</option>  
+    //                                         </select>
+                                            
+    //                                     </div> 
+    //                                     <div class="col-md-3">
+    //                                         <button class="btn btn-inverse-warning btn-fw w-100">Search</button>
+    //                                     </div>
+    //                                 </div>
+    //                                 <form enctype="multipart/form-data" name="registrationform" id="registrationform">
+    //                                     <input type="hidden" id="saveurl" value="{{ url('registration/saveData') }}" />
+    //                                     <input type="hidden" id="recordid" name="recordid" value="" />
+    //                                     <input type="hidden" id="bedno" name="bedno" value="${bedDetails.bed_no}" />
+    //                                     <input type="hidden" id="bedname" name="bedname" value="${bedDetails.bed_name}" />
+    //                                     <input type="hidden" id="type" name="type" value="${typeflag}" />
+    //                                     <input type="hidden" id="typename" name="typename" value="${typeName}" />
+    //                                     <input type="hidden" id="price" name="price" value="${price}" />
+    //                                     <input type="hidden" id="mode" name="mode">
+    //                                         <div class="col-lg-12 text-center pb-3" style="color:red;font-weight:600" id="error"> </div>
+    //                                         <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
+    //                                         <div class="row pb-2">
+    //                                             <div class="col-md-6">
+    //                                                 <label for="pname" class="form-label">Patient Name<span style="color:red" title="Mandatory">*</span></label>
+    //                                                 <input type="text" class="form-control" placeholder="Enter patient name" id="pname" name="pname">
+    //                                             </div>
+    //                                             <div class="col-md-6">
+    //                                                 <label for="phone" class="form-label">Contact No<span style="color:red" title="Mandatory">*</span></label>
+    //                                                 <input type="text" class="form-control" placeholder="Enter contact no" id="phone" name="phone">
+    //                                             </div>
+    //                                         </div>
+    //                                         <div class="row pb-2">
+    //                                             <div class="col-md-6">
+    //                                                 <label for="email" class="form-label">Email</label>
+    //                                                 <input type="text" class="form-control" placeholder="Enter email" id="email" name="email">
+    //                                             </div>
+    //                                             <div class="col-md-6">
+    //                                                 <label for="address" class="form-label">Address</label>
+    //                                                 <textarea  class="form-control" placeholder="Enter address" id="address" name="address"></textarea>
+    //                                             </div>
+    //                                         </div>
+    //                                         <div class="row pb-2">
+    //                                             <div class="col-md-6">
+    //                                                 <label for="aname" class="form-label">Attendant's Name</label>
+    //                                                 <input type="text" class="form-control" placeholder="Enter attendants name" id="aname" name="aname">
+    //                                             </div>
+    //                                             <div class="col-md-6">
+    //                                                 <label for="aphone" class="form-label"> Attendant's Contact</label>
+    //                                                 <input type="text" class="form-control" placeholder="Enter attendants no" id="aphone" name="aphone">
+    //                                             </div>
+    //                                         </div>
+    //                                         <div class="row pb-2">
+    //                                             <div class="col-md-6">
+    //                                                 <div class="form-check">
+    //                                                     <input class="form-check-input" type="checkbox" value="1" id="emergency id="emergency" name="emergency">
+    //                                                     <label class="form-check-label" for="checkBox">
+    //                                                         If from emergency
+    //                                                     </label>
+    //                                                 </div>
+    //                                             </div>
+    //                                             <div class="col-md-6">
+    //                                                 <label for="treatment" class="form-label">Treatment Type</label>
+    //                                                 <select id="treattype" name="treattype" class="form-select">
+    //                                                     <option value="" selected disabled>Treatment type</option>
+    //                                                     <option value="Surgery">Surgery</option>
+    //                                                     <option value="Observation">Observation</option>
+    //                                                 </select>
+    //                                             </div>
+    //                                         </div>
+    //                                         <div class="row pb-2">
+    //                                             <div class="col-md-12">
+    //                                                 <label for="treatment" class="form-label">Reference From</label>
+    //                                                 <input type="text" class="form-control" placeholder="Reference" id="reff" name="reff">
+    //                                             </div>
+    //                                         </div>
+    //                                     </div>
+    //                                         <button type="submit" class="btn btn-success" onclick="show()">Save</button>
+    //                                 </form>
+    //                             </div>
+    //                         </div>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     `;
+    // }
+//     function populateModal(bedinfo) {
+//     let bedDetails = bedinfo[0];
+//     let floor = bedinfo[1];
+//     let block = bedinfo[2];
+//     let additionalInfo = bedinfo[3]; // This will be either cabininfo, wardinfo, or icuinfo
+//     let typeflag = bedinfo[4];
+//     let regnNos = bedinfo[5];
+//     let idproofs = bedinfo[6];
+//     console.log(idproofs);
+//     // Determine type-specific data
+//     let type = bedDetails.type;
+//     let typeName = additionalInfo[type + "_name"]; // assuming the type_name is stored in this format
+//     let amenities = additionalInfo.amenities;
+//     let price = additionalInfo.price;
+
+//     // Generate options for regnNos
+//     let regnOptions = '<option value="" selected disabled>Search existing patient</option>';
+//     for (let id in regnNos) {
+//         if (regnNos.hasOwnProperty(id)) {
+//             regnOptions += `<option value="${id}">${regnNos[id]}</option>`;
+//         }
+//     }
+
+//     let idproofOptions = '<option value="" selected disabled>Enter Id Proof</option>';
+//     for (let id in idproofs) {
+//         if (regnNos.hasOwnProperty(id)) {
+//             idproofOptions += `<option value="${id}">${idproofs[id]}</option>`;
+//         }
+//     }
+
+//     let modalBody = document.getElementById('modalBody');
+//     modalBody.innerHTML = `
+//         <div class="container-fluid">
+//             <div class="row">
+//                 <div class="col-md-3">
+//                     <div class="accordion" id="accordionExample">
+//                         <div class="accordion-item">
+//                             <h2 class="accordion-header" id="headingOne">
+//                             <button class="accordion-button" style="background:rgb(238,232,170)" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+//                             Bed Information
+//                             </button>
+//                             </h2>
+//                             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+//                                 <div class="accordion-body" style="background: rgb(249,255,227)">
+//                                     <h5 class="card-title pb-4">${bedDetails.bed_name}</h5>
+//                                     <p class="card-text pb-2"><strong>Bed Number:</strong> ${bedDetails.bed_no}</p>
+//                                     <p class="card-text pb-2"><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+//                                     <p class="card-text pb-2"><strong>Flag:</strong> ${typeflag}</p>
+//                                     <p class="card-text pb-2"><strong>Type Name:</strong> ${typeName}</p>
+//                                     <p class="card-text pb-2"><strong>Floor:</strong> ${floor}</p>
+//                                     <p class="card-text pb-2"><strong>Block:</strong> ${block}</p>
+//                                     <p class="card-text pb-2"><strong>Amenities:</strong> ${amenities}</p>
+//                                     <p class="card-text pb-2"><strong>Price 24hrs:</strong> ₹${price}</p>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </div>
+//                 <div class="col-md-9">
+//                     <div class="card">
+//                             <div class="card-header text-white" style="background:rgb(32,178,170)">
+//                                 Registration Form
+//                             </div>
+//                             <div class="card-body" style="background:rgb(245,255,250)">
+//                                 <div class="row pb-4">
+//                                     <div class="col-md-9">
+//                                         <select id="regn" name="regn[]" class="form-control select2" onchange="searchPatient()">
+//                                             ${regnOptions}
+//                                         </select>
+//                                     </div> 
+//                                     <div class="col-md-3">
+//                                         <button class="btn btn-inverse-warning btn-fw w-100" onclick="searchPatient()">Search</button>
+//                                     </div>
+//                                 </div>
+//                                 <form enctype="multipart/form-data" name="registrationform" id="registrationform">
+//                                     <input type="hidden" id="saveurl" value="{{ url('registration/saveData') }}" />
+//                                     <input type="hidden" id="recordid" name="recordid" value="" />
+//                                     <input type="hidden" id="bedno" name="bedno" value="${bedDetails.bed_no}" />
+//                                     <input type="hidden" id="bedname" name="bedname" value="${bedDetails.bed_name}" />
+//                                     <input type="hidden" id="type" name="type" value="${typeflag}" />
+//                                     <input type="hidden" id="typename" name="typename" value="${typeName}" />
+//                                     <input type="hidden" id="price" name="price" value="${price}" />
+//                                     <input type="hidden" id="mode" name="mode">
+//                                     <div class="col-lg-12 text-center pb-3" style="color:red;font-weight:600" id="error"> </div>
+//                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
+//                                     <div class="row pb-2">
+//                                         <div class="col-md-6">
+//                                             <label for="pname" class="form-label">Patient Name<span style="color:red" title="Mandatory">*</span></label>
+//                                             <input type="text" class="form-control" placeholder="Enter patient name" id="pname" name="pname">
+//                                         </div>
+//                                         <div class="col-md-6">
+//                                             <label for="phone" class="form-label">Contact No<span style="color:red" title="Mandatory">*</span></label>
+//                                             <input type="text" class="form-control" placeholder="Enter contact no" id="phone" name="phone">
+//                                         </div>
+//                                     </div>
+//                                     <div class="row pb-2">
+//                                         <select id="regn" name="regn[]" class="form-control">
+//                                             ${idproofOptions}
+//                                         </select>
+//                                     </div>
+//                                     <div class="row pb-2">
+//                                         <div class="col-md-6">
+//                                             <label for="email" class="form-label">Email</label>
+//                                             <input type="text" class="form-control" placeholder="Enter email" id="email" name="email">
+//                                         </div>
+//                                         <div class="col-md-6">
+//                                             <label for="address" class="form-label">Address</label>
+//                                             <textarea class="form-control" placeholder="Enter address" id="address" name="address"></textarea>
+//                                         </div>
+//                                     </div>
+//                                     <div class="row pb-2">
+//                                         <div class="col-md-6">
+//                                             <label for="aname" class="form-label">Attendant's Name</label>
+//                                             <input type="text" class="form-control" placeholder="Enter attendants name" id="aname" name="aname">
+//                                         </div>
+//                                         <div class="col-md-6">
+//                                             <label for="aphone" class="form-label">Attendant's Contact</label>
+//                                             <input type="text" class="form-control" placeholder="Enter attendants no" id="aphone" name="aphone">
+//                                         </div>
+//                                     </div>
+//                                     <div class="row pb-2">
+//                                         <div class="col-md-6">
+//                                             <div class="form-check">
+//                                                 <input class="form-check-input" type="checkbox" value="1" id="emergency" name="emergency">
+//                                                 <label class="form-check-label" for="emergency">
+//                                                     If from emergency
+//                                                 </label>
+//                                             </div>
+//                                         </div>
+//                                         <div class="col-md-6">
+//                                             <label for="treattype" class="form-label">Treatment Type</label>
+//                                             <select id="treattype" name="treattype" class="form-select">
+//                                                 <option value="" selected disabled>Treatment type</option>
+//                                                 <option value="Surgery">Surgery</option>
+//                                                 <option value="Observation">Observation</option>
+//                                             </select>
+//                                         </div>
+//                                     </div>
+//                                     <div class="row pb-2">
+//                                         <div class="col-md-12 pb-3">
+//                                             <label for="reff" class="form-label">Reference From</label>
+//                                             <input type="text" class="form-control" placeholder="Reference" id="reff" name="reff">
+//                                         </div>
+//                                          <button type="submit" class="btn btn-success" onclick="show()">Save</button>
+//                                     </div>
+                                   
+//                                 </form>
+//                             </div>
+//                         </div>
+//                 </div>
+//             </div>
+//         </div>
+//     `;
+// }
+
+function populateModal(bedinfo) {
+    let bedDetails = bedinfo[0];
+    let floor = bedinfo[1];
+    let block = bedinfo[2];
+    let additionalInfo = bedinfo[3]; // This will be either cabininfo, wardinfo, or icuinfo
+    let typeflag = bedinfo[4];
+    let regnNos = bedinfo[5];
+    let idproofs = bedinfo[6];
+    
+    console.log(idproofs);
+
+    // Determine type-specific data
+    let type = bedDetails.type;
+    let typeName = additionalInfo[type + "_name"]; // assuming the type_name is stored in this format
+    let amenities = additionalInfo.amenities;
+    let price = additionalInfo.price;
+
+    // Generate options for regnNos
+    let regnOptions = '<option value="" selected disabled>Search existing patient</option>';
+    for (let id in regnNos) {
+        if (regnNos.hasOwnProperty(id)) {
+            regnOptions += `<option value="${id}">${regnNos[id]}</option>`;
+        }
+    }
+
+    // Generate options for idproofs
+    let idproofOptions = '<option value="" selected disabled>Enter Id Proof</option>';
+    for (let id in idproofs) {
+        if (idproofs.hasOwnProperty(id)) {
+            idproofOptions += `<option value="${id}">${idproofs[id]}</option>`;
+        }
+    }
+
+    let modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = `
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" style="background:rgb(238,232,170)" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Bed Information
+                            </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body" style="background: rgb(249,255,227)">
+                                    <h5 class="card-title pb-4">${bedDetails.bed_name}</h5>
+                                    <p class="card-text pb-2"><strong>Bed Number:</strong> ${bedDetails.bed_no}</p>
+                                    <p class="card-text pb-2"><strong>Type:</strong> ${type.charAt(0).toUpperCase() + type.slice(1)}</p>
+                                    <p class="card-text pb-2"><strong>Flag:</strong> ${typeflag}</p>
+                                    <p class="card-text pb-2"><strong>Type Name:</strong> ${typeName}</p>
+                                    <p class="card-text pb-2"><strong>Floor:</strong> ${floor}</p>
+                                    <p class="card-text pb-2"><strong>Block:</strong> ${block}</p>
+                                    <p class="card-text pb-2"><strong>Amenities:</strong> ${amenities}</p>
+                                    <p class="card-text pb-2"><strong>Price 24hrs:</strong> ₹${price}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-9">
-                        <div class="card">
-                                <div class="card-header text-white" style="background:rgb(32,178,170)">
-                                    Registration Form
+                </div>
+                <div class="col-md-9">
+                    <div class="card">
+                            <div class="card-header text-white" style="background:rgb(32,178,170)">
+                                Registration Form
+                            </div>
+                            <div class="card-body" style="background:rgb(245,255,250)">
+                                <div class="row pb-4">
+                                    <div class="col-md-9">
+                                        <select id="regn" name="regn[]" class="form-control select2" onchange="searchPatient()">
+                                            ${regnOptions}
+                                        </select>
+                                    </div> 
+                                    <div class="col-md-3">
+                                        <button class="btn btn-inverse-warning btn-fw w-100" onclick="searchPatient()">Search</button>
+                                    </div>
                                 </div>
-                                <div class="card-body" style="background:rgb(245,255,250)">
-                                    <div class="row pb-4">
-                                        <div class="col-md-9">
-                                            <select id="regn" name="regn[]" class="form-control select2" >
-                                            <option value="" slected disabled>Search exisiting patient</option>
-                                                <option value="001">ghhjgjgjg001</option>
-                                                <option value="002">ghhjgjgjg002</option>  
-                                            </select>
-                                            
-                                        </div> 
-                                        <div class="col-md-3">
-                                            <button class="btn btn-inverse-warning btn-fw w-100">Search</button>
+                                <form enctype="multipart/form-data" name="registrationform" id="registrationform">
+                                    <input type="hidden" id="saveurl" value="{{ url('registration/saveData') }}" />
+                                    <input type="hidden" id="recordid" name="recordid" value="" />
+                                    <input type="hidden" id="bedno" name="bedno" value="${bedDetails.bed_no}" />
+                                    <input type="hidden" id="bedname" name="bedname" value="${bedDetails.bed_name}" />
+                                    <input type="hidden" id="type" name="type" value="${typeflag}" />
+                                    <input type="hidden" id="typename" name="typename" value="${typeName}" />
+                                    <input type="hidden" id="price" name="price" value="${price}" />
+                                    <input type="hidden" id="mode" name="mode">
+                                    <div class="col-lg-12 text-center pb-3" style="color:red;font-weight:600" id="error"> </div>
+                                    <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
+                                    <div class="row pb-2">
+                                        <div class="col-md-6">
+                                            <label for="pname" class="form-label">Patient Name<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Enter patient name" id="pname" name="pname">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="phone" class="form-label">Contact No<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Enter contact no" id="phone" name="phone">
                                         </div>
                                     </div>
-                                    <form enctype="multipart/form-data" name="registrationform" id="registrationform">
-                                        <input type="hidden" id="saveurl" value="{{ url('registration/saveData') }}" />
-                                        <input type="hidden" id="recordid" name="recordid" value="" />
-                                        <input type="hidden" id="bedno" name="bedno" value="${bedDetails.bed_no}" />
-                                        <input type="hidden" id="bedname" name="bedname" value="${bedDetails.bed_name}" />
-                                        <input type="hidden" id="type" name="type" value="${typeflag}" />
-                                        <input type="hidden" id="mode" name="mode">
-                                            <div class="col-lg-12 text-center pb-3" style="color:red;font-weight:600" id="error"> </div>
-                                            <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
-                                            <div class="row pb-2">
-                                                <div class="col-md-6">
-                                                    <label for="pname" class="form-label">Patient Name<span style="color:red" title="Mandatory">*</span></label>
-                                                    <input type="text" class="form-control" placeholder="Enter patient name" id="pname" name="pname">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="phone" class="form-label">Contact No<span style="color:red" title="Mandatory">*</span></label>
-                                                    <input type="text" class="form-control" placeholder="Enter contact no" id="phone" name="phone">
-                                                </div>
-                                            </div>
-                                            <div class="row pb-2">
-                                                <div class="col-md-6">
-                                                    <label for="email" class="form-label">Email</label>
-                                                    <input type="text" class="form-control" placeholder="Enter email" id="email" name="email">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="address" class="form-label">Address</label>
-                                                    <textarea  class="form-control" placeholder="Enter address" id="address" name="address"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="row pb-2">
-                                                <div class="col-md-6">
-                                                    <label for="aname" class="form-label">Attendant's Name</label>
-                                                    <input type="text" class="form-control" placeholder="Enter attendants name" id="email" name="email">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="aphone" class="form-label"> Attendant's Contact</label>
-                                                    <input type="text" class="form-control" placeholder="Enter attendants no" id="aphone" name="aphone">
-                                                </div>
-                                            </div>
-                                            <div class="row pb-2">
-                                                <div class="col-md-6">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="1" id="emergency id="emergency" name="emergency">
-                                                        <label class="form-check-label" for="checkBox">
-                                                            If from emergency
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="treatment" class="form-label">Treatment Type</label>
-                                                    <select id="treattype" name="treattype" class="form-select">
-                                                        <option value="" selected disabled>Treatment type</option>
-                                                        <option value="Surgery">Surgery</option>
-                                                        <option value="Observation">Observation</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="row pb-2">
-                                                <div class="col-md-12">
-                                                    <label for="treatment" class="form-label">Reference From</label>
-                                                    <input type="text" class="form-control" placeholder="Reference" id="reff" name="reff">
-                                                </div>
+                                    <div class="row pb-2">
+                                        <div class="col-md-6">
+                                            <label for="idproof" class="form-label">ID Proof<span style="color:red" title="Mandatory">*</span></label>
+                                            <select id="idproof" name="idproof" class="form-control" onchange="getLength()">
+                                                ${idproofOptions}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="idproofno" class="form-label">ID Proof Number<span style="color:red" title="Mandatory">*</span></label>
+                                            <input type="text" class="form-control" placeholder="Enter ID proof number" id="idproofno" name="idproofno">
+                                        </div>
+                                    </div>
+                                    <div class="row pb-2">
+                                        <div class="col-md-6">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="text" class="form-control" placeholder="Enter email" id="email" name="email">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="address" class="form-label">Address</label>
+                                            <textarea class="form-control" placeholder="Enter address" id="address" name="address"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row pb-2">
+                                        <div class="col-md-6">
+                                            <label for="aname" class="form-label">Attendant's Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter attendant's name" id="aname" name="aname">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="aphone" class="form-label">Attendant's Contact</label>
+                                            <input type="text" class="form-control" placeholder="Enter attendant's contact no" id="aphone" name="aphone">
+                                        </div>
+                                    </div>
+                                    <div class="row pb-2">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="1" id="emergency" name="emergency">
+                                                <label class="form-check-label" for="emergency">
+                                                    If from emergency
+                                                </label>
                                             </div>
                                         </div>
-                                            <button type="submit" class="btn btn-success" onclick="show()">Save</button>
-                                    </form>
-                                </div>
+                                        <div class="col-md-6">
+                                            <label for="treattype" class="form-label">Treatment Type</label>
+                                            <select id="treattype" name="treattype" class="form-select">
+                                                <option value="" selected disabled>Treatment type</option>
+                                                <option value="Surgery">Surgery</option>
+                                                <option value="Observation">Observation</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row pb-2">
+                                        <div class="col-md-12 pb-3">
+                                            <label for="reff" class="form-label">Reference From</label>
+                                            <input type="text" class="form-control" placeholder="Reference" id="reff" name="reff">
+                                        </div>
+                                        <button type="submit" class="btn btn-success" onclick="show()">Save</button>
+                                    </div>
+                                </form>
                             </div>
-                    </div>
+                        </div>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
+}
+
+
 
     function show(){
         // let myModal = new bootstrap.Modal(document.getElementById('confModal'));
         // myModal.show();
         let formData = new FormData(document.getElementById('registrationform'));
-        
-        for (let [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
+        formData.append('_token','{{csrf_token()}}');
+        // for (let [key, value] of formData.entries()) {
+        //         console.log(`${key}: ${value}`);
+        //     }
+        if(formData){
+            if(confirm('Please Confirm your booking')){
+                $.ajax({
+                    type:"POST",
+                    url:"{{url('registration/saveData')}}",
+                    data:formData,
+                    processData:false,
+                    contentType:false,
+                    success:function(response){
+                        alert(response.message);
+                    },
+                    error:function(){
+                        alert('Error!!');
+                    }
+                })
             }
+        }
     }
 
+function searchPatient(){
+    let patid = document.getElementById('regn').value;
+    alert(patid);
+    if(patid){
+        $.ajax({
+            type:"GET",
+            url:"{{url('getpatient/data')}}/"+patid,
+            headers:{_token:"{{csrf_token()}}"},
+            success:function(response){
+                alert(response.message);
+                document.getElementById("pname").value = response.patinfo['patient_name'];
+                document.getElementById("phone").value = response.patinfo['patient_phone'];
+                document.getElementById("email").value = response.patinfo['patient_email'];
+                document.getElementById("address").value = response.patinfo['patient_address'];
+            },
+            error:function(){
+                alert("Error!!");
+            }
+        })
+    }
+}
 
+function getLength(){
+    let idproofID = document.getElementById('idproof').value;
+    //alert(idproofID);
+    if(idproofID){
+        $.ajax({
+            type:"GET",
+            url:"{{url('idprooflength')}}/"+idproofID,
+            headers:{_token:"{{csrf_token()}}"},
+            success:function(response){
+                let idproofnoInput = document.getElementById('idproofno');
+                if (response.idproofLength) {
+                    idproofnoInput.setAttribute('maxlength', response.idproofLength);
+                } else {
+                    idproofnoInput.removeAttribute('maxlength');
+                }
+            },
+            error:function(){
+                alert("Error!!");
+            }
 
+        })
+    }
+}
 // Function to initialize multi-step form behavior
 
 

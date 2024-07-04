@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('floors', function (Blueprint $table) {
-            $table->id(); // This column is auto_increment and primary key
-            $table->integer('count')->unique(); // This should not be auto_increment
-            $table->string('floor_no', 25)->unique();
-            $table->enum('status', ['Active', 'Inactive', 'Deleted']);
-            $table->text('narration')->nullable(); // Adding the narration field
+        Schema::create('idproofs', function (Blueprint $table) {
+            $table->id();
+            $table->string('id_name');
+            $table->string('id_code')->unique();
+            $table->string('id_val_length');
+            $table->enum('status',['Active','Inactive']);
+            $table->text('narration')->nullable();
             $table->string('created_by');
             $table->string('updated_by');
             $table->timestamps();
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('floors');
+        Schema::dropIfExists('idproofs');
     }
 };

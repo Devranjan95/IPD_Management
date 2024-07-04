@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tokens', function (Blueprint $table) {
+       Schema::create('tokens', function (Blueprint $table) {
             $table->id();
             $table->string('patient_regn_no');
             $table->string('token_no');
@@ -29,8 +29,12 @@ return new class extends Migration
             $table->string('date_of_discharge')->nullable();
             $table->string('time_of_discharge')->nullable();
             $table->string('total_stay_hr')->nullable();
+            $table->string('total_price')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
+
+            // Add foreign key constraint
+            $table->foreign('patient_regn_no')->references('patient_regn_no')->on('patients')->onDelete('cascade');
         });
     }
 

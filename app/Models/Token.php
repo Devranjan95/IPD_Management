@@ -8,4 +8,30 @@ use Illuminate\Database\Eloquent\Model;
 class Token extends Model
 {
     use HasFactory;
+    use HasFactory;
+    protected $table = "tokens";
+    protected $fillable = [
+        'patient_regn_no',
+        'token_no',
+        'attendant_name',
+        'attendant_phone',
+        'bednumber',
+        'type',
+        'type_name',
+        'type_price_24hr',
+        'date_of_addmission',
+        'time_of_addmission',
+        'emergency',
+        'treating_type',
+        'reffered_from',
+        'date_of_discharge',
+        'time_of_discharge',
+        'total_stay_hr',
+        'status',
+    ];
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class, 'patient_regn_no','patient_regn_no');
+    }
 }

@@ -16,4 +16,11 @@ class Patient extends Model
         'patient_email',
         'patient_address',
     ];
+
+    public function tokens()
+    {
+        return $this->hasMany(Token::class, 'patient_regn_no','patient_regn_no');
+    }
+
+    
 }

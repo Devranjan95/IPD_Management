@@ -50,6 +50,16 @@
                                             </a>
                                         </div>
                                     </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="card h-100 transition shadow">
+                                            <a href="{{url('idproof')}}" class="card-link">
+                                                <div class="card-body text-center">
+                                                <img src="{{asset('assets/master/icu.svg')}}" alt="">
+                                                    <h5 class="card-title mt-3">ID Proofs</h5>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
                                     <!-- Cabin-Types Card -->
                                     <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
@@ -114,16 +124,6 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-2 mb-3">
-                                        <div class="card h-100 transition shadow">
-                                            <a href="{{url('bedtypes')}}" class="card-link">
-                                                <div class="card-body text-center">
-                                                <img src="{{asset('assets/master/icu.svg')}}" alt="">
-                                                    <h5 class="card-title mt-3">Bed Types</h5>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div> -->
                                     <div class="col-md-2 mb-3">
                                         <div class="card h-100 transition shadow">
                                             <a href="{{url('bedcategories')}}" class="card-link">
