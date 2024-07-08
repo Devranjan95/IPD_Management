@@ -78,7 +78,8 @@ class FloorController extends Controller
                 })->get();
                 if ($floorexists) {
                     foreach ($floorexists as $ex) {
-                        if ($request->recordid != $ex->count) {
+                        //dd();
+                        if ($request->recordid != $ex->id) {
                             return response()->json(['status' => false, 'message' => "Error!! Sorry floor already exists"]);
                         }
                     }
@@ -99,37 +100,37 @@ class FloorController extends Controller
     
                     if ($updatefloor) {
                         if ($request->status == 'Inactive') {
-                            $associatedBlocks = Block::where('floor_count', $request->recordid)->get();
-                            $associatedCabins = Cabin::where('floor_count', $request->recordid)->get();
-                            $associatedWards = Ward::where('floor_count', $request->recordid)->get();
-                            $associatedIcus = Icu::where('floor_count', $request->recordid)->get();
+                            $associatedBlocks = Block::where('floor_count', $request->floorcount)->get();
+                            $associatedCabins = Cabin::where('floor_count', $request->floorcount)->get();
+                            $associatedWards = Ward::where('floor_count', $request->floorcount)->get();
+                            $associatedIcus = Icu::where('floor_count', $request->floorcount)->get();
     
                             if ($associatedBlocks->isEmpty() && $associatedCabins->isEmpty() && $associatedWards->isEmpty() && $associatedIcus->isEmpty()) {
                                 DB::commit();
                                 return response()->json(['status' => true, 'message' => 'Floor updated successfully']);
                             } else {
-                                Block::where('floor_count', $request->recordid)
+                                Block::where('floor_count', $request->floorcount)
                                     ->update([
                                         'status' => 'Inactive',
                                         'updated_by' => 1,
                                         'updated_at' => now()
                                     ]);
     
-                                Cabin::where('floor_count', $request->recordid)
+                                Cabin::where('floor_count', $request->floorcount)
                                     ->update([
                                         'status' => 'Inactive',
                                         'updated_by' => 1,
                                         'updated_at' => now()
                                     ]);
     
-                                Ward::where('floor_count', $request->recordid)
+                                Ward::where('floor_count', $request->floorcount)
                                     ->update([
                                         'status' => 'Inactive',
                                         'updated_by' => 1,
                                         'updated_at' => now()
                                     ]);
     
-                                Icu::where('floor_count', $request->recordid)
+                                Icu::where('floor_count', $request->floorcount)
                                     ->update([
                                         'status' => 'Inactive',
                                         'updated_by' => 1,
@@ -140,28 +141,28 @@ class FloorController extends Controller
                                 return response()->json(['status' => true, 'message' => 'Floor updated successfully']);
                             }
                         } else {
-                            Block::where('floor_count', $request->recordid)
+                            Block::where('floor_count', $request->floorcount)
                                 ->update([
                                     'status' => 'Active',
                                     'updated_by' => 1,
                                     'updated_at' => now()
                                 ]);
     
-                            Cabin::where('floor_count', $request->recordid)
+                            Cabin::where('floor_count', $request->floorcount)
                                 ->update([
                                     'status' => 'Active',
                                     'updated_by' => 1,
                                     'updated_at' => now()
                                 ]);
     
-                            Ward::where('floor_count', $request->recordid)
+                            Ward::where('floor_count', $request->floorcount)
                                 ->update([
                                     'status' => 'Active',
                                     'updated_by' => 1,
                                     'updated_at' => now()
                                 ]);
     
-                            Icu::where('floor_count', $request->recordid)
+                            Icu::where('floor_count', $request->floorcount)
                                 ->update([
                                     'status' => 'Active',
                                     'updated_by' => 1,

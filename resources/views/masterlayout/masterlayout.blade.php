@@ -25,7 +25,8 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Bootstrap CSS CDN (optional, for styling) -->
     <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="{{asset('assets/css/bootstrap-3.3.7.min.css')}}"> -->
 
 <!-- ***************************************************************************** -->
 
@@ -402,6 +403,7 @@
     <script src="{{asset('assets/js/jquery-3.6.4.min.js')}}"></script>
     <script src="{{asset('assets/js/dataTables.js')}}"></script>
     <script src="{{asset('assets/js/dataTables.bootstrap5.js')}}"></script>
+    <!-- <script src="{{asset('assets/js/bootstrap-3.3.7.min.js')}}"></script> -->
 <!--***************************************************************************  -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script src="{{asset('assets/vendors/select2/select2.min.js')}}"></script>
@@ -430,10 +432,10 @@
   </body>
 </html>
 <script>
- window.addEventListener('load', function() {
-    var preloader = document.getElementById('preloader');
-    preloader.style.display = 'none';
-  });
+//  window.addEventListener('load', function() {
+//     var preloader = document.getElementById('preloader');
+//     preloader.style.display = 'none';
+//   });
 
 new DataTable('.table');
 

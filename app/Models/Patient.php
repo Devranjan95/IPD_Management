@@ -14,7 +14,10 @@ class Patient extends Model
         'patient_name',
         'patient_phone',
         'patient_email',
+        'idproof',
+        'idproof_no',
         'patient_address',
+        'total_visits'
     ];
 
     public function tokens()

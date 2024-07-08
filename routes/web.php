@@ -39,6 +39,10 @@ Route::get('/masters', function () {
     return view('backend.master');
 });
 
+Route::get('/visitorpass', function () {
+    return view('backend.visitorpass');
+});
+
 Route::get('floors/',[FloorController::class,'index']);
 Route::post('floors/saveData',[FloorController::class,'saveFloor']);
 Route::get('floors/editData/{id}',[FloorController::class,'getData']);
@@ -120,3 +124,4 @@ Route::get('idprooflength/{idproofID}',[RegistrationController::class,'getidproo
 Route::get('getbedinfo/{bednum}',[RegistrationController::class,'getBedData']);
 Route::get('getpatient/data/{patid}',[RegistrationController::class,'searchPatient']);
 Route::post('registration/saveData',[RegistrationController::class,'saveRegistration']);
+Route::get('getregn/printpass/{regn}', [RegistrationController::class, 'getPatient']);

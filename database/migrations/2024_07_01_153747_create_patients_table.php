@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('patient_name');
             $table->string('patient_phone');
             $table->string('patient_email')->nullable();
-            $table->string('total_visits')->nullable();
+            $table->string('idproof')->nullable();
+            $table->string('idproof_no')->nullable();
+            $table->integer('total_visits');
             $table->text('patient_address');
             $table->timestamps();
         });

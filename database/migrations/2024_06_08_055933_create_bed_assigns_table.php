@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('type',20);
             $table->string('type_name',30);
             $table->string('type_id',3);
+            $table->integer('bed_price');
+            $table->string('category');
             $table->string('floor_count',25);
             $table->foreignId('block_id')->constrained('blocks')->onDelete('cascade');;
             $table->string('bed_no',30);  // Changed to JSON type

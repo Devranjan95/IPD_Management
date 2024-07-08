@@ -103,6 +103,9 @@ public function assignBed(Request $request)
     $type = $request->flag;
     $id = $request->id;
     $typename = $request->tname;
+    $price = $request->price;
+    $category = $request->cattype;
+    //dd($price);
     //dd($typename);
     $typeClasses = [
         'cabin' => Cabin::class,
@@ -121,6 +124,8 @@ public function assignBed(Request $request)
                 "type" => $type,
                 "type_name" => $name,
                 "type_id" => $id,
+                "bed_price" => $price,
+                "category" => $category,
                 "floor_count" => $request->floor,
                 "block_id" => $request->block,
                 "bed_no" => $bedNumber,

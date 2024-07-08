@@ -288,6 +288,8 @@
                                             <div id="bed_numbers" class="row">
                                                 @if(isset($cabininfo))
                                                             <input type="hidden" id="id" name="id" value="{{$cabininfo->id}}">
+                                                            <input type="hidden" id="cattype" name="cattype" value="{{$cabininfo->cabintype->cabin_type}}">
+                                                            <input type="hidden" id="price" name="price" value="{{$cabininfo->price}}">
                                                             <input type="hidden" id="tname" name="tname" value="{{$cabininfo->cabin_name}}">
                                                             <input type="hidden" id="block" name="block" value="{{$cabininfo->block->id}}">
                                                             <input type="hidden" id="floor" name="floor" value="{{$cabininfo->floor->count}}">
@@ -323,6 +325,8 @@
                                                     @endfor
                                                 @elseif(isset($wardinfo))
                                                             <input type="hidden" id="id" name="id" value="{{$wardinfo->id}}">
+                                                            <input type="hidden" id="cattype" name="cattype" value="{{$wardinfo->wardtype->ward_type}}">
+                                                            <input type="hidden" id="price" name="price" value="{{$wardinfo->price}}">
                                                             <input type="hidden" id="tname" name="tname" value="{{$wardinfo->ward_name}}">
                                                             <input type="hidden" id="block" name="block" value="{{$wardinfo->block->id}}">
                                                             <input type="hidden" id="floor" name="floor" value="{{$wardinfo->floor->count}}">
@@ -358,6 +362,8 @@
                                                     @endfor
                                                 @elseif(isset($icuinfo))
                                                             <input type="hidden" id="id" name="id" value="{{$icuinfo->id}}">
+                                                            <input type="hidden" id="cattype" name="cattype" value="{{$icuinfo->icutype->icu_type}}">
+                                                            <input type="hidden" id="price" name="price" value="{{$icuinfo->price}}">
                                                             <input type="hidden" id="tname" name="tname" value="{{$icuinfo->icu_name}}">
                                                             <input type="hidden" id="block" name="block" value="{{$icuinfo->block->id}}">
                                                             <input type="hidden" id="floor" name="floor" value="{{$icuinfo->floor->count}}">

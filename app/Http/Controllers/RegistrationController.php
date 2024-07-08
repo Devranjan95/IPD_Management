@@ -23,71 +23,53 @@ use Carbon\Carbon;
 
 class RegistrationController extends Controller
 {
-    public function index(){
-        $floor = Floor::all();
+
+    public function index() {
+        $floors = Floor::all();
         $floorOccupancy = [];
-
-        $floor = Floor::all();
-
-        $floorOccupancy = [];
-        foreach ($floor as $fl) {
-            // Calculate for Cabin
-
-            $blockinfo = Block::where('floor_count',$fl->count)->get();
+    
+        foreach ($floors as $fl) {
+            // Collect block information and bed assignments
+            $blockinfo = Block::where('floor_count', $fl->count)->get();
             $bedno = [];
-            foreach($blockinfo as $blk){
-                    $bedassigninfo = BedAssign::where('block_id',$blk->id)->select('bed_no','type','status')->get();
-                    $bedno[]=$bedassigninfo;
+            foreach ($blockinfo as $blk) {
+                $bedassigninfo = BedAssign::where('block_id', $blk->id)->select('bed_no', 'type', 'status','type_name','category','bed_price')->get();
+                $bedno[] = $bedassigninfo;
             }
-            //dd($bedno);
-            $cabinOccupancy = Cabin::where('floor_count', $fl->count)
-                            ->selectRaw('SUM(total_occupancy) as total_occupancy_sum, SUM(assigned) as assigned_sum')
-                            ->groupBy('floor_count')
-                            ->first();
-
-            $total_occupancy_sum_cabin = $cabinOccupancy ? $cabinOccupancy->total_occupancy_sum : 0;
-            $assigned_sum_cabin = $cabinOccupancy ? $cabinOccupancy->assigned_sum : 0;
-            $total_available_cabin = $total_occupancy_sum_cabin - $assigned_sum_cabin;
-
-            // Calculate for Ward
-            $wardOccupancy = Ward::where('floor_count', $fl->count)
-                            ->selectRaw('SUM(total_occupancy) as total_occupancy_sum, SUM(assigned) as assigned_sum')
-                            ->groupBy('floor_count')
-                            ->first();
-
-            $total_occupancy_sum_ward = $wardOccupancy ? $wardOccupancy->total_occupancy_sum : 0;
-            $assigned_sum_ward = $wardOccupancy ? $wardOccupancy->assigned_sum : 0;
-            $total_available_ward = $total_occupancy_sum_ward - $assigned_sum_ward;
-
-            // Calculate for ICU
-            $icuOccupancy = ICU::where('floor_count', $fl->count)
-                            ->selectRaw('SUM(total_occupancy) as total_occupancy_sum, SUM(assigned) as assigned_sum')
-                            ->groupBy('floor_count')
-                            ->first();
-
-            $total_occupancy_sum_icu = $icuOccupancy ? $icuOccupancy->total_occupancy_sum : 0;
-            $assigned_sum_icu = $icuOccupancy ? $icuOccupancy->assigned_sum : 0;
-            $total_available_icu = $total_occupancy_sum_icu - $assigned_sum_icu;
-
+    
+            // Calculate bed counts for Cabin
+            $cabincount = BedAssign::where('type', 'cabin')
+                ->where('floor_count', $fl->count)->where('status','Vacant')
+                ->count();
+    
+            // Calculate bed counts for Ward
+            $wardcount = BedAssign::where('type', 'ward')
+                ->where('floor_count', $fl->count)->where('status','Vacant')
+                ->count();
+    
+            // Calculate bed counts for ICU
+            $icucount = BedAssign::where('type', 'icu')
+                ->where('floor_count', $fl->count)->where('status','Vacant')
+                ->count();
+    
             // Store the results in an array
             $floorOccupancy[] = [
                 'floor_no' => $fl->floor_no,
-                'total_occupancy_sum_cabin' => $total_occupancy_sum_cabin,
-                'assigned_sum_cabin' => $assigned_sum_cabin,
-                'total_available_cabin' => $total_available_cabin,
-                'total_occupancy_sum_ward' => $total_occupancy_sum_ward,
-                'assigned_sum_ward' => $assigned_sum_ward,
-                'total_available_ward' => $total_available_ward,
-                'total_occupancy_sum_icu' => $total_occupancy_sum_icu,
-                'assigned_sum_icu' => $assigned_sum_icu,
-                'total_available_icu' => $total_available_icu,
+                'total_occupancy_sum_cabin' => $cabincount,  // Adjusted variable name
+                'total_occupancy_sum_ward' => $wardcount, // Adjusted variable name
+                'total_occupancy_sum_icu' => $icucount, // Adjusted variable name
                 'blockinfo' => $blockinfo,
-                'bedno'=>$bedno,
+                'bedno' => $bedno,
+                'wardcount' => $wardcount, // Keeping the variable for ward count
+                'cabincount' => $cabincount, // New variable for cabin count
+                'icucount' => $icucount, // New variable for ICU count
             ];
         }
         //dd($floorOccupancy);
-        return view('backend.registration',['floor'=>$floor,'floorOccupancy'=>$floorOccupancy]);
+        // Return view with the data
+        return view('backend.registration', ['floor' => $floors, 'floorOccupancy' => $floorOccupancy]);
     }
+    
 
     public function getBedData($bednum){
         $bednum = str_replace('-', '/', $bednum);
@@ -182,74 +164,123 @@ class RegistrationController extends Controller
     }
 
     public function saveRegistration(Request $request){
+        //dd($request->recordid);
         //dd($request);
         try{
             $request->validate([
                 'bedno' => 'required',
                 'bedname' => 'required',
-                'type'=>'required',
-                'pname'=>'required',
-                'phone'=>'required',
-                'email'=>'email',
-                'aname'=>'required',
-                'aphone'=>'required'
+                'type' => 'required',
+                'pname' => ['required', 'regex:/^[a-zA-Z\s]+$/'],
+                'phone' => ['required', 'digits_between:10,15'],
+                'aname' => ['required', 'regex:/^[a-zA-Z\s]+$/'],
+                'aphone' => ['required', 'digits_between:10,15']
             ]);
-            
-            if($request->regno){
-                $regn = $request->regno;
-            }else{
-                $regn = $this->generateRegn();
-            }
-            //dd($regn);
-            $savePatient = Patient::create([
+            if($request->recordid){
+                //dd(1);
+                $patientexist = Patient::where('id',$request->recordid)->first();
+                $totalvisit = $patientexist->total_visits;
+                $totalvisit = $totalvisit + 1;
+                //dd($totalvisit);
+                $updatepatientvisit = Patient::where('id',$request->recordid)->update(["total_visits"=>$totalvisit]);
+                //dd($updatepatientvisit);
+                if($updatepatientvisit){
+                    $token = $this->tokenGen($request->treattype);
+                    $flag = $request->emergency; 
+                    if($flag == 1){
+                        $flag = "Yes";
+                    }else{
+                        $flag = "No";
+                    }
+                    $regn = $patientexist->patient_regn_no;
+                    $savetoken = Token::create([
                         'patient_regn_no'=>$regn,
-                        'patient_name'=>ucwords($request->pname),
-                        'patient_phone'=>$request->phone,
-                        'patient_email'=>$request->email,
-                        'patient_address'=>$request->address,
+                        'token_no'=>$token,
+                        'attendant_name'=>ucwords($request->aname),
+                        'attendant_phone'=>$request->aphone,
+                        'bednumber'=>$request->bedno,
+                        'type'=>$request->type,
+                        'type_name'=>$request->typename,
+                        'type_price_24hr'=>$request->price,
+                        'date_of_addmission'=>Carbon::now()->toDateString(),
+                        'time_of_addmission'=>Carbon::now()->toTimeString(),
+                        'emergency'=>$flag,
+                        'treating_type'=>$request->treattype,
+                        'reffered_from'=>$request->reff,
+                        'status'=>"Booked"
                     ]);
-            if($savePatient){
-                $regcounterFile = storage_path('app/registrationcounter.txt');
-                $regcounter = intval(file_get_contents($regcounterFile));
-                $regcounter++;
-                file_put_contents($regcounterFile, $regcounter);
-                $token = $this->tokenGen($request->treattype);
-                //dd($token);
-                $flag = $request->emergency; 
-                if($flag == 1){
-                    $flag = "Yes";
-                }else{
-                    $flag = "No";
-                }
-                $savetoken = Token::create([
-                    'patient_regn_no'=>$regn,
-                    'token_no'=>$token,
-                    'attendant_name'=>ucwords($request->aname),
-                    'attendant_phone'=>$request->aphone,
-                    'bednumber'=>$request->bedno,
-                    'type'=>$request->type,
-                    'type_name'=>$request->typename,
-                    'type_price_24hr'=>$request->price,
-                    'date_of_addmission'=>Carbon::now()->toDateString(),
-                    'time_of_addmission'=>Carbon::now()->toTimeString(),
-                    'emergency'=>$flag,
-                    'treating_type'=>$request->treattype,
-                    'reffered_from'=>$request->reff,
-                    'status'=>"Booked"
-                ]);
-                if($savetoken){
-                    $updatebedstatus = BedAssign::where('bed_no',$request->bedno)->update(["status"=>"Booked"]);
-                    if($updatebedstatus){
-                        return response()->json(["message"=>"Booking completed successfully","regn"=>$regn]);
+                    if($savetoken){
+                        $updatebedstatus = BedAssign::where('bed_no',$request->bedno)->update(["status"=>"Booked"]);
+                        if($updatebedstatus){
+                            return response()->json(["message"=>"Booking completed successfully","regn"=>$regn]);
+                        }else{
+                            return response()->json(["message"=>"Sorry something went wrong"]);
+                        }
                     }else{
                         return response()->json(["message"=>"Sorry something went wrong"]);
                     }
-                }else{
-                    return response()->json(["message"=>"Sorry something went wrong"]);
-                }
-                
-            }
 
+                 }
+               
+            }else{
+                
+                if($request->regno){
+                    $regn = $request->regno;
+                }else{
+                    $regn = $this->generateRegn();
+                }
+                $savePatient = Patient::create([
+                            'patient_regn_no'=>$regn,
+                            'patient_name'=>ucwords($request->pname),
+                            'patient_phone'=>$request->phone,
+                            'patient_email'=>$request->email,
+                            'idproof' => $request->idproof,
+                            'idproof_no'=>$request->idproofno,
+                            'patient_address'=>$request->address,
+                            'total_visits'=>1
+                        ]);
+                if($savePatient){
+                    $regcounterFile = storage_path('app/registrationcounter.txt');
+                    $regcounter = intval(file_get_contents($regcounterFile));
+                    $regcounter++;
+                    file_put_contents($regcounterFile, $regcounter);
+                    $token = $this->tokenGen($request->treattype);
+                    //dd($token);
+                    $flag = $request->emergency; 
+                    if($flag == 1){
+                        $flag = "Yes";
+                    }else{
+                        $flag = "No";
+                    }
+                    $savetoken = Token::create([
+                        'patient_regn_no'=>$regn,
+                        'token_no'=>$token,
+                        'attendant_name'=>ucwords($request->aname),
+                        'attendant_phone'=>$request->aphone,
+                        'bednumber'=>$request->bedno,
+                        'type'=>$request->type,
+                        'type_name'=>$request->typename,
+                        'type_price_24hr'=>$request->price,
+                        'date_of_addmission'=>Carbon::now()->toDateString(),
+                        'time_of_addmission'=>Carbon::now()->toTimeString(),
+                        'emergency'=>$flag,
+                        'treating_type'=>$request->treattype,
+                        'reffered_from'=>$request->reff,
+                        'status'=>"Booked"
+                    ]);
+                    if($savetoken){
+                        $updatebedstatus = BedAssign::where('bed_no',$request->bedno)->update(["status"=>"Booked"]);
+                        if($updatebedstatus){
+                            return response()->json(["message"=>"Booking completed successfully","regn"=>$regn]);
+                        }else{
+                            return response()->json(["message"=>"Sorry something went wrong"]);
+                        }
+                    }else{
+                        return response()->json(["message"=>"Sorry something went wrong"]);
+                    }
+                    
+                }
+            }
         }catch (ValidationException $e){
             return response()->json([
                 'status' => false,
@@ -267,4 +298,32 @@ class RegistrationController extends Controller
             return response()->json(["message"=>"Sorry something went wrong"]);
         }
     }
+
+    public function getPatient($regn)
+    {
+        // Replace hyphens back with slashes
+        $originalRegn = str_replace('-', '/', $regn);
+        $currentDate = Carbon::now()->format('Y-m-d'); // Adjust the date format as needed
+
+        $info = Token::with('patient')
+            ->where('patient_regn_no', $originalRegn)
+            ->where('date_of_addmission', $currentDate)
+            ->first();
+        //print_r($info);exit;
+        return view("backend.visitorpass", ['info' => $info]);
+    }
+
+
+    // public function getPatient($regn)
+    // {
+    //     // Replace hyphens back with slashes
+    //     $currentDate = Carbon::now()->format('Y-m-d');
+    //     $originalRegn = str_replace('-', '/', $regn);
+    //     $info = Token::with('patient')->where('patient_regn_no',$originalRegn)->where('date_of_addmission',$currentDate)->get();
+    //     //dd($info);
+    //     if($info){
+    //         return view("backend.visitorpass",['info'=>$info]);
+    //     }
+        
+    // }
 }
