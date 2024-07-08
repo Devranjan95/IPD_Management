@@ -684,7 +684,7 @@
     function searchPatient() {
         let patid = document.getElementById('regn').value;
         document.getElementById('recordid').value = patid;
-        alert(patid);
+        //alert(patid);
         if (patid) {
             $.ajax({
                 type: "GET",
@@ -832,7 +832,7 @@
             $('#regnno').html(response.regn);
             $('#registrationno').val(response.regn);
             let regn = $('#registrationno').val();
-            alert(regn);
+            //alert(regn);
 
             let myModal = new bootstrap.Modal(document.getElementById('success_tic'), {
                 backdrop: 'static',
@@ -853,7 +853,7 @@
 function getregn() {
     let regn = $('#registrationno').val();
     let modifiedRegn = regn.replace(/\//g, '-'); // Replace slashes with hyphens
-    alert(modifiedRegn);
+    //alert(modifiedRegn);
 
     if (regn) {
         $.ajax({
