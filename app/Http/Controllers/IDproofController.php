@@ -13,7 +13,7 @@ class IDproofController extends Controller
 {
     public function index(){
         $iddatas = IdProof::all();
-        return view("backend.idproofMaster",['iddatas'=>$iddatas]);
+        return view("backend.Masters.IDproof.idproofMaster",['iddatas'=>$iddatas]);
     }
 
 

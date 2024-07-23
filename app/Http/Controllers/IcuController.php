@@ -38,7 +38,7 @@ class IcuController extends Controller
             ];
         }
     
-        return view('backend.icuMaster', [
+        return view('backend.Masters.Icu.icuMaster', [
             'icutypes' => $icutypes,
             'floors' => $floors,
             'amenities' => $amenities,

@@ -17,7 +17,7 @@ class FloorController extends Controller
     //
     public function index(){
         $floordata = Floor::where('status','!=','Deleted')->get();
-        return view("backend.floorMaster",['floordata'=>$floordata]);
+        return view("backend.Masters.Floor.floorMaster",['floordata'=>$floordata]);
     }
 
     

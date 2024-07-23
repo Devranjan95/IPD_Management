@@ -11,7 +11,7 @@ class BedCategoryController extends Controller
     //
     public function index(){
         $bedcategories = BedCategory::where('status','!=','Deleted')->get();
-        return view('backend.bedcategoryMaster',['bedcategories'=>$bedcategories]);
+        return view('backend.Masters.Bed.bedcategoryMaster',['bedcategories'=>$bedcategories]);
     }
 
     public function saveBedCateggory(Request $request){

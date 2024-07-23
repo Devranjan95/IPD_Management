@@ -51,7 +51,7 @@ class BlockController extends Controller
             }
         }
     
-        return view("backend.blockMaster", compact('blocks', 'floors', 'floorStatuses'));
+        return view("backend.Masters.Block.blockMaster", compact('blocks', 'floors', 'floorStatuses'));
     }
     
     

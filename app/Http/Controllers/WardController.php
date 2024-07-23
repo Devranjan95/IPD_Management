@@ -62,7 +62,7 @@ class WardController extends Controller
             ];
         }
     
-        return view('backend.wardMaster', [
+        return view('backend.Masters.Ward.wardMaster', [
             'wardtypes' => $wardtypes,
             'floors' => $floors,
             'amenities' => $amenities,

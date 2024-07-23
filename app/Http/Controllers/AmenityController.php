@@ -12,7 +12,7 @@ class AmenityController extends Controller
     //
     public function index(){
         $amenities = Amenity::where('status',"!=","Deleted")->get();
-        return view('backend.amenityMaster',['amenities'=>$amenities]);
+        return view('backend.Masters.Amenity.amenityMaster',['amenities'=>$amenities]);
     }
     public function saveAmenity(Request $request){
         //dd($request->all());

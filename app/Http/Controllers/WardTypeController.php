@@ -7,13 +7,14 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\WardType;
 use App\Models\Ward;
+use App\Models\Token;
 
 class WardTypeController extends Controller
 {
     //
     public function index(){
         $wardtypes = WardType::where('status','!=','Deleted')->get();
-        return view("backend.wardtypeMaster",['wardtypes'=>$wardtypes]);
+        return view("backend.Masters.Ward.wardtypeMaster",['wardtypes'=>$wardtypes]);
     }
     public function saveWardType(Request $request){
         //dd($request->all());
@@ -63,32 +64,60 @@ class WardTypeController extends Controller
     
                     }
                 }
-                $updatewardtype = WardType::where('id',$request->recordid)
-                                    ->update(["ward_type"=>ucwords($request->wardtype),
-                                              "status"=>$request->status,
-                                              "narration"=>$request->narration,
-                                              "updated_by"=>1,
-                                              "updated_at"=>date('Y-m-d H:i:s')]);
+                if ($request->status == "Inactive"){
+                    $wardtypeexist = Token::where('type',$request->wardtype)->where('status','Booked')->exists();
+                    if($wardtypeexist){
+                        return response()->json(['status' => false,"message"=>"Sorry wardtype already in use for a patient cannot be inactive"]);
+                    }else{
+                        $updatewardtype = WardType::where('id',$request->recordid)
+                        ->update(["ward_type"=>ucwords($request->wardtype),
+                                  "status"=>$request->status,
+                                  "narration"=>$request->narration,
+                                  "updated_by"=>1,
+                                  "updated_at"=>date('Y-m-d H:i:s')]);
+                        
+                        if($updatewardtype){
+                            Ward::where("ward_type_id", $request->recordid)->update([
+                                "status" => "Inactive"
+                            ]);
+                            return response()->json(['status' => true,"message"=>"Wardtype updated successfully"]);
+                        }
+                    }
+                }else{
+                    $updatewardtype = WardType::where('id',$request->recordid)
+                        ->update(["ward_type"=>ucwords($request->wardtype),
+                                  "status"=>$request->status,
+                                  "narration"=>$request->narration,
+                                  "updated_by"=>1,
+                                  "updated_at"=>date('Y-m-d H:i:s')]);
+                    if($updatewardtype){
+                        Ward::where("ward_type_id", $request->recordid)->update([
+                            "status" => "Active"
+                        ]);
+                        return response()->json(['status' => true,"message"=>"Wardtype updated successfully"]);
+                    }
+                }
+                
                 // if($updatewardtype){
                 //     return response()->json(['status'=>true,'message'=>'Wardtype updated successfully']);
                 // }else{
                 //     return response()->json(['status'=>false,'message'=>'Wardtype could not be updated']);
                 // }
-                if ($updatewardtype) {
-                    // Update cabin status if necessary
-                    if ($request->status == "Inactive") {
-                        Ward::where("ward_type_id", $request->recordid)->update([
-                            "status" => "Inactive"
-                        ]);
-                    } else {
-                        Ward::where("ward_type_id", $request->recordid)->update([
-                            "status" => "Active"
-                        ]);
-                    }
-                    return response()->json(['status' => true, 'message' => 'Wardtype updated successfully']);
-                } else {
-                    return response()->json(['status' => false, 'message' => 'Wardtype could not be updated'], 500);
-                }
+                // if ($updatewardtype) {
+                //     // Update cabin status if necessary
+                //     if ($request->status == "Inactive") {
+                //         Ward::where("ward_type_id", $request->recordid)->update([
+                //             "status" => "Inactive"
+                //         ]);
+                //     } else {
+                //         Ward::where("ward_type_id", $request->recordid)->update([
+                //             "status" => "Active"
+                //         ]);
+                //     }
+                //     return response()->json(['status' => true, 'message' => 'Wardtype updated successfully']);
+                // } else {
+                //     return response()->json(['status' => false, 'message' => 'Wardtype could not be updated'], 500);
+                // }
                 
             }
         }catch (ValidationException $e){

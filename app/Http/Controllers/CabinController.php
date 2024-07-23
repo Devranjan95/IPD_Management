@@ -87,7 +87,7 @@ class CabinController extends Controller
             ];
         }
     
-        return view('backend.cabinMaster', [
+        return view('backend.Masters.Cabin.cabinMaster', [
             'cabintypes' => $cabintypes,
             'floors' => $floors,
             'amenities' => $amenities,

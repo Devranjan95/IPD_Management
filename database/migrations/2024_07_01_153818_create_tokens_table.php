@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('attendant_name');
             $table->string('attendant_phone');
             $table->string('bednumber');
-            $table->string('type');
-            $table->string('type_name');
+            $table->string('bedtype');
+            $table->string('flag');
+            $table->string('category_id');
+            $table->string('type_name_id');
             $table->string('type_price_24hr');
             $table->string('date_of_addmission');
             $table->string('time_of_addmission');

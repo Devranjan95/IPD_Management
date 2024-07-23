@@ -15,6 +15,7 @@ class BedAssign extends Model
         'type_id',
         'bed_price',
         'category',
+        'category_id',
         'floor_count',
         'block_id',
         'bed_no',

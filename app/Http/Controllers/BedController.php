@@ -12,6 +12,7 @@ use App\Models\Cabin;
 use App\Models\Ward;
 use App\Models\Icu;
 use App\Models\BedAssign;
+use App\Models\Token;
 
 class BedController extends Controller
 {
@@ -49,7 +50,7 @@ class BedController extends Controller
 
     $floors = Floor::where('status', 'Active')->pluck('floor_no', 'id');
 
-    return view("backend.bedMaster", [
+    return view("backend.Masters.Bed.bedMaster", [
         'bedcategory' => $bedcategory,
         'beds' => $beds,
         'bedcategoryname' => $bedcategoryname,
@@ -125,26 +126,31 @@ class BedController extends Controller
                     }
                 }
                 $check = BedAssign::where('bed_name',$request->recordid)->exists();
-                if(!$check){
-                    $updatebed = Bed::where('id',$request->recordid)
-                    ->update(["bed_name"=>ucwords($request->bedname),
-                              "bed_category_id"=>$request->bed_category_id,
-                              "no_of_beds"=>$request->no_of_beds,
-                              "status"=>$request->status,
-                              "narration"=>$request->narration,
-                              "updated_by"=>1,
-                              "updated_at"=>date('Y-m-d H:i:s')]);
-                    if($updatebed){
-                        return response()->json(['status'=>true,'message'=>'Bed updated successfully']);
-                    }else{
-                        return response()->json(['status'=>false,'message'=>'Bed could not be updated']);
-                    }
+                $checkinToken = Token::where('bedtype',$request->bedname)->where('status','Booked')->exists();
+                if($checkinToken){
+                    return response()->json(["message"=>"Sorry the bed has been used in registration cannot make it inactive"]);
                 }else{
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Cannot update status. Bed in use',
-                    ]);
-                }  
+                    if(!$check){
+                        $updatebed = Bed::where('id',$request->recordid)
+                        ->update(["bed_name"=>ucwords($request->bedname),
+                                  "bed_category_id"=>$request->bed_category_id,
+                                  "no_of_beds"=>$request->no_of_beds,
+                                  "status"=>$request->status,
+                                  "narration"=>$request->narration,
+                                  "updated_by"=>1,
+                                  "updated_at"=>date('Y-m-d H:i:s')]);
+                        if($updatebed){
+                            return response()->json(['status'=>true,'message'=>'Bed updated successfully']);
+                        }else{
+                            return response()->json(['status'=>false,'message'=>'Bed could not be updated']);
+                        }
+                    }else{
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Cannot update status. Bed in use',
+                        ]);
+                    }  
+                }
             }
         }catch (ValidationException $e){
             return response()->json([

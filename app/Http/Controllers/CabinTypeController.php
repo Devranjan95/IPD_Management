@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use App\Models\Token;
 use App\Models\CabinType;
 use App\Models\Cabin;
 class CabinTypeController extends Controller
@@ -12,7 +13,7 @@ class CabinTypeController extends Controller
     //
     public function index(){
         $cabintypes = CabinType::where('status','!=','Deleted')->get();
-        return view("backend.cabintypeMaster",['cabintypes'=>$cabintypes]);
+        return view("backend.Masters.Cabin.cabintypeMaster",['cabintypes'=>$cabintypes]);
     }
     // public function saveCabinType(Request $request)
     // {
@@ -158,7 +159,33 @@ class CabinTypeController extends Controller
                 }
             }
 
-            $updatecabintype = CabinType::where('id', $request->recordid)
+
+            if($request->status == "Inactive"){
+                $cabintypeexist = Token::where('type',$request->cabintype)->where('status','Booked')->exists();
+                if($cabintypeexist){
+                    return response()->json(["message"=>"Sorry cabintype already in use for a patient cannot  inactive"]);
+                }else{
+                    // Cabin::where("cabin_type_id", $request->recordid)->update([
+                    //     "status" => "Inactive"
+                    // ]);
+                    $updatecabintype = CabinType::where('id', $request->recordid)
+                    ->update([
+                        "cabin_type" => $request->cabintype,
+                        "status" => $request->status,
+                        "narration" => $request->narration,
+                        "updated_by" => 1,
+                        "updated_at" => now()
+                    ]);
+                    if ($updatecabintype){
+                        Cabin::where("cabin_type_id", $request->recordid)->update([
+                            "status" => "Inactive"
+                        ]);
+                        return response()->json(['status' => true,"message"=>"Cabintype updated successfully"]);
+                    }
+
+                }
+            }else{
+                $updatecabintype = CabinType::where('id', $request->recordid)
                 ->update([
                     "cabin_type" => $request->cabintype,
                     "status" => $request->status,
@@ -166,21 +193,12 @@ class CabinTypeController extends Controller
                     "updated_by" => 1,
                     "updated_at" => now()
                 ]);
-
-            if ($updatecabintype) {
-                // Update cabin status if necessary
-                if ($request->status == "Inactive") {
-                    Cabin::where("cabin_type_id", $request->recordid)->update([
-                        "status" => "Inactive"
-                    ]);
-                } else {
+                if ($updatecabintype){
                     Cabin::where("cabin_type_id", $request->recordid)->update([
                         "status" => "Active"
                     ]);
+                    return response()->json(['status' => true,"message"=>"Cabintype updated successfully"]);
                 }
-                return response()->json(['status' => true, 'message' => 'Cabintype updated successfully']);
-            } else {
-                return response()->json(['status' => false, 'message' => 'Cabintype could not be updated'], 500);
             }
         }
     } catch (ValidationException $e) {

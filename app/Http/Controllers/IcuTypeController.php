@@ -12,7 +12,7 @@ class IcuTypeController extends Controller
     //
     public function index(){
         $icutypes = IcuType::where('status','!=','Deleted')->get();
-        return view("backend.icutypeMaster",['icutypes'=>$icutypes]);
+        return view("backend.Masters.Icu.icutypeMaster",['icutypes'=>$icutypes]);
     }
     public function saveIcuType(Request $request){
         //dd($request->all());

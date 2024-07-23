@@ -220,7 +220,7 @@
         <div class="navbar-menu-wrapper d-flex align-items-top">
           <ul class="navbar-nav">
             <li class="nav-item fw-semibold d-none d-lg-block ms-0">
-              <h1 class="welcome-text">Welcome, <span class="text-warning fw-bold">Devranjan</span></h1>
+              <h1 class="welcome-text">Welcome, <span class="text-warning fw-bold">{{ Auth::user()->name }}</span></h1>
               <!-- <h3 class="welcome-sub-text">Your performance summary this week </h3> -->
             </li>
           </ul>
@@ -237,18 +237,52 @@
             </li>
             <li class="nav-item dropdown d-none d-lg-block user-dropdown">
               <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                <img class="img-xs rounded-circle" src="{{asset('assets/images/faces/face8.jpg')}}" alt="Profile image"> </a>
+                <!-- <img class="img-xs rounded-circle" src="{{asset('assets/images/faces/face8.jpg')}}" alt="Profile image"> </a> -->
+                 <!-- <span class="text-warning fw-bold">{{Auth::user()->role_name}}</span> -->
+                 <button class="btn btn-rounded btn-fw btn-success btn-sm">
+                 <div style="display: inline-block;">{{ Auth::user()->role_name }}</div>
+                  <div style="display: inline-block; width: 10px; height: 10px; vertical-align: middle;">
+                      <svg viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                          <g id="SVGRepo_iconCarrier">
+                              <path d="M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z" fill="#ffffff"></path>
+                          </g>
+                      </svg>
+                  </div>
+                     
+                 </button>
+                  <!-- <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-dark-500 bg-warning hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                        
+                          <div>{{Auth::user()->role_name}}</div>
+
+                        <div class="ms-1">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                  </button> -->
               <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
                 <div class="dropdown-header text-center">
-                  <img class="img-md rounded-circle" src="{{asset('assets/images/faces/face8.jpg')}}" alt="Profile image">
-                  <p class="mb-1 mt-3 fw-semibold">Allen Moreno</p>
-                  <p class="fw-light text-muted mb-0">allenmoreno@gmail.com</p>
+                  <!-- <img class="img-md rounded-circle" src="{{asset('assets/images/faces/face8.jpg')}}" alt="Profile image"> -->
+                  <p class="mb-1 mt-3 fw-semibold">{{Auth::user()->name}}</p>
+                  <p class="fw-light text-muted mb-0">{{Auth::user()->email}}</p>
                 </div>
                 <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile <span class="badge badge-pill badge-danger">1</span></a>
                 <!-- <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
                 <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i> Activity</a>
                 <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i> FAQ</a> -->
-                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out</a>
+                <a href="#" class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>
+                  <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+
+                        <x-dropdown-link :href="route('logout')"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-dropdown-link>
+                  </form>
+              </a>
               </div>
             </li>
           </ul>
@@ -260,22 +294,36 @@
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        @php
+            $permissions = session('permissions', []);
+            $actions = session('actions', []);
+        @endphp
+
+        <!-- Debug: Display permissions and actions -->
+        <!-- <script>
+            console.log('Permissions:', @json($permissions));
+            console.log('Actions:', @json($actions));
+        </script> -->
         
           <ul class="nav">
-            <li class="nav-item">
-              <a class="nav-link" href="index.html">
-                <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
-                <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/dashboard.svg')}}" alt="" width="30px" height="30px">
-                <span class="menu-title">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{url('registration')}}">
-                <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
-                <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/registration1.svg')}}" alt=""  width="30px" height="30px">
-                <span class="menu-title">Registration</span>
-              </a>
-            </li>
+            @if (in_array(1, session('permissions')))
+              <li class="nav-item">
+                <a class="nav-link" href="{{route('dashboard')}}">
+                  <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
+                  <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/dashboard.svg')}}" alt="" width="30px" height="30px">
+                  <span class="menu-title">Dashboard</span>
+                </a>
+              </li>
+            @endif
+            @if (in_array(2, session('permissions')))
+              <li class="nav-item">
+                <a class="nav-link" href="{{url('registration')}}">
+                  <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
+                  <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/registration1.svg')}}" alt=""  width="30px" height="30px">
+                  <span class="menu-title">Registration</span>
+                </a>
+              </li>
+            @endif
             <!-- <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#mybilling" aria-expanded="false" aria-controls="ui-basic">
                 
@@ -290,20 +338,24 @@
                 </ul>
               </div>
             </li> -->
-            <li class="nav-item">
-              <a class="nav-link" href="index.html">
-                <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
-                <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/user.svg')}}" alt=""  width="30px" height="30px">
-                <span class="menu-title">Users</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{url('masters')}}">
-                <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
-                <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/lock.svg')}}" alt=""  width="30px" height="30px">
-                <span class="menu-title">Masters</span>
-              </a>
-            </li>
+            @if (in_array(3, session('permissions')))
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('userregister') }}">
+                  <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
+                  <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/user.svg')}}" alt=""  width="30px" height="30px">
+                  <span class="menu-title">Users</span>
+                </a>
+              </li>
+            @endif
+            @if (in_array(4, session('permissions')))
+              <li class="nav-item">
+                <a class="nav-link" href="{{url('masters')}}">
+                  <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
+                  <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/lock.svg')}}" alt=""  width="30px" height="30px">
+                  <span class="menu-title">Masters</span>
+                </a>
+              </li>
+            @endif
             <!-- <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="ui-basic">
                 
@@ -339,26 +391,8 @@
               </div>
             </li> -->
           </ul>
-        </nav>
-<!-- ******************************DELETE MODAL***************************** -->
-                  <!-- Delete Confirmation Modal -->
-<!-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this record?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-rounded btn-fw btn-success btn-sm" data-bs-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-rounded btn-fw btn-danger btn-sm" id="confirmDelete">Delete</button>
-            </div>
-        </div>
-    </div>
-</div> -->
+      </nav>
+
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
