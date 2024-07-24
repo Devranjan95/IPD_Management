@@ -43,6 +43,9 @@
     <link rel="icon"  type="image/png" href="{{asset('assets/previous/Hospyllum.svg')}}">
    
     <style>
+      /* .card{
+        background: rgb(253,255,245)
+      } */
       #preloader {
     position: fixed;
     left: 0;
@@ -347,6 +350,15 @@
                 </a>
               </li>
             @endif
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{url('discharge')}}">
+                  <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
+                  <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/lock.svg')}}" alt=""  width="30px" height="30px">
+                  <span class="menu-title">Discharge</span>
+                </a>
+            </li>
+
             @if (in_array(4, session('permissions')))
               <li class="nav-item">
                 <a class="nav-link" href="{{url('masters')}}">

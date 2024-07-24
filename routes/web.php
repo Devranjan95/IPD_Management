@@ -19,6 +19,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ActionController;
+use App\Http\Controllers\DischargeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,7 +41,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('backend.Dashboard.dashboard');
 })->middleware(['auth', 'verified','role.new'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -58,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::get('getpatient/data/{patid}',[RegistrationController::class,'searchPatient'])->middleware('check.permission:2');
         Route::post('registration/saveData',[RegistrationController::class,'saveRegistration'])->middleware('check.permission:2');
         Route::get('getregn/printpass/{regn}', [RegistrationController::class, 'getPatient'])->middleware('check.permission:2');
+        Route::post('getamenitycost', [RegistrationController::class, 'getAmenityCost'])->middleware('check.permission:2');
 
         Route::get('/masterlayout', function () {
             return view('masterlayout.masterlayout');
@@ -161,6 +163,8 @@ Route::middleware('auth')->group(function () {
         Route::post('action/saveData',[ActionController::class,'saveAction'])->middleware('check.permission:4');
         Route::get('action/editData/{id}',[ActionController::class,'getData'])->middleware('check.permission:4');
         Route::get('action/deleteData/{id}',[ActionController::class,'deleteData'])->middleware('check.permission:4');
+
+        Route::get('discharge/',[DischargeController::class,'index']);
 
     });
     

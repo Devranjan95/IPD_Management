@@ -16,36 +16,87 @@ class IcuController extends Controller
 {
     //
 
+    // public function index(){
+    //     $icutypes = IcuType::where('status', 'Active')->pluck('icu_type', 'id');
+    //     $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
+    //     $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+    //     $icus = Icu::where('status', '!=', 'Deleted')->get();
+    
+    //     $icuDetails = []; // Array to store cabin details
+        
+    //     foreach ($icus as $icu) {
+    //         $floor = Floor::where('count', $icu->floor_count)->first(); // Get floor details
+    //         $block = Block::where('id', $icu->block_id)->first(); // Get block details
+    //         $icutype = IcuType::where('id',$icu->icu_type_id)->first();
+    //         $icuDetails[] = [
+    //             'icu_type' => IcuType::where('id', $icu->icu_type_id)->value('icu_type'),
+    //             'floor_no' => $floor ? $floor->floor_no : null,
+    //             'block_name' => $block ? $block->block_name : null,
+    //             'floor_status' => $floor ? $floor->status : null, // Add floor status
+    //             'block_status' => $block ? $block->status : null,  // Add block status
+    //             'icutype_status'=>$icutype ? $icutype->status : null
+    //         ];
+    //     }
+    
+    //     return view('backend.Masters.Icu.icuMaster', [
+    //         'icutypes' => $icutypes,
+    //         'floors' => $floors,
+    //         'amenities' => $amenities,
+    //         'icus' => $icus,
+    //         'icuDetails' => $icuDetails, // Pass the details to the view
+    //     ]);
+    // }
+
     public function index(){
         $icutypes = IcuType::where('status', 'Active')->pluck('icu_type', 'id');
         $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
-        $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+        $amenitiesList = Amenity::where('status', 'Active')->pluck('amenities', 'id');
         $icus = Icu::where('status', '!=', 'Deleted')->get();
-    
-        $icuDetails = []; // Array to store cabin details
+        
+        $icuDetails = []; // Array to store ICU details
         
         foreach ($icus as $icu) {
             $floor = Floor::where('count', $icu->floor_count)->first(); // Get floor details
             $block = Block::where('id', $icu->block_id)->first(); // Get block details
-            $icutype = IcuType::where('id',$icu->icu_type_id)->first();
+            $icutype = IcuType::where('id', $icu->icu_type_id)->first();
+            
+            // Decode amenities and fetch their names
+            $amenityIDs = [];
+            if (!empty($icu->amenities)) {
+                if (is_array($icu->amenities)) {
+                    $amenityIDs = $icu->amenities;
+                } elseif (is_string($icu->amenities)) {
+                    $jsonDecoded = json_decode($icu->amenities, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $amenityIDs = $jsonDecoded;
+                    } else {
+                        $amenityIDs = explode(',', $icu->amenities);
+                    }
+                }
+            }
+    
+            $amenityNames = Amenity::whereIn('id', $amenityIDs)->pluck('amenities')->toArray();
+    
             $icuDetails[] = [
-                'icu_type' => IcuType::where('id', $icu->icu_type_id)->value('icu_type'),
+                'icu_type' => $icutype->icu_type ?? null,
                 'floor_no' => $floor ? $floor->floor_no : null,
                 'block_name' => $block ? $block->block_name : null,
                 'floor_status' => $floor ? $floor->status : null, // Add floor status
                 'block_status' => $block ? $block->status : null,  // Add block status
-                'icutype_status'=>$icutype ? $icutype->status : null
+                'icutype_status' => $icutype ? $icutype->status : null,
+                'amenity_names' => $amenityNames // Add amenity names
             ];
         }
     
         return view('backend.Masters.Icu.icuMaster', [
             'icutypes' => $icutypes,
             'floors' => $floors,
-            'amenities' => $amenities,
+            'amenities' => $amenitiesList,
             'icus' => $icus,
             'icuDetails' => $icuDetails, // Pass the details to the view
         ]);
     }
+    
     
     
 

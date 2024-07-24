@@ -56,7 +56,7 @@
                                         <label for="amenities" class="form-label">Amenities<span style="color:red" title="Mandatory">*</span></label>
                                         <select id="amenities" name="amenities[]" class="form-control select2" multiple="multiple">
                                             @foreach ($amenities as $key => $item)
-                                                <option value="{{ $item }}">{{ $item }}</option>
+                                                <option value="{{ $key }}">{{ $item }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -144,7 +144,17 @@
                                                 <td style="text-align:center">{{ $ward->total_occupancy }}</td>
                                                 <td style="text-align:center">{{ $ward->assigned }}</td>
                                                 <td style="text-align:center">{{ $available }}</td>
-                                                <td>{{ $ward->amenities }}</td>
+                                                <td>
+                                                    @if (!empty($wardDetails[$index]['amenity_names']))
+                                                        <ul>
+                                                            @foreach($wardDetails[$index]['amenity_names'] as $amenityName)
+                                                                <li>{{ $amenityName }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @else
+                                                        No amenities available
+                                                    @endif
+                                                </td>
                                                 <td style="text-align:center">{{ $ward->price }}</td> 
                                                 <td>
                                                     @if($ward->status == "Active")

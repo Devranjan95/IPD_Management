@@ -56,7 +56,7 @@
                                         <label for="amenities" class="form-label">Amenities<span style="color:red" title="Mandatory">*</span></label>
                                         <select id="amenities" name="amenities[]" class="form-control select2" multiple="multiple">
                                             @foreach ($amenities as $key => $item)
-                                                <option value="{{ $item }}">{{ $item }}</option>
+                                                <option value="{{ $key }}">{{ $item }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -143,7 +143,17 @@
                                                 <td style="text-align:center">{{ $icu->total_occupancy }}</td>
                                                 <td style="text-align:center">{{ $icu->assigned }}</td>
                                                 <td style="text-align:center">{{ $available }}</td>
-                                                <td>{{ $icu->amenities }}</td>
+                                                <td>
+                                                    @if (!empty($icuDetails[$index]['amenity_names']))
+                                                        <ul>
+                                                            @foreach($icuDetails[$index]['amenity_names'] as $amenityName)
+                                                                <li>{{ $amenityName }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @else
+                                                        No amenities available
+                                                    @endif
+                                                </td>
                                                 <td style="text-align:center">{{ $icu->price }}</td> 
                                                 <td>
                                                     @if($icu->status == "Active")

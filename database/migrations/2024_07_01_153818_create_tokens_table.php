@@ -23,6 +23,10 @@ return new class extends Migration
             $table->string('category_id');
             $table->string('type_name_id');
             $table->string('type_price_24hr');
+            $table->string('extra_amenity')->nullable();
+            $table->string('amenity_start_date')->nullable();
+            $table->string('amenity_end_date')->nullable();
+            $table->string('adv_amount')->nullable();
             $table->string('date_of_addmission');
             $table->string('time_of_addmission');
             $table->string('emergency')->nullable();
@@ -30,6 +34,7 @@ return new class extends Migration
             $table->string('reffered_from')->nullable();
             $table->string('date_of_discharge')->nullable();
             $table->string('time_of_discharge')->nullable();
+            $table->text('discharge_summary')->nullable();
             $table->string('total_stay_hr')->nullable();
             $table->string('total_price')->nullable();
             $table->string('status')->nullable();

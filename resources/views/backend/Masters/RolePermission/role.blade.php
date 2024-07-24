@@ -136,11 +136,12 @@
                                 </thead>
                                 <tbody>
                                     @php 
-                                        $sl = 1;
-                                    @endphp
+                                       $sl = 1;
+                                    @endphp 
                                     @foreach($roleData as $data)
                                         @if($data['role']->id != 1)
                                         <tr>
+                                            
                                             <td>{{ $sl++ }}</td>
                                             <td>{{ $data['role']->name }}</td>
                                             <td>{{ implode(', ', $data['pernames']) }}</td>

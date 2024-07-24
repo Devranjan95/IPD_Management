@@ -40,36 +40,87 @@ class WardController extends Controller
     //     ]);
     // }
 
+    // public function index(){
+    //     $wardtypes = WardType::where('status', 'Active')->pluck('ward_type', 'id');
+    //     $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
+    //     $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+    //     $wards = Ward::where('status', '!=', 'Deleted')->get();
+    
+    //     $wardDetails = []; // Array to store cabin details
+        
+    //     foreach ($wards as $ward) {
+    //         $floor = Floor::where('count', $ward->floor_count)->first(); // Get floor details
+    //         $block = Block::where('id', $ward->block_id)->first(); // Get block details
+    //         $wardtype = WardType::where('id',$ward->ward_type_id)->first();
+    //         $wardDetails[] = [
+    //             'ward_type' => WardType::where('id', $ward->ward_type_id)->value('ward_type'),
+    //             'floor_no' => $floor ? $floor->floor_no : null,
+    //             'block_name' => $block ? $block->block_name : null,
+    //             'floor_status' => $floor ? $floor->status : null, // Add floor status
+    //             'block_status' => $block ? $block->status : null,  // Add block status
+    //             'wardtype_status'=>$wardtype ? $wardtype->status : null
+    //         ];
+    //     }
+    
+    //     return view('backend.Masters.Ward.wardMaster', [
+    //         'wardtypes' => $wardtypes,
+    //         'floors' => $floors,
+    //         'amenities' => $amenities,
+    //         'wards' => $wards,
+    //         'wardDetails' => $wardDetails, // Pass the details to the view
+    //     ]);
+    // }
+
     public function index(){
         $wardtypes = WardType::where('status', 'Active')->pluck('ward_type', 'id');
         $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
-        $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+        $amenitiesList = Amenity::where('status', 'Active')->pluck('amenities', 'id');
         $wards = Ward::where('status', '!=', 'Deleted')->get();
-    
-        $wardDetails = []; // Array to store cabin details
+        
+        $wardDetails = []; // Array to store ward details
         
         foreach ($wards as $ward) {
             $floor = Floor::where('count', $ward->floor_count)->first(); // Get floor details
             $block = Block::where('id', $ward->block_id)->first(); // Get block details
-            $wardtype = WardType::where('id',$ward->ward_type_id)->first();
+            $wardtype = WardType::where('id', $ward->ward_type_id)->first();
+            
+            // Decode amenities and fetch their names
+            $amenityIDs = [];
+            if (!empty($ward->amenities)) {
+                if (is_array($ward->amenities)) {
+                    $amenityIDs = $ward->amenities;
+                } elseif (is_string($ward->amenities)) {
+                    $jsonDecoded = json_decode($ward->amenities, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $amenityIDs = $jsonDecoded;
+                    } else {
+                        $amenityIDs = explode(',', $ward->amenities);
+                    }
+                }
+            }
+    
+            $amenityNames = Amenity::whereIn('id', $amenityIDs)->pluck('amenities')->toArray();
+    
             $wardDetails[] = [
-                'ward_type' => WardType::where('id', $ward->ward_type_id)->value('ward_type'),
+                'ward_type' => $wardtype->ward_type ?? null,
                 'floor_no' => $floor ? $floor->floor_no : null,
                 'block_name' => $block ? $block->block_name : null,
                 'floor_status' => $floor ? $floor->status : null, // Add floor status
                 'block_status' => $block ? $block->status : null,  // Add block status
-                'wardtype_status'=>$wardtype ? $wardtype->status : null
+                'wardtype_status' => $wardtype ? $wardtype->status : null,
+                'amenity_names' => $amenityNames // Add amenity names
             ];
         }
     
         return view('backend.Masters.Ward.wardMaster', [
             'wardtypes' => $wardtypes,
             'floors' => $floors,
-            'amenities' => $amenities,
+            'amenities' => $amenitiesList,
             'wards' => $wards,
             'wardDetails' => $wardDetails, // Pass the details to the view
         ]);
     }
+    
     
 
     public function showBlocks(Request $request){

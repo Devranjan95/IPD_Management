@@ -7,6 +7,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\Floor;
 use App\Models\Block;
+use App\Models\Amenity;
 use App\Models\Cabin;
 use App\Models\CabinType;
 use App\Models\WardType;
@@ -81,27 +82,49 @@ class RegistrationController extends Controller
         $floor = Floor::where('count',$beddata->floor_count)->value('floor_no');
         $block = Block::where('id',$beddata->block_id)->value('block_name');
         $idproof = IdProof::where('status','Active')->pluck('id_name','id');
+        $amenities = Amenity::where('status','Active')->pluck('amenities','id');
+        $amvals = [];
         if($beddata->type == "cabin"){
             $cabininfo = Cabin::where('id',$beddata->type_id)->first();
             $type = CabinType::where('id',$cabininfo->cabin_type_id)->value('cabin_type');
+            $amenityvals = $cabininfo->amenities;
+            $amenityvals = explode(',',$amenityvals);
+            foreach($amenityvals as $key=>$val){
+                $amenitycompare = Amenity::where('id',$val)->pluck('amenities','id');
+                $amvals[]=$amenitycompare;
+            }
+            //dd($amvals);
             //$type = $cabininfo->cabin_type_id;
             $bedinfo = [$beddata,$floor,$block,$cabininfo,$type];
         }elseif($beddata->type == "ward"){
             $wardinfo = Ward::where('id',$beddata->type_id)->first();
             $type = WardType::where('id',$wardinfo->ward_type_id)->value('ward_type');
+            $amenityvals = $wardinfo->amenities;
+            $amenityvals = explode(',',$amenityvals);
+            foreach($amenityvals as $key=>$val){
+                $amenitycompare = Amenity::where('id',$val)->pluck('amenities','id');
+                $amvals[]=$amenitycompare;
+            }
             //$type = $wardinfo->ward_type_id;
             $bedinfo = [$beddata,$floor,$block,$wardinfo,$type];
         }else{
             $icuinfo = Icu::where('id',$beddata->type_id)->first();
             $type = IcuType::where('id',$icuinfo->icu_type_id)->value('icu_type');
+            $amenityvals = $icuinfo->amenities;
+            $amenityvals = explode(',',$amenityvals);
+            foreach($amenityvals as $key=>$val){
+                $amenitycompare = Amenity::where('id',$val)->pluck('amenities','id');
+                $amvals[]=$amenitycompare;
+            }
             //$type = $icuinfo->icu_type_id;
             $bedinfo = [$beddata,$floor,$block,$icuinfo,$type];
         }
         $bedinfo[] = $regnNos;
         $bedinfo[] = $idproof;
         $bedinfo[] = $bedname;
-        //dd($bedinfo);
-        //print_r($bedinfo);exit;
+        $bedinfo[] = $amenities;
+        $bedinfo[] = $amvals;
+        
         if($bedinfo){
             return response()->json(["message"=>"Bed found","bedinfo"=>$bedinfo]);
         }else{
@@ -109,12 +132,18 @@ class RegistrationController extends Controller
         }
     }
 
+    
+    
+
     public function generateRegn(){
+        //dd(1);
         $regcounterFile = storage_path('app/registrationcounter.txt');
         $regcounter = intval(file_get_contents($regcounterFile));
+        //dd($regcounter);
         $formattedCounter = sprintf('%04d', $regcounter);
         $prefix = "PATCON/" . date('d/m/Y/H/i/s') . "/";
         if($regcounter){
+            //dd(1);
             $regn = $prefix.$formattedCounter;
             return $regn;
         }else{
@@ -170,139 +199,67 @@ class RegistrationController extends Controller
         }
     }
 
-    // public function saveRegistration(Request $request){
-    //     //dd($request->flag);
-    //     //dd($request->catid);
-    //     //dd($request->typeid);
-    //     //dd($request);
-    //     try{
-    //         $request->validate([
-    //             'bedno' => 'required',
-    //             'bedname' => 'required',
-    //             'pname' => ['required', 'regex:/^[a-zA-Z\s]+$/'],
-    //             'phone' => ['required', 'digits_between:10,15'],
-    //             'aname' => ['required', 'regex:/^[a-zA-Z\s]+$/'],
-    //             'aphone' => ['required', 'digits_between:10,15']
-    //         ]);
-    //         if($request->recordid){
-    //             //dd(1);
-    //             $patientexist = Patient::where('id',$request->recordid)->first();
-    //             $totalvisit = $patientexist->total_visits;
-    //             $totalvisit = $totalvisit + 1;
-    //             //dd($totalvisit);
-    //             $updatepatientvisit = Patient::where('id',$request->recordid)->update(["total_visits"=>$totalvisit]);
-    //             //dd($updatepatientvisit);
-    //             if($updatepatientvisit){
-    //                 $token = $this->tokenGen($request->treattype);
-    //                 $flag = $request->emergency; 
-    //                 if($flag == 1){
-    //                     $flag = "Yes";
-    //                 }else{
-    //                     $flag = "No";
-    //                 }
-    //                 $regn = $patientexist->patient_regn_no;
-    //                 $savetoken = Token::create([
-    //                     'patient_regn_no'=>$regn,
-    //                     'token_no'=>$token,
-    //                     'attendant_name'=>ucwords($request->aname),
-    //                     'attendant_phone'=>$request->aphone,
-    //                     'bednumber'=>$request->bedno,
-    //                     'bedtype'=>$request->bedname,
-    //                     'flag'=>$request->flag,
-    //                     'category_id'=>$request->catid,
-    //                     'type_name_id'=>$request->typeid,
-    //                     'type_price_24hr'=>$request->price,
-    //                     'date_of_addmission'=>Carbon::now()->toDateString(),
-    //                     'time_of_addmission'=>Carbon::now()->toTimeString(),
-    //                     'emergency'=>$flag,
-    //                     'treating_type'=>$request->treattype,
-    //                     'reffered_from'=>$request->reff,
-    //                     'status'=>"Booked"
-    //                 ]);
-    //                 if($savetoken){
-    //                     $updatebedstatus = BedAssign::where('bed_no',$request->bedno)->update(["status"=>"Booked"]);
-    //                     if($updatebedstatus){
-    //                         return response()->json(["message"=>"Booking completed successfully","regn"=>$regn]);
-    //                     }else{
-    //                         return response()->json(["message"=>"Sorry something went wrong"]);
-    //                     }
-    //                 }else{
-    //                     return response()->json(["message"=>"Sorry something went wrong"]);
-    //                 }
-
-    //              }
-               
-    //         }else{
-                
-    //             if($request->regno){
-    //                 $regn = $request->regno;
-    //             }else{
-    //                 $regn = $this->generateRegn();
-    //             }
-    //             $savePatient = Patient::create([
-    //                         'patient_regn_no'=>$regn,
-    //                         'patient_name'=>ucwords($request->pname),
-    //                         'patient_phone'=>$request->phone,
-    //                         'patient_email'=>$request->email,
-    //                         'idproof' => $request->idproof,
-    //                         'idproof_no'=>$request->idproofno,
-    //                         'patient_address'=>$request->address,
-    //                         'total_visits'=>1
-    //                     ]);
-    //             if($savePatient){
-    //                 $regcounterFile = storage_path('app/registrationcounter.txt');
-    //                 $regcounter = intval(file_get_contents($regcounterFile));
-    //                 $regcounter++;
-    //                 file_put_contents($regcounterFile, $regcounter);
-    //                 $token = $this->tokenGen($request->treattype);
-    //                 //dd($token);
-    //                 $flag = $request->emergency; 
-    //                 if($flag == 1){
-    //                     $flag = "Yes";
-    //                 }else{
-    //                     $flag = "No";
-    //                 }
-    //                 $savetoken = Token::create([
-    //                     'patient_regn_no'=>$regn,
-    //                     'token_no'=>$token,
-    //                     'attendant_name'=>ucwords($request->aname),
-    //                     'attendant_phone'=>$request->aphone,
-    //                     'bednumber'=>$request->bedno,
-    //                     'bedtype'=>$request->bedname,
-    //                     'type'=>$request->type,
-    //                     'type_name'=>$request->typename,
-    //                     'type_price_24hr'=>$request->price,
-    //                     'date_of_addmission'=>Carbon::now()->toDateString(),
-    //                     'time_of_addmission'=>Carbon::now()->toTimeString(),
-    //                     'emergency'=>$flag,
-    //                     'treating_type'=>$request->treattype,
-    //                     'reffered_from'=>$request->reff,
-    //                     'status'=>"Booked"
-    //                 ]);
-    //                 if($savetoken){
-    //                     $updatebedstatus = BedAssign::where('bed_no',$request->bedno)->update(["status"=>"Booked"]);
-    //                     if($updatebedstatus){
-    //                         return response()->json(["message"=>"Booking completed successfully","regn"=>$regn]);
-    //                     }else{
-    //                         return response()->json(["message"=>"Sorry something went wrong"]);
-    //                     }
-    //                 }else{
-    //                     return response()->json(["message"=>"Sorry something went wrong"]);
-    //                 }
-                    
-    //             }
-    //         }
-    //     }catch (ValidationException $e){
-    //         return response()->json([
-    //             'status' => false,
-    //             'errors' => $e->errors()
-    //         ], 422);
-    //     }
-    // }
+    public function getAmenityCost(Request $request){
+        $amenityIds = $request->selectedAmenities;
+        $totalCost = 0;
+    
+        if($request->type == "cabin"){
+            $cabinCost = Cabin::where('status', 'Active')->where('id', $request->typeid)->value('price');
+            $totalCost = $cabinCost;
+    
+            if (!empty($amenityIds)) {
+                $amenityPrices = [];
+                foreach($amenityIds as $id) {
+                    $amenitycost = Amenity::where('status', 'Active')->where('id', $id)->value('price');
+                    $amenityPrices[] = $amenitycost;
+                }
+    
+                $amenityCostsum = array_sum($amenityPrices);
+                $totalCost += $amenityCostsum;
+            }
+            
+        } elseif($request->type == "ward") {
+            $wardCost = Ward::where('status', 'Active')->where('id', $request->typeid)->value('price');
+            $totalCost = $wardCost;
+    
+            if (!empty($amenityIds)) {
+                $amenityPrices = [];
+                foreach($amenityIds as $id) {
+                    $amenitycost = Amenity::where('status', 'Active')->where('id', $id)->value('price');
+                    $amenityPrices[] = $amenitycost;
+                }
+    
+                $amenityCostsum = array_sum($amenityPrices);
+                $totalCost += $amenityCostsum;
+            }
+            
+        } elseif($request->type == "icu") {
+            $icuCost = Icu::where('status', 'Active')->where('id', $request->typeid)->value('price');
+            $totalCost = $icuCost;
+    
+            if (!empty($amenityIds)) {
+                $amenityPrices = [];
+                foreach($amenityIds as $id) {
+                    $amenitycost = Amenity::where('status', 'Active')->where('id', $id)->value('price');
+                    $amenityPrices[] = $amenitycost;
+                }
+    
+                $amenityCostsum = array_sum($amenityPrices);
+                $totalCost += $amenityCostsum;
+            }
+            
+        } else {
+            return response()->json(["message" => "Invalid type!"]);
+        }
+    
+        return response()->json(["totalCost" => $totalCost]);
+    }
+    
 
     public function saveRegistration(Request $request) {
         //dd($request->all()); // Debug all input data
-    
+        //dd($request->totalcost);
+        //dd($request->recordid);
         try {
             $request->validate([
                 'bedno' => 'required',
@@ -315,9 +272,14 @@ class RegistrationController extends Controller
     
             if ($request->recordid) {
                 //$patexist = Token::where('')
+                //dd(1);
                 $patientexist = Patient::where('id', $request->recordid)->first();
-                $token = Token::where("patient_regn_no",$patientexist->patient_regn_no)->where('status','!=','Booked')->first();
+                $token = Token::where("patient_regn_no",$patientexist->patient_regn_no)->where('status','Booked')->first();
+                //dd($token);
                 if($token){
+                    return response()->json(["status"=>false,"message"=>"Sorry this patient is already booked"]);
+                }else{
+                    
                     $totalvisit = $patientexist->total_visits + 1;
                     $updatepatientvisit = Patient::where('id', $request->recordid)->update(["total_visits" => $totalvisit]);
         
@@ -335,7 +297,10 @@ class RegistrationController extends Controller
                             'flag' => $request->flag, // Ensure this is set correctly
                             'category_id' => $request->catid, // Ensure this is set correctly
                             'type_name_id' => $request->typeid, // Ensure this is set correctly
-                            'type_price_24hr' => $request->price,
+                            'extra_amenity'=>$amenities,
+                            'amenity_start_date'=>$amenitydate,
+                            'type_price_24hr' => $request->totalcost,
+                            'adv_amount'=>$request->advance,
                             'date_of_addmission' => Carbon::now()->toDateString(),
                             'time_of_addmission' => Carbon::now()->toTimeString(),
                             'emergency' => $flag,
@@ -347,25 +312,26 @@ class RegistrationController extends Controller
                         if ($savetoken) {
                             $updatebedstatus = BedAssign::where('bed_no', $request->bedno)->update(["status" => "Booked"]);
                             if ($updatebedstatus) {
-                                return response()->json(["message" => "Booking completed successfully", "regn" => $regn]);
+                                return response()->json(["status"=>true,"message" => "Booking completed successfully", "regn" => $regn]);
                             } else {
-                                return response()->json(["message" => "Sorry something went wrong"]);
+                                return response()->json(["status"=>false,"message" => "Sorry something went wrong"]);
                             }
                         } else {
-                            return response()->json(["message" => "Sorry something went wrong"]);
+                            return response()->json(["status"=>false,"message" => "Sorry something went wrong"]);
                         }
                     }
-                }else{
-                    return response()->json(["message"=>"Sorry this patient is already booked"]);
                 }
                 
             } else {
-                if ($request->regno) {
+                //dd($request->regno);
+
+                if ($request->has('regno') && !empty($request->regno)) {
                     $regn = $request->regno;
                 } else {
                     $regn = $this->generateRegn();
                 }
-    
+                
+                //print_r($regn);exit;
                 $savePatient = Patient::create([
                     'patient_regn_no' => $regn,
                     'patient_name' => ucwords($request->pname),
@@ -384,6 +350,14 @@ class RegistrationController extends Controller
                     file_put_contents($regcounterFile, $regcounter);
                     $token = $this->tokenGen($request->treattype);
                     $flag = $request->emergency ? "Yes" : "No";
+
+                    if(!empty($request->amenities)){
+                        $amenities = implode(',',$request->amenities);
+                        $amenitydate = Carbon::now()->toDateString();
+                    }else{
+                        $amenities = null;
+                        $amenitydate = null;
+                    }
     
                     $savetoken = Token::create([
                         'patient_regn_no' => $regn,
@@ -395,7 +369,10 @@ class RegistrationController extends Controller
                         'flag' => $request->flag, // Ensure this is set correctly
                         'category_id' => $request->catid, // Ensure this is set correctly
                         'type_name_id' => $request->typeid, // Ensure this is set correctly
-                        'type_price_24hr' => $request->price,
+                        'extra_amenity'=>$amenities,
+                        'amenity_start_date'=>$amenitydate,
+                        'type_price_24hr' => $request->totalcost,
+                        'adv_amount'=>$request->advance,
                         'date_of_addmission' => Carbon::now()->toDateString(),
                         'time_of_addmission' => Carbon::now()->toTimeString(),
                         'emergency' => $flag,
@@ -407,12 +384,12 @@ class RegistrationController extends Controller
                     if ($savetoken) {
                         $updatebedstatus = BedAssign::where('bed_no', $request->bedno)->update(["status" => "Booked"]);
                         if ($updatebedstatus) {
-                            return response()->json(["message" => "Booking completed successfully", "regn" => $regn]);
+                            return response()->json(["status"=>true,"message" => "Booking completed successfully", "regn" => $regn]);
                         } else {
-                            return response()->json(["message" => "Sorry something went wrong"]);
+                            return response()->json(["status"=>false,"message" => "Sorry something went wrong"]);
                         }
                     } else {
-                        return response()->json(["message" => "Sorry something went wrong"]);
+                        return response()->json(["status"=>false,"message" => "Sorry something went wrong"]);
                     }
                 }
             }
@@ -446,20 +423,9 @@ class RegistrationController extends Controller
             ->where('date_of_addmission', $currentDate)
             ->first();
         //print_r($info);exit;
-        return view("backend.visitorpass", ['info' => $info]);
+        return view("backend.Registration.visitorpass", ['info' => $info]);
     }
 
 
-    // public function getPatient($regn)
-    // {
-    //     // Replace hyphens back with slashes
-    //     $currentDate = Carbon::now()->format('Y-m-d');
-    //     $originalRegn = str_replace('-', '/', $regn);
-    //     $info = Token::with('patient')->where('patient_regn_no',$originalRegn)->where('date_of_addmission',$currentDate)->get();
-    //     //dd($info);
-    //     if($info){
-    //         return view("backend.visitorpass",['info'=>$info]);
-    //     }
-        
-    // }
+
 }

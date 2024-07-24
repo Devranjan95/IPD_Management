@@ -79,7 +79,7 @@
                                     <h3 class="headingcolor">Users</h3>
                                     <nav>
                                         <ol class="breadcrumb">
-                                            <li class="breadcrumb-item text-primary"><a class="text-decoration-none text-primary" href="{{url('masters')}}">Masters</a></li>
+                                            <li class="breadcrumb-item text-primary"><a class="text-decoration-none text-primary" href="{{url('masters')}}">Main</a></li>
                                             <li class="breadcrumb-item active text-warning" aria-current="page">Users</li>
                                         </ol>
                                     </nav>

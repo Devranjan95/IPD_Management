@@ -21,6 +21,10 @@ class Token extends Model
         'category_id',
         'type_name_id',
         'type_price_24hr',
+        'extra_amenity',
+        'amenity_start_date',
+        'amenity_end_date',
+        'adv_amount',
         'date_of_addmission',
         'time_of_addmission',
         'emergency',
@@ -29,6 +33,7 @@ class Token extends Model
         'date_of_discharge',
         'time_of_discharge',
         'total_stay_hr',
+        'discharge_summary',
         'status',
     ];
 

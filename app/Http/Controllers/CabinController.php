@@ -65,36 +65,91 @@ class CabinController extends Controller
     //         'cabinDetails' => $cabinDetails, // Pass the details to the view
     //     ]);
     // }
+
+
+    // public function index(){
+    //     $cabintypes = CabinType::where('status', 'Active')->pluck('cabin_type', 'id');
+    //     $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
+    //     $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+    //     $cabins = Cabin::where('status', '!=', 'Deleted')->get();
+    
+    //     $cabinDetails = []; // Array to store cabin details
+        
+    //     foreach ($cabins as $cabin) {
+    //         $floor = Floor::where('count', $cabin->floor_count)->first(); // Get floor details
+    //         $block = Block::where('id', $cabin->block_id)->first(); // Get block details
+    //         $cabintype = CabinType::where('id',$cabin->cabin_type_id)->first();
+            
+    //         $cabinDetails[] = [
+    //             'cabin_type' => CabinType::where('id', $cabin->cabin_type_id)->value('cabin_type'),
+    //             'floor_no' => $floor ? $floor->floor_no : null,
+    //             'block_name' => $block ? $block->block_name : null,
+    //             'floor_status' => $floor ? $floor->status : null, // Add floor status
+    //             'block_status' => $block ? $block->status : null,  // Add block status
+    //             'cabintype_status' => $cabintype ? $cabintype->status : null
+    //         ];
+    //     }
+    
+    //     return view('backend.Masters.Cabin.cabinMaster', [
+    //         'cabintypes' => $cabintypes,
+    //         'floors' => $floors,
+    //         'amenities' => $amenities,
+    //         'cabins' => $cabins,
+    //         'cabinDetails' => $cabinDetails, // Pass the details to the view
+    //     ]);
+    // }
+
     public function index(){
         $cabintypes = CabinType::where('status', 'Active')->pluck('cabin_type', 'id');
         $floors = Floor::where('status', 'Active')->pluck('floor_no', 'count');
-        $amenities = Amenity::where('status', 'Active')->pluck('amenities', 'id');
+        $amenitiesList = Amenity::where('status', 'Active')->pluck('amenities', 'id');
         $cabins = Cabin::where('status', '!=', 'Deleted')->get();
-    
+        
         $cabinDetails = []; // Array to store cabin details
         
         foreach ($cabins as $cabin) {
             $floor = Floor::where('count', $cabin->floor_count)->first(); // Get floor details
             $block = Block::where('id', $cabin->block_id)->first(); // Get block details
-            $cabintype = CabinType::where('id',$cabin->cabin_type_id)->first();
+            $cabintype = CabinType::where('id', $cabin->cabin_type_id)->first();
+            
+            // Decode amenities and fetch their names
+            $amenityIDs = [];
+            if (!empty($cabin->amenities)) {
+                if (is_array($cabin->amenities)) {
+                    $amenityIDs = $cabin->amenities;
+                } elseif (is_string($cabin->amenities)) {
+                    $jsonDecoded = json_decode($cabin->amenities, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $amenityIDs = $jsonDecoded;
+                    } else {
+                        $amenityIDs = explode(',', $cabin->amenities);
+                    }
+                }
+            }
+    
+            $amenityNames = Amenity::whereIn('id', $amenityIDs)->pluck('amenities')->toArray();
+    
             $cabinDetails[] = [
-                'cabin_type' => CabinType::where('id', $cabin->cabin_type_id)->value('cabin_type'),
+                'cabin_type' => $cabintype->cabin_type ?? null,
                 'floor_no' => $floor ? $floor->floor_no : null,
                 'block_name' => $block ? $block->block_name : null,
                 'floor_status' => $floor ? $floor->status : null, // Add floor status
                 'block_status' => $block ? $block->status : null,  // Add block status
-                'cabintype_status' => $cabintype ? $cabintype->status : null
+                'cabintype_status' => $cabintype ? $cabintype->status : null,
+                'amenity_names' => $amenityNames // Add amenity names
             ];
         }
     
         return view('backend.Masters.Cabin.cabinMaster', [
             'cabintypes' => $cabintypes,
             'floors' => $floors,
-            'amenities' => $amenities,
+            'amenities' => $amenitiesList,
             'cabins' => $cabins,
             'cabinDetails' => $cabinDetails, // Pass the details to the view
         ]);
     }
+    
+    
     
     
     
