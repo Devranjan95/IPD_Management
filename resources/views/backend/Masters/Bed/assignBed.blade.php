@@ -245,8 +245,8 @@ function Takevalue(value, element) {
     }
 }
 function assignBed(id,flag){
-    alert(id);
-    alert(flag);
+    // alert(id);
+    // alert(flag);
     $.ajax({
         type:"GET",
         url:"{{url('bedassign/assigning')}}/"+id+'/'+flag,

@@ -20,6 +20,9 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ActionController;
 use App\Http\Controllers\DischargeController;
+use App\Http\Controllers\DeathController;
+use App\Http\Controllers\BirthController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -165,7 +168,21 @@ Route::middleware('auth')->group(function () {
         Route::get('action/deleteData/{id}',[ActionController::class,'deleteData'])->middleware('check.permission:4');
 
         Route::get('discharge/',[DischargeController::class,'index']);
+        Route::post('discharge/searchPatient',[DischargeController::class,'searchPatient']);
+        Route::post('discharge/saveData',[DischargeController::class,'saveDischarge']);
 
+        Route::get('deathentry/',[DeathController::class,'index']);
+        Route::post('deathrecord/searchPatient',[DeathController::class,'searchPatient']);
+        Route::post('deathrecord/saveData',[DeathController::class,'saveDeathRecord']);
+
+
+        Route::get('birthentry/',[BirthController::class,'index']);
+        Route::post('birthrecord/searchPatient',[BirthController::class,'searchPatient']);
+        Route::post('birthrecord/saveData',[BirthController::class,'saveBirthRecord']);
+
+        Route::get('birthreports/',[ReportController::class,'index']);
+        Route::get('deathreports/',[ReportController::class,'index_death']);
+        
     });
     
 // *******************************************************************************************

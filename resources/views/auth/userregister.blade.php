@@ -263,7 +263,7 @@
                         }, 4000);
 
                         if ($("#mode").val() === 'add') {
-                            $("#roleform")[0].reset(); // Reset the form
+                            $("#userform")[0].reset(); // Reset the form
                         } else {
                             window.location.reload();
                         }
@@ -291,7 +291,7 @@ function showAdd() {
     }
 
 
-    function showEdit(id) {
+function showEdit(id) {
     document.getElementById("userform").reset();
     document.getElementById("mode").value = "edit";
     document.getElementById("recordid").value = id;

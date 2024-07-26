@@ -19,31 +19,12 @@
                                         <h3 class="headingcolor">Discharge Patient</h3>
                                         <nav>
                                         <ol class="breadcrumb">
-                                            <li class="breadcrumb-item text-primary"><a class="text-decoration-none text-primary" href="{{url('masters')}}">Main</a></li>
+                                            <li class="breadcrumb-item text-primary"><a class="text-decoration-none text-primary" href="{{url('dashboard')}}">Dashboard</a></li>
                                             <li class="breadcrumb-item active text-warning" aria-current="page">Discharge Patient</li>
                                         </ol>
                                     </nav>
                                     </div>
-                                    <!-- <div class='col-lg-6 pb-2'>
-                                        <button type="button" class="btn btn-rounded btn-fw btn-success" style="float:right"
-                                            data-bs-toggle="modal" onclick="showAdd()" data-bs-target="#staticBackdrop">Add
-                                            New</button>
-                                    </div> -->
-                                    <!-- <hr style="color:#030d04"> -->
                                 </div>
-                            </div>
-                            <div class="col-md-12">
-                                    <div class="col-md-6">
-                                        <select id="regn" name="regn" class="form-control select2" onchange="searchPatient()">
-                                            <option value="" selected disabled>Select</option>
-                                            @foreach($regnvalues as $regn)
-                                                <option value="{{$regn->patient_regn_no}}">{{$regn->patient_regn_no}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <!-- <div class="col-md-3">
-                                        <button class="btn btn-inverse-warning btn-fw w-100" onclick="searchPatient()">Search</button>
-                                    </div> -->
                             </div>
                             <div class="col-md-12">
                                 <form enctype="multipart/form-data" name="dischargeform" id="dischargeform">
@@ -53,6 +34,27 @@
                                     <input type="hidden" id="mode" name="mode">
                                         <div class="col-lg-12 text-center pb-3" style="color:red;font-weight:600" id="error"> </div>
                                         <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
+                                        <div class="row pb-5">
+                                            <div class="col-md-6">
+                                                <select id="regn" name="regn" class="form-control select2" onchange="searchPatient()">
+                                                    <option value="" selected disabled>Select</option>
+                                                    @foreach($regnvalues as $regn)
+                                                        <option value="{{$regn->patient_regn_no}}">{{$regn->patient_regn_no}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                            <div>
+                                                <label class="form-label">Clearance<span style="color:red" title="Mandatory">*</span></label>
+                                                <select  id="multi_option" multiple name="native-select" placeholder="Native Select" data-silent-initial-value-set="false">
+                                                    <option value="Accounts">Accounts</option>
+                                                    <option value="Bed">Bed</option>
+                                                    <option value="Pharmacy">Pharmacy</option>
+                                                    <option value="Surgery">Surgery</option>
+                                                </select>
+                                            </div>
+                                            </div>
+                                        </div>
                                         <div class="row pb-3">
                                             <div class="col-md-6">
                                                 <label for="discharge" class="form-label">Patient Name<span style="color:red" title="Mandatory">*</span></label>
@@ -62,36 +64,47 @@
                                                 <label for="discharge" class="form-label">Contact No<span style="color:red" title="Mandatory">*</span></label>
                                                 <input type="text" class="form-control" placeholder="contact" id="contact" name="contact" readonly>
                                             </div>
-                                        </div>
-                                        <div class="row pb-3">
-                                            <div class="col-md-6">
+                                            <!-- <div class="col-md-4">
                                                 <label for="discharge" class="form-label">Advance Paid<span style="color:red" title="Mandatory">*</span></label>
                                                 <input type="text" class="form-control" placeholder="Advance amount" id="advamount" name="advamount" readonly>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="discharge" class="form-label">Payment Due<span style="color:red" title="Mandatory">*</span></label>
-                                                <input type="text" class="form-control" placeholder="Payment due" id="dueamount" name="dueamount" readonly>
-                                            </div>
+                                            </div> -->
+                                            
                                         </div>
+                                        
                                         <div class="row pb-3">
-                                            <div class="col-md-6">
-                                                <label for="discharge" class="form-label">Discharge Date<span style="color:red" title="Mandatory">*</span></label>
-                                                <input type="date" class="form-control" placeholder="Date" id="disdate" name="disdate" readonly>
+                                            <div class="col-md-4">
+                                                <label for="discharge" class="form-label">Expected Discharge Date<span style="color:red" title="Mandatory">*</span></label>
+                                                <input type="date" class="form-control"  id="disdate" name="disdate">
                                             </div>
-                                            <div class="col-md-6">
-                                                <label for="discharge" class="form-label">Discharge Time<span style="color:red" title="Mandatory">*</span></label>
-                                                <input type="time" class="form-control" placeholder="Time" id="distime" name="disttime" readonly>
+                                            <div class="col-md-4">
+                                                <label for="discharge" class="form-label">Expected Discharge Time<span style="color:red" title="Mandatory">*</span></label>
+                                                <input type="time" class="form-control"  id="distime" name="distime">
+                                            </div>
+                                            <div class="col-md-4">
+                                            <label for="discharge" class="form-label">Patient Status<span style="color:red" title="Mandatory">*</span></label>
+                                                <select id="pstatus" name="pstatus" class="form-control">
+                                                    <option value="" selected disabled>Select</option>
+                                                    <!-- <option value="Born" >Born</option> -->
+                                                    <option value="Living" >Living</option>
+                                                    <option value="Deceased" >Deceased</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="row pb-3">
                                             <div class="col-md-12">
-                                                <label for="discharge" class="form-label">Discharge Summary</label>
-                                                <textarea class="form-control" placeholder="Summary" id="summary" name="summary" rows="10"></textarea>
+                                                <label for="discharge" class="form-label">Discharge Summary<span style="color:red" title="Mandatory">*</span></label>
+                                                <textarea class="form-control" placeholder="Summary" id="summary" name="summary" rows="50"></textarea>
                                             </div>
                                         </div>
                                     
-                                    
-                                        <button type="submit" class="btn btn-success">Save</button>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="d-grid gap-2">
+                                                    <button class="btn btn-success" type="submit">Proceed</button>                                                  
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                     
                                 </form>
                             </div>
@@ -106,6 +119,11 @@
     </section>
 @endsection
 @section('scripts')
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
@@ -113,7 +131,140 @@
             placeholder: "Search existing patient",
             allowClear: true
         });
+
+        VirtualSelect.init({ 
+            ele: '#multi_option',
+            showSelectAll: true
+        });
+
+
+        $.validator.addMethod("alphanumeric", function(value, element) {
+            return this.optional(element) || /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/.test(value);
+        }, "Only letters, numbers, and spaces are allowed, and must contain at least one letter.");
+
+        $.validator.addMethod("positiveNumber", function(value, element) {
+            return this.optional(element) || (value >= 0);
+        }, "Price must be a positive number.");
+
+    // Form validation rules
+        $("#dischargeform").validate({
+            rules: {
+                regn:{
+                    required:true
+                },
+                'native-select':{
+                    required: true
+                },
+                patname: {
+                    required: true,
+                },
+                contact: {
+                    required: true
+                },
+                disdate:{
+                    required: true
+                },
+                distime:{
+                    required: true
+                },
+                pstatus:{
+                    required: true
+                },
+                summary:{
+                    required: true
+                }
+            
+            },
+            messages: {
+                regn:{
+                    required:"Please select regitration no"
+                },
+                'native-select':{
+                    required: "Please select a clearance"
+                },
+                patname: {
+                    required: "Patient name is required.",
+                },
+                contact: {
+                    required: "Contact is required"
+                },
+                disdate:{
+                    required: "Please enter discharge date"
+                },
+                distime:{
+                    required: "Please enter discharge time"
+                },
+                pstatus:{
+                    required: "Please select patient status"
+                },
+                summary:{
+                    required: "Please fill the dicharge summary"
+                }
+                
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                if (element.hasClass('select2')) {
+                    error.insertAfter(element.next('.select2-container'));
+                } else {
+                    error.addClass('invalid-feedback');
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function(element, errorClass, validClass) {
+                if ($(element).hasClass('select2')) {
+                    $(element).next('.select2-container').find('.select2-selection').addClass('is-invalid').removeClass('is-valid');
+                } else {
+                    $(element).addClass('is-invalid').removeClass('is-valid');
+                }
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                if ($(element).hasClass('select2')) {
+                    $(element).next('.select2-container').find('.select2-selection').removeClass('is-invalid').addClass('is-valid');
+                } else {
+                    $(element).removeClass('is-invalid').addClass('is-valid');
+                }
+            },
+            submitHandler: function(form) {
+                var formData = new FormData(form);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                $.ajax({
+                    url: $("#saveurl").val(),
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.status) {
+                            $("#success").text(response.message).show();
+                            $("#error").hide();
+                            setTimeout(function() {
+                                $('#success').slideUp();
+                            }, 4000);
+
+                            if ($("#mode").val() === 'add') {
+                                $("#userform")[0].reset(); // Reset the form
+                            } else {
+                                window.location.reload();
+                            }
+                        } else {
+                            $("#error").text(response.message).show();
+                            $("#success").hide();
+                            setTimeout(function() {
+                                $('#error').slideUp();
+                            }, 2000);
+                        }
+                    },
+                    error: function(xhr) {
+                        $("#error").text("An error occurred: " + xhr.responseText).show();
+                        $("#success").hide();
+                    }
+                });
+            }
+        });
     });
+    
 
     function searchPatient(){
         let regn = $("#regn").val();
@@ -121,7 +272,18 @@
         if(regn){
             $.ajax({
                 type:"POST",
-                url:"{{url()}}"
+                url:"{{url('discharge/searchPatient')}}",
+                data:{_token:"{{csrf_token()}}",regn:regn},
+                success:function(response){
+                    alert(response.message);
+                    if(response.patientinfo){
+                        document.getElementById("patname").value = response.patientinfo.patient_name;
+                        document.getElementById("contact").value = response.patientinfo.patient_phone;
+                    }
+                },
+                error:function(){
+                    alert("Error!!!")
+                }
             })
         }
     }

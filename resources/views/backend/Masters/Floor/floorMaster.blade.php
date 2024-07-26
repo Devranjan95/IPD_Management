@@ -23,11 +23,11 @@
                                     <div class="col-lg-12 text-center pb-3" style="color:green;font-weight:600" id="success"> </div>
                                     <div class="row pb-3">
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Insert Floor<span style="color:red" title="Mandatory">*</span></label>
+                                            <label for="floor" class="form-label">Insert Floor Name<span style="color:red" title="Mandatory">*</span></label>
                                             <input type="text" class="form-control" placeholder="Mention Floor" id="floorNo" name="floorNo">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="floor" class="form-label">Insert Floor Count<span style="color:red" title="Mandatory">*</span></label>
+                                            <label for="floor" class="form-label">Insert Floor No<span style="color:red" title="Mandatory">*</span></label>
                                             <input type="text" class="form-control" placeholder="Mention Floor count" id="floorcount" name="floorcount">
                                         </div>
                                     </div>
@@ -86,8 +86,8 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
-                                            <th>Floor No</th>
-                                            <th style="text-align:center">No</th>
+                                            <th>Floor Name</th>
+                                            <th style="text-align:center">Floor No</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>

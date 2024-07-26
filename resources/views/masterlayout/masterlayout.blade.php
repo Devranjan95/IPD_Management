@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="{{asset('assets/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
     <!-- *******************************MULTISELECT CDN********************************** -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Include Virtual Select CSS -->
+    <link rel="stylesheet" href="{{asset('assets/css/virtual-select.min.css')}}"/>
     <!-- Bootstrap CSS CDN (optional, for styling) -->
     <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
     <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"> -->
@@ -351,12 +353,44 @@
               </li>
             @endif
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="{{url('discharge')}}">
-                  <!-- <i class="mdi mdi-grid-large menu-icon"></i> -->
+                  
                   <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/lock.svg')}}" alt=""  width="30px" height="30px">
                   <span class="menu-title">Discharge</span>
                 </a>
+            </li> -->
+
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#others" aria-expanded="false" aria-controls="ui-basic">
+                
+                <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/discharge.svg')}}" alt=""  width="30px" height="30px">
+                <span class="menu-title">Others</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="others">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="{{url('discharge')}}">Discharge Form</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('deathentry')}}">Death Record Entry</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('birthentry')}}">Birth Record Entry</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="ui-basic">
+                
+                <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/report.svg')}}" alt=""  width="30px" height="30px">
+                <span class="menu-title">Reports</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="reports">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="#">Patient Reports</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('deathreports')}}">Death Reports</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('birthreports')}}">Birth Reports</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="#">Bed Reports</a></li>
+                </ul>
+              </div>
             </li>
 
             @if (in_array(4, session('permissions')))
@@ -471,6 +505,8 @@
     <!-- Custom js for this page-->
     <script src="{{asset('assets/js/jquery.cookie.js')}}" type="text/javascript"></script>
     <script src="{{asset('assets/js/dashboard.js')}}"></script>
+    <!-- Include Virtual Select JS -->
+    <script src="{{asset('assets/js/virtual-select.min.js')}}"></script>
     @yield('scripts')
     <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
     <!-- End custom js for this page-->
