@@ -182,6 +182,7 @@
                                                                                             <div class="col-md-3">
                                                                                                 <div class="form-check bed-icon-wrapper">
                                                                                                     <label class="form-check-label" for="bed{{$blockIndex}}{{$bedIndex}}">
+                                                                                                        
                                                                                                         @if($bed->status != "Booked")
                                                                                                             <a href="#" style="margin-left:-20px" onclick="getBedinfo('{{$bed->bed_no}}')">
                                                                                                                 <i class="fa fa-bed bed-icon" style="color:

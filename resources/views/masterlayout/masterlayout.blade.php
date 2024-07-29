@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Moon Hospital </title>
+    <title>PATCON </title>
     <!-- plugins:css -->
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{asset('assets/vendors/feather/feather.css')}}">
@@ -42,7 +42,7 @@
     <!-- inject:css -->
     <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
     <!-- endinject -->
-    <link rel="icon"  type="image/png" href="{{asset('assets/previous/Hospyllum.svg')}}">
+    <link rel="icon"  type="image/png" href="{{asset('assets/previous/patconlogo.svg')}}">
    
     <style>
       /* .card{
@@ -109,7 +109,7 @@
         padding-left:15px
       }
       .navbar .navbar-brand-wrapper .navbar-brand img {
-        height: 90px;
+        height: 200px;
       }
       .sidebar .nav.sub-menu {
         background: #ace1af;
@@ -215,10 +215,10 @@
           </div>
           <div>
             <a class="navbar-brand brand-logo" href="index.html">
-              <img src="{{asset('assets/previous/Hospyllum.svg')}}" alt="logo" />
+              <img src="{{asset('assets/previous/patconlogo.svg')}}" alt="logo" />
             </a>
             <a class="navbar-brand brand-logo-mini" href="index.html">
-              <img src="{{asset('assets/previous/Hospyllum.svg')}}" alt="logo" width="50px"/>
+              <img src="{{asset('assets/previous/patconlogo.svg')}}" alt="logo" width="50px"/>
             </a>
           </div>
         </div>
@@ -370,7 +370,9 @@
               </a>
               <div class="collapse" id="others">
                 <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="{{url('patientstatusupdate')}}">Patient Status</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('discharge')}}">Discharge Form</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('finaldischarge')}}">Patient Check Out</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('deathentry')}}">Death Record Entry</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('birthentry')}}">Birth Record Entry</a></li>
                 </ul>
@@ -385,10 +387,11 @@
               </a>
               <div class="collapse" id="reports">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="#">Patient Reports</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('patientreports')}}">Patient Reports</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('deathreports')}}">Death Reports</a></li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('birthreports')}}">Birth Reports</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="#">Bed Reports</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('bedreports')}}">Bed Reports</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('dischargereports')}}">Discharge Reports</a></li>
                 </ul>
               </div>
             </li>

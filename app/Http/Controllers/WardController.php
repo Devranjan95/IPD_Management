@@ -120,6 +120,10 @@ class WardController extends Controller
             'wardDetails' => $wardDetails, // Pass the details to the view
         ]);
     }
+
+    
+    
+
     
     
 

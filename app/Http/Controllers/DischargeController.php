@@ -8,13 +8,15 @@ use Illuminate\Http\Request;
 use App\Models\Patient;
 use App\Models\Token;
 use App\Models\DischargeInfo;
+use App\Models\BedAssign;
 
 
 class DischargeController extends Controller
 {
     //
     public function index(){
-        $statusArray = ["Booked","InBed","Operation","Deceased"];
+        //$statusArray = ["Booked","InBed","Operation"];
+        $statusArray = ["Clear for Discharge"];
         $regnvalues = Token::whereIn('status',$statusArray)->select('patient_regn_no')->get();
         return view('backend.Discharge.dischargeform',['regnvalues'=>$regnvalues]);
     }
@@ -33,6 +35,41 @@ class DischargeController extends Controller
             return response()->json(["status"=>false,"message"=>"Patient not found"]);
         }
     }
+
+    public function finalDischarge(Request $request){
+        $regns = Token::where('status','Discharge InProgress')->get();
+        return view('backend.Discharge.finaldischarge',['regns'=>$regns]);
+       
+    }
+
+    public function searchDischargeInprogress(Request $request){
+        //dd($request);
+        $statusArray = ["Booked","InBed","Discharge InProgress"];
+        // Fetch the patient with filtered tokens
+        $patientInfo = Patient::with(['tokens' => function($query) use ($statusArray) {
+            $query->whereIn('status', $statusArray);
+        }])->where('patient_regn_no', $request->regn)->first();
+        
+        return response()->json(["message"=>"Load patient details","patientInfo"=>$patientInfo]);
+    }
+
+    public function updateDischarge(Request $request){
+        //dd($request);
+        $tokeninfo = Token::where('id',$request->tokenId)->first();
+        //dd($tokeninfo);
+        $tokenUpdate = Token::where('id',$request->tokenId)->update(["status"=>"Discharged"]);
+        if($tokenUpdate){
+            $bedupdate = BedAssign::where('bed_no',$tokeninfo->bednumber)->update(["status"=>"Vacant"]);
+            return response()->json(["status"=>true,"message"=>"Checkout Successful"]);
+        }else{
+            return response()->json(["status"=>false,"message"=>"Checkout Unsuccessful"]);
+        }
+        
+
+        
+    }
+
+    
 
     // public function saveDischarge(Request $request)
     // {
@@ -116,6 +153,7 @@ class DischargeController extends Controller
 
     public function saveDischarge(Request $request)
     {
+        //dd($request);
         try {
             $clearance = $request->input('native-select');
             if (is_string($clearance)) {
@@ -153,8 +191,9 @@ class DischargeController extends Controller
     
             // Update token status
             if ($saveDischarge) {
+                $statusArray = ["Clear for Discharge"];
                 $updateDatetoken = Token::where('patient_regn_no', $request->regn)
-                    ->where('status', 'InBed')
+                    ->whereIn('status', $statusArray)
                     ->update([
                         'date_of_discharge' => $request->disdate,
                         'time_of_discharge' => $request->distime,

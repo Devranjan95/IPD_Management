@@ -15,14 +15,14 @@ use App\Models\DischargeInfo;
 class DeathController extends Controller
 {
     public function index(){
-        $statusArray = ["Deceased"];
-        $regnvalues = Token::whereIn('status',$statusArray)->select('patient_regn_no')->get();
+        //$statusArray = ["Deceased"];
+        $regnvalues = Token::where('deceased_status','Y')->select('patient_regn_no')->get();
         return view("backend.Discharge.deathrecordentry",["regnvalues"=>$regnvalues]);
     }
 
     public function searchPatient(Request $request){
         $patientInfo = Patient::where('patient_regn_no',$request->regn)->first();
-        $tokenInfo = Token::where('patient_regn_no',$request->regn)->where('status','Deceased')->first();
+        $tokenInfo = Token::where('patient_regn_no',$request->regn)->where('deceased_status','Y')->first();
         return response()->json(["message"=>"Patient found","patientInfo"=>$patientInfo,"tokenInfo"=>$tokenInfo]);
     }
 

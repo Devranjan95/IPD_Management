@@ -19,10 +19,12 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ActionController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\DischargeController;
 use App\Http\Controllers\DeathController;
 use App\Http\Controllers\BirthController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,9 +45,10 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', function () {
-    return view('backend.Dashboard.dashboard');
-})->middleware(['auth', 'verified','role.new'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('backend.Dashboard.dashboard');
+// })->middleware(['auth', 'verified','role.new'])->name('dashboard');
+Route::get('/dashboard',[DashboardController::class,'index'])->middleware(['auth', 'verified','role.new'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -167,9 +170,18 @@ Route::middleware('auth')->group(function () {
         Route::get('action/editData/{id}',[ActionController::class,'getData'])->middleware('check.permission:4');
         Route::get('action/deleteData/{id}',[ActionController::class,'deleteData'])->middleware('check.permission:4');
 
+        Route::get('patientstatusupdate/',[StatusController::class,'index']);
+        Route::post('searchPatient/status',[StatusController::class,'searchPatient']);
+        Route::post('updateTokenStatus',[StatusController::class,'updateStatus']);
+        Route::post('updateStatusBorn',[StatusController::class,'updateStatusNewBorn']);
+        Route::post('updateStatusdischargeprocess',[StatusController::class,'updateStatusNewDischargeProcess']);
+
         Route::get('discharge/',[DischargeController::class,'index']);
         Route::post('discharge/searchPatient',[DischargeController::class,'searchPatient']);
         Route::post('discharge/saveData',[DischargeController::class,'saveDischarge']);
+        Route::get('finaldischarge',[DischargeController::class,'finalDischarge']);
+        Route::post('searchPatient/dischargeInprogress',[DischargeController::class,'searchDischargeInprogress']);
+        Route::post('updateFinalDischarge',[DischargeController::class,'updateDischarge']);
 
         Route::get('deathentry/',[DeathController::class,'index']);
         Route::post('deathrecord/searchPatient',[DeathController::class,'searchPatient']);
@@ -182,6 +194,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('birthreports/',[ReportController::class,'index']);
         Route::get('deathreports/',[ReportController::class,'index_death']);
+        Route::get('patientreports/',[ReportController::class,'index_patient']);
+        Route::get('dischargereports/',[ReportController::class,'index_discharge']);
+        Route::get('bedreports/',[ReportController::class,'index_bed']);
+
+        //Route::get('')
         
     });
     

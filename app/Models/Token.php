@@ -35,6 +35,8 @@ class Token extends Model
         'total_stay_hr',
         'discharge_summary',
         'status',
+        'deceased_status',
+        'maternity_status',
     ];
 
     public function patient()

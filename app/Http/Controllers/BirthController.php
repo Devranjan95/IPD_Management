@@ -14,8 +14,8 @@ use App\Models\BirthRecord;
 class BirthController extends Controller
 {
     public function index(){
-        $statusArray = ["Booked","InBed","Operation","BabyBorn"];
-        $regnvalues = Token::whereIn('status',$statusArray)->select('patient_regn_no')->get();
+        $statusArray = ["Booked","InBed","Operation"];
+        $regnvalues = Token::whereIn('status',$statusArray)->where('maternity_status',"Successfull")->select('patient_regn_no')->get();
         return view("backend.Discharge.birthrecordentry",["regnvalues"=>$regnvalues]);
     }
 

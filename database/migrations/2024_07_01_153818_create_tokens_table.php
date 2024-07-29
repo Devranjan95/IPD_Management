@@ -38,6 +38,8 @@ return new class extends Migration
             $table->string('total_stay_hr')->nullable();
             $table->string('total_price')->nullable();
             $table->string('status')->nullable();
+            $table->string('deceased_status')->nullable();
+            $table->string('maternity_status')->nullable();
             $table->timestamps();
 
             // Add foreign key constraint
