@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Floor;
 use App\Models\Block;
 use App\Models\Cabin;
+use App\Models\Token;
 use App\Models\CabinType;
 use App\Models\Amenity;
 
@@ -223,27 +224,56 @@ class CabinController extends Controller
                     }
                 }
                 //$available = $request->occupancy - $assigned;
-
-                $updatecabin = Cabin::where('id',$request->recordid)
-                                    ->update(["cabin_name" => ucwords($request->cabinname),
-                                              "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
-                                              "floor_count" => $request->floor,
-                                              "block_id" => $request->block,
-                                              "total_occupancy" => $request->occupancy,
-                                              "amenities" => $amenities,
-                                              "price" => $request->cabinprice,
-                                              "status" => $request->status,
-                                              "narration" => $request->narration,
-                                              "created_by" => 1,
-                                              "updated_by" => 1,
-                                              "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updatecabin){
-                    return response()->json(['status'=>true,'message'=>'Cabin updated successfully']);
+                if($request->status == "Inactive"){
+                    $statusArray = ["Booked","InBed","Discharge InProgress"];
+                    $cabinexist = Token::where('flag','Cabin')->where('type_name_id',$request->recordid)->whereIn('status', $statusArray)->get();
+                    //dd($cabinexist);
+                    if($cabinexist->isNotEmpty()){
+                        return response()->json(["status"=>false,"message"=>"Sorry!! Cabin cannot be inactive, Patients alloted to the cabin"]);
+                    }else{
+                        //dd(1);
+                        //This is if i want to update the childs of cabin............
+                        $updatecabin = Cabin::where('id',$request->recordid)
+                        ->update(["cabin_name" => ucwords($request->cabinname),
+                                  "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
+                                  "floor_count" => $request->floor,
+                                  "block_id" => $request->block,
+                                  "total_occupancy" => $request->occupancy,
+                                  "amenities" => $amenities,
+                                  "price" => $request->cabinprice,
+                                  "status" => $request->status,
+                                  "narration" => $request->narration,
+                                  "created_by" => 1,
+                                  "updated_by" => 1,
+                                  "updated_at"=>date('Y-m-d H:i:s')]);
+                        if($updatecabin){
+                            return response()->json(['status'=>true,'message'=>'Cabin updated successfully']);
+                        }else{
+                            return response()->json(['status'=>false,'message'=>'Cabin could not be updated']);
+                        }
+                    }
                 }else{
-                    return response()->json(['status'=>false,'message'=>'Cabin could not be updated']);
+                    //dd(1);
+                        $updatecabin = Cabin::where('id',$request->recordid)
+                        ->update(["cabin_name" => ucwords($request->cabinname),
+                                  "cabin_type_id" => $request->cabintype, // Make sure to include cabin_type_id
+                                  "floor_count" => $request->floor,
+                                  "block_id" => $request->block,
+                                  "total_occupancy" => $request->occupancy,
+                                  "amenities" => $amenities,
+                                  "price" => $request->cabinprice,
+                                  "status" => $request->status,
+                                  "narration" => $request->narration,
+                                  "created_by" => 1,
+                                  "updated_by" => 1,
+                                  "updated_at"=>date('Y-m-d H:i:s')]);
+                        if($updatecabin){
+                            return response()->json(['status'=>true,'message'=>'Cabin updated successfully']);
+                        }else{
+                            return response()->json(['status'=>false,'message'=>'Cabin could not be updated']);
+                        }
                 }
-               
-                
+   
             }
         }catch (ValidationException $e){
             return response()->json([
@@ -263,25 +293,32 @@ class CabinController extends Controller
 
     public function deleteData(string $id)
     {
-        // Find the cabin record by ID
-        $cabin = Cabin::find($id);
+        $statusArray = ["Booked","InBed","Discharge InProgress"];
+        $cabinexist = Token::where('flag','Cabin')->where('type_name_id',$id)->whereIn('status', $statusArray)->get();
+        //dd($cabinexist);
+        if($cabinexist->isNotEmpty()){
+            return response()->json(["status"=>false,"message"=>"Sorry!! cannot delete this cabin, Patients alloted to the cabin"]);
+        }else{
+                // Find the cabin record by ID
+            $cabin = Cabin::find($id);
 
-        // Check if the floor record exists
-        if (!$cabin) {
-            return response()->json(['message' => 'Cabin not found'], 404);
-        }
+            // Check if the floor record exists
+            if (!$cabin) {
+                return response()->json(['message' => 'Cabin not found'], 404);
+            }
 
-        // Attempt to delete the floor record
-        if ($cabin->delete()) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Cabin Deleted',
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Cabin could not be deleted.',
-            ]);
+            // Attempt to delete the floor record
+            if ($cabin->delete()) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Cabin Deleted',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Cabin could not be deleted.',
+                ]);
+            }
         }
     }
 }

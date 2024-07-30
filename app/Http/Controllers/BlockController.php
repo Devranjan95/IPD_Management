@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use App\Models\Floor;
 use App\Models\Block;
+use App\Models\Token;
 use App\Models\Cabin;
 use App\Models\Ward;
 use App\Models\Icu;
@@ -235,38 +236,44 @@ class BlockController extends Controller
     
                     if ($updateblock) {
                         if ($request->status == 'Inactive') {
-                            $associatedCabins = Cabin::where('block_id', $request->recordid)->get();
-                            $associatedWards = Ward::where('block_id', $request->recordid)->get();
-                            $associatedIcus = Icu::where('block_id', $request->recordid)->get();
-    
-                            if ($associatedCabins->isEmpty() && $associatedWards->isEmpty() && $associatedIcus->isEmpty()) {
-                                DB::commit();
-                                return response()->json(['status' => true, 'message' => 'Block updated successfully']);
-                            } else {
-                                Cabin::where('block_id', $request->recordid)
-                                    ->update([
-                                        'status' => 'Inactive',
-                                        'updated_by' => 1,
-                                        'updated_at' => now()
-                                    ]);
-    
-                                Ward::where('block_id', $request->recordid)
-                                    ->update([
-                                        'status' => 'Inactive',
-                                        'updated_by' => 1,
-                                        'updated_at' => now()
-                                    ]);
-    
-                                Icu::where('block_id', $request->recordid)
-                                    ->update([
-                                        'status' => 'Inactive',
-                                        'updated_by' => 1,
-                                        'updated_at' => now()
-                                    ]);
-    
-                                DB::commit();
-                                return response()->json(['status' => true, 'message' => 'Block updated successfully']);
-                            }
+                            $statusArray = ["Booked","InBed","Discharge InProgress"];
+                            $associatedToken = Token::where('block_id',$request->recordid)->whereIn('status',$statusArray)->get();
+                            if($associatedToken->isNotEmpty()){
+                                return response()->json(['status'=>false,"message"=>"Sorry!! block cannot be inactive, Patients alloted in this block"]);
+                            }else{
+                                $associatedCabins = Cabin::where('block_id', $request->recordid)->get();
+                                $associatedWards = Ward::where('block_id', $request->recordid)->get();
+                                $associatedIcus = Icu::where('block_id', $request->recordid)->get();
+        
+                                if ($associatedCabins->isEmpty() && $associatedWards->isEmpty() && $associatedIcus->isEmpty()) {
+                                    DB::commit();
+                                    return response()->json(['status' => true, 'message' => 'Block updated successfully']);
+                                } else {
+                                    Cabin::where('block_id', $request->recordid)
+                                        ->update([
+                                            'status' => 'Inactive',
+                                            'updated_by' => 1,
+                                            'updated_at' => now()
+                                        ]);
+        
+                                    Ward::where('block_id', $request->recordid)
+                                        ->update([
+                                            'status' => 'Inactive',
+                                            'updated_by' => 1,
+                                            'updated_at' => now()
+                                        ]);
+        
+                                    Icu::where('block_id', $request->recordid)
+                                        ->update([
+                                            'status' => 'Inactive',
+                                            'updated_by' => 1,
+                                            'updated_at' => now()
+                                        ]);
+        
+                                    DB::commit();
+                                    return response()->json(['status' => true, 'message' => 'Block updated successfully']);
+                                }
+                            }                      
                         } else {
                             Cabin::where('block_id', $request->recordid)
                                 ->update([
@@ -317,36 +324,42 @@ class BlockController extends Controller
     }
     public function deleteData(string $id)
     {
-        $cabins = Cabin::where('block_id', $id)->exists();
-        $wards = Ward::where('block_id', $id)->exists();
-        $icus = Icu::where('block_id', $id)->exists();
-        if(!$cabins && !$wards && !$icus){
-            $block = Block::find($id);
-
-            // Check if the floor record exists
-            if (!$block) {
-                return response()->json(['message' => 'Block not found'], 404);
-            }
-
-            // Attempt to delete the floor record
-            if ($block->delete()) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Block Deleted',
-                ]);
-            } else {
+        $statusArray = ["Booked","InBed","Discharge InProgress"];
+        $associatedToken = Token::where('block_id',$id)->whereIn('status',$statusArray)->get();
+        if($associatedToken->isNotEmpty()){
+            return response()->json(["message"=>"Sorry!! cannot delete this block, Patients alloted in this block"]);
+        }else{
+            $cabins = Cabin::where('block_id', $id)->exists();
+            $wards = Ward::where('block_id', $id)->exists();
+            $icus = Icu::where('block_id', $id)->exists();
+            if(!$cabins && !$wards && !$icus){
+                $block = Block::find($id);
+    
+                // Check if the floor record exists
+                if (!$block) {
+                    return response()->json(['message' => 'Block not found'], 404);
+                }
+    
+                // Attempt to delete the floor record
+                if ($block->delete()) {
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Block Deleted',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Block could not be deleted.',
+                    ]);
+                }
+    
+            }else {
+                // Associated records found, cannot delete floor
                 return response()->json([
                     'status' => false,
-                    'message' => 'Block could not be deleted.',
+                    'message' => 'Cannot delete block. Associated records exist in cabin, ward, or icu.',
                 ]);
-            }
-
-        }else {
-            // Associated records found, cannot delete floor
-            return response()->json([
-                'status' => false,
-                'message' => 'Cannot delete block. Associated records exist in cabin, ward, or icu.',
-            ]);
-        } 
+            } 
+        }
     }
 }

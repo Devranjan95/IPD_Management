@@ -99,7 +99,7 @@
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Patient Distribution</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="width:500px;height:500px">
                     <canvas id="patientPieChart"></canvas>
                 </div>
             </div>

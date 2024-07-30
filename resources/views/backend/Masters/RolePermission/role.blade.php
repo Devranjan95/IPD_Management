@@ -144,8 +144,28 @@
                                             
                                             <td>{{ $sl++ }}</td>
                                             <td>{{ $data['role']->name }}</td>
-                                            <td>{{ implode(', ', $data['pernames']) }}</td>
-                                            <td>{{ implode(', ', $data['actionnames']) }}</td>
+                                            <td>{{--{{ implode(', ', $data['pernames']) }}--}}
+                                                @if(count($data['pernames'])==14)
+                                                    <p>All</p>
+                                                @else 
+                                                <ul>
+                                                  @foreach($data['pernames'] as $screen)
+                                                   <li>{{$screen}}</li>
+                                                  @endforeach
+                                                </ul>
+                                                @endif
+                                            </td>
+                                            <td>{{--{{ implode(', ', $data['actionnames']) }}--}}
+                                                @if(count($data['actionnames'])==14)
+                                                    <p>All</p>
+                                                @else
+                                                <ul>
+                                                    @foreach($data['actionnames'] as $action)
+                                                    <li>{{$action}}</li>
+                                                    @endforeach
+                                                </ul>
+                                                @endif 
+                                            </td>
                                             <td>
                                                 @if($data['role']->status == "Active")
                                                 <label class="badge badge-success">Active</label>

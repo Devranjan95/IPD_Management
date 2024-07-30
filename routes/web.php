@@ -51,9 +51,9 @@ Route::get('/', function () {
 Route::get('/dashboard',[DashboardController::class,'index'])->middleware(['auth', 'verified','role.new'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/edit.profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/update.profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/destroy.profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
 // *******************************************************************************************
@@ -170,33 +170,33 @@ Route::middleware('auth')->group(function () {
         Route::get('action/editData/{id}',[ActionController::class,'getData'])->middleware('check.permission:4');
         Route::get('action/deleteData/{id}',[ActionController::class,'deleteData'])->middleware('check.permission:4');
 
-        Route::get('patientstatusupdate/',[StatusController::class,'index']);
-        Route::post('searchPatient/status',[StatusController::class,'searchPatient']);
-        Route::post('updateTokenStatus',[StatusController::class,'updateStatus']);
-        Route::post('updateStatusBorn',[StatusController::class,'updateStatusNewBorn']);
-        Route::post('updateStatusdischargeprocess',[StatusController::class,'updateStatusNewDischargeProcess']);
+        Route::get('patientstatusupdate/',[StatusController::class,'index'])->middleware('check.permission:5');
+        Route::post('searchPatient/status',[StatusController::class,'searchPatient'])->middleware('check.permission:5');
+        Route::post('updateTokenStatus',[StatusController::class,'updateStatus'])->middleware('check.permission:5');
+        Route::post('updateStatusBorn',[StatusController::class,'updateStatusNewBorn'])->middleware('check.permission:5');
+        Route::post('updateStatusdischargeprocess',[StatusController::class,'updateStatusNewDischargeProcess'])->middleware('check.permission:5');
 
-        Route::get('discharge/',[DischargeController::class,'index']);
-        Route::post('discharge/searchPatient',[DischargeController::class,'searchPatient']);
-        Route::post('discharge/saveData',[DischargeController::class,'saveDischarge']);
-        Route::get('finaldischarge',[DischargeController::class,'finalDischarge']);
-        Route::post('searchPatient/dischargeInprogress',[DischargeController::class,'searchDischargeInprogress']);
-        Route::post('updateFinalDischarge',[DischargeController::class,'updateDischarge']);
+        Route::get('discharge/',[DischargeController::class,'index'])->middleware('check.permission:6');
+        Route::post('discharge/searchPatient',[DischargeController::class,'searchPatient'])->middleware('check.permission:6');
+        Route::post('discharge/saveData',[DischargeController::class,'saveDischarge'])->middleware('check.permission:6');
+        Route::get('finaldischarge',[DischargeController::class,'finalDischarge'])->middleware('check.permission:7');
+        Route::post('searchPatient/dischargeInprogress',[DischargeController::class,'searchDischargeInprogress'])->middleware('check.permission:6');
+        Route::post('updateFinalDischarge',[DischargeController::class,'updateDischarge'])->middleware('check.permission:6');
 
-        Route::get('deathentry/',[DeathController::class,'index']);
-        Route::post('deathrecord/searchPatient',[DeathController::class,'searchPatient']);
-        Route::post('deathrecord/saveData',[DeathController::class,'saveDeathRecord']);
+        Route::get('deathentry/',[DeathController::class,'index'])->middleware('check.permission:8');
+        Route::post('deathrecord/searchPatient',[DeathController::class,'searchPatient'])->middleware('check.permission:8');
+        Route::post('deathrecord/saveData',[DeathController::class,'saveDeathRecord'])->middleware('check.permission:8');
 
 
-        Route::get('birthentry/',[BirthController::class,'index']);
-        Route::post('birthrecord/searchPatient',[BirthController::class,'searchPatient']);
-        Route::post('birthrecord/saveData',[BirthController::class,'saveBirthRecord']);
+        Route::get('birthentry/',[BirthController::class,'index'])->middleware('check.permission:9');
+        Route::post('birthrecord/searchPatient',[BirthController::class,'searchPatient'])->middleware('check.permission:9');
+        Route::post('birthrecord/saveData',[BirthController::class,'saveBirthRecord'])->middleware('check.permission:9');
 
-        Route::get('birthreports/',[ReportController::class,'index']);
-        Route::get('deathreports/',[ReportController::class,'index_death']);
-        Route::get('patientreports/',[ReportController::class,'index_patient']);
-        Route::get('dischargereports/',[ReportController::class,'index_discharge']);
-        Route::get('bedreports/',[ReportController::class,'index_bed']);
+        Route::get('birthreports/',[ReportController::class,'index'])->middleware('check.permission:12');
+        Route::get('deathreports/',[ReportController::class,'index_death'])->middleware('check.permission:11');
+        Route::get('patientreports/',[ReportController::class,'index_patient'])->middleware('check.permission:10');
+        Route::get('dischargereports/',[ReportController::class,'index_discharge'])->middleware('check.permission:14');
+        Route::get('bedreports/',[ReportController::class,'index_bed'])->middleware('check.permission:13');
 
         //Route::get('')
         

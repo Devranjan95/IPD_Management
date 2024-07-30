@@ -157,7 +157,7 @@ function populatePatientDetails(patientInfo) {
 
 
 function updateStatusToDeceased(tokenId) {
-    alert(tokenId);
+    //alert(tokenId);
     if (confirm("Are you sure you want to mark this patient as deceased?")) {
         $.ajax({
             url: "{{ url('updateTokenStatus') }}",
@@ -180,7 +180,7 @@ function updateStatusToDeceased(tokenId) {
 }
 
 function updateStatusToBorn(tokenId) {
-    alert(tokenId);
+    //alert(tokenId);
     if (confirm("Are you sure you want to mark this patient as New born?")) {
         $.ajax({
             url: "{{ url('updateStatusBorn') }}",
@@ -204,7 +204,7 @@ function updateStatusToBorn(tokenId) {
 
 
 function updateStatusDischargeProcess(tokenId) {
-    alert(tokenId);
+    //alert(tokenId);
     if (confirm("Are you sure you want to process this patient to discharge?")) {
         $.ajax({
             url: "{{ url('updateStatusdischargeprocess') }}",

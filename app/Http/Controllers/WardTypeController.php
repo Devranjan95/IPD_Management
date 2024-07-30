@@ -65,9 +65,10 @@ class WardTypeController extends Controller
                     }
                 }
                 if ($request->status == "Inactive"){
-                    $wardtypeexist = Token::where('type',$request->wardtype)->where('status','Booked')->exists();
-                    if($wardtypeexist){
-                        return response()->json(['status' => false,"message"=>"Sorry wardtype already in use for a patient cannot be inactive"]);
+                    $statusArray = ["Booked","InBed","Discharge InProgress"];
+                    $wardtypeexist = Token::where('flag','Ward')->where('category_id',$request->recordid)->where('status',$statusArray)->get();
+                    if($wardtypeexist->isNotEmpty()){
+                        return response()->json(['status' => false,"message"=>"Sorry!! wardtype cannot be inactive, Patients alloted to the wardtype"]);
                     }else{
                         $updatewardtype = WardType::where('id',$request->recordid)
                         ->update(["ward_type"=>ucwords($request->wardtype),
@@ -136,33 +137,39 @@ class WardTypeController extends Controller
     }
     public function deleteData(string $id)
     {
-        $ward = Ward::where('ward_type_id',$id)->exists();
-        if(!$ward){
-            $wardtype = WardType::find($id);
-
-            // Check if the floor record exists
-            if (!$wardtype) {
-                return response()->json(['message' => 'Wardtype not found'], 404);
-            }
-
-            // Attempt to delete the floor record
-            if ($wardtype->delete()) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Wardtype Deleted',
-                ]);
+        $statusArray = ["Booked","InBed","Discharge InProgress"];
+        $wardtypeexist = Token::where('flag','Ward')->where('category_id',$id)->where('status',$statusArray)->get();
+        if($wardtypeexist->isNotEmpty()){
+            return response()->json(['status' => false,"message"=>"Sorry!! cannot delete wardtype, Patients alloted to this wardtype"]);
+        }else{
+            $ward = Ward::where('ward_type_id',$id)->exists();
+            if(!$ward){
+                $wardtype = WardType::find($id);
+    
+                // Check if the floor record exists
+                if (!$wardtype) {
+                    return response()->json(['message' => 'Wardtype not found'], 404);
+                }
+    
+                // Attempt to delete the floor record
+                if ($wardtype->delete()) {
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Wardtype Deleted',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Wardtype could not be deleted.',
+                    ]);
+                }
             } else {
+                // Associated records found, cannot delete floor
                 return response()->json([
                     'status' => false,
-                    'message' => 'Wardtype could not be deleted.',
+                    'message' => 'Cannot delete Wardtype. Associated records exist in  ward',
                 ]);
-            }
-        } else {
-            // Associated records found, cannot delete floor
-            return response()->json([
-                'status' => false,
-                'message' => 'Cannot delete Wardtype. Associated records exist in  ward',
-            ]);
-        }  
+            }  
+        }
     }
 }

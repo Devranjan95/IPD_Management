@@ -45,18 +45,19 @@
                                                                                     $assigned = $cabin->assigned;
                                                                                     $available = $occupancy - $assigned;
                                                                                 @endphp
-                                                                                @if($available === 0)
+                                                                                @if($cabin->status != "Active")
+                                                                                    <div class="cabin-card bg-danger text-white">
+                                                                                        <h6>{{ $cabin->cabin_name }}</h6>
+                                                                                        <p style="font-size:12px">Cabin Not Active</p>
+                                                                                    </div>
+                                                                                @elseif($available === 0)
                                                                                     <div class="cabin-card bg-danger">
                                                                                         <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$cabin->id}}, 'cabin')">
                                                                                             <h6 style="color:#fff">{{ $cabin->cabin_name }}</h6>
                                                                                             <p style="font-size:12px;color:#fff">Available 0</p>
                                                                                         </a>
                                                                                     </div>
-                                                                                @elseif($cabin->status != "Active")
-                                                                                    <div class="cabin-card bg-danger text-white">
-                                                                                        <h6>{{ $cabin->cabin_name }}</h6>
-                                                                                        <p style="font-size:12px">Cabin Not Active</p>
-                                                                                    </div>
+                                                                                    
                                                                                 @else
                                                                                     <div class="cabin-card">
                                                                                         <a href="#" style="text-decoration:none" onclick="takeValue({{$cabin->id}}, 'cabin')">
@@ -88,18 +89,18 @@
                                                                                     $assigned = $ward->assigned;
                                                                                     $available = $occupancy - $assigned;
                                                                                 @endphp
-                                                                                @if($available === 0)
+                                                                                @if($ward->status != "Active")
+                                                                                    <div class="cabin-card bg-danger text-white">
+                                                                                        <h6>{{ $ward->ward_name }}</h6>
+                                                                                        <p style="font-size:12px">Ward Not Active</p>
+                                                                                    </div>
+                                                                                @elseif($available === 0)
                                                                                     <div class="ward-card bg-danger text-white">
                                                                                         <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$ward->id}}, 'ward')">
                                                                                             <h6>{{ $ward->ward_name }}</h6>
                                                                                             <p style="font-size:12px">Available 0</p>
                                                                                         </a>
-                                                                                    </div>
-                                                                                @elseif($ward->status != "Active")
-                                                                                    <div class="cabin-card bg-danger text-white">
-                                                                                        <h6>{{ $ward->ward_name }}</h6>
-                                                                                        <p style="font-size:12px">Ward Not Active</p>
-                                                                                    </div>
+                                                                                    </div>                                                           
                                                                                 @else
                                                                                     <div class="ward-card">
                                                                                         <a href="#" style="text-decoration:none" onclick="takeValue({{$ward->id}}, 'ward')">
@@ -131,18 +132,18 @@
                                                                                     $assigned = $icu->assigned;
                                                                                     $available = $occupancy - $assigned;
                                                                                 @endphp
-                                                                                @if($available === 0)
+                                                                                @if($icu->status != "Active")
+                                                                                    <div class="cabin-card bg-danger text-white">
+                                                                                        <h6>{{ $icu->icu_name }}</h6>
+                                                                                        <p style="font-size:12px">Icu Not Active</p>
+                                                                                    </div>
+                                                                                @elseif($available === 0)
                                                                                     <div class="icu-card bg-danger text-white">
                                                                                         <a href="#" style="text-decoration:none;color:#fff" onclick="takeValue({{$icu->id}}, 'icu')">
                                                                                             <h6>{{ $icu->icu_name }}</h6>
                                                                                             <p style="font-size:12px">Available 0</p>
                                                                                         </a>
-                                                                                    </div>
-                                                                                @elseif($icu->status != "Active")
-                                                                                    <div class="cabin-card bg-danger text-white">
-                                                                                        <h6>{{ $icu->icu_name }}</h6>
-                                                                                        <p style="font-size:12px">Icu Not Active</p>
-                                                                                    </div>
+                                                                                    </div>                                                     
                                                                                 @else
                                                                                     <div class="icu-card">
                                                                                         <a href="#" style="text-decoration:none" onclick="takeValue({{$icu->id}}, 'icu')">

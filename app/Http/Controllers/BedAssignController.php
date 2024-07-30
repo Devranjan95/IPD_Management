@@ -40,7 +40,7 @@ class BedAssignController extends Controller
             $warddetails[$floor->count] = $wards;
             $icudetails[$floor->count] = $icus;
         }
-    
+        //dd($cabindetails);
         return view('backend.Masters.Bed.bedassignvisual', [
             'floors' => $floors,
             'cabindetails' => $cabindetails,

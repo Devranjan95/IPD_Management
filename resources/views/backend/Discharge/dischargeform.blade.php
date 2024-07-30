@@ -269,7 +269,7 @@ $(document).ready(function() {
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    if (response.status) {
+                    if(response.status) {
                         $("#success").text(response.message).show();
                         $("#error").hide();
                         setTimeout(function() {
@@ -304,7 +304,7 @@ $(document).ready(function() {
 
     function searchPatient(){
         let regn = $("#regn").val();
-        alert(regn);
+        //alert(regn);
         if(regn){
             $.ajax({
                 type:"POST",

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Floor;
 use App\Models\Block;
 use App\Models\Ward;
+use App\Models\Token;
 use App\Models\WardType;
 use App\Models\Amenity;
 
@@ -192,27 +193,52 @@ class WardController extends Controller
     
                     }
                 }
-                
-                $updateward = Ward::where('id',$request->recordid)
-                                    ->update(["ward_name" => ucwords($request->wardname),
-                                              "ward_type_id" => $request->wardtype, // Make sure to include cabin_type_id
-                                              "floor_count" => $request->floor,
-                                              "block_id" => $request->block,
-                                              "total_occupancy" => $request->occupancy,
-                                              "amenities" => $amenities,
-                                              "price" => $request->wardprice,
-                                              "status" => $request->status,
-                                              "narration" => $request->narration,
-                                              "created_by" => 1,
-                                              "updated_by" => 1,
-                                              "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updateward){
-                    return response()->json(['status'=>true,'message'=>'Ward updated successfully']);
+
+                $statusArray = ["Booked","InBed","Discharge InProgress"];
+                $wardexist = Token::where('flag','Ward')->where('type_name_id',$request->recordid)->whereIn('status', $statusArray)->get();
+                //dd($cabinexist);
+                if($wardexist->isNotEmpty()){
+                    return response()->json(["status"=>false,"message"=>"Sorry!! Ward cannot be inactive, Patients alloted to the ward"]);
                 }else{
-                    return response()->json(['status'=>false,'message'=>'Ward could not be updated']);
+                    //This is if i want to update the child of wards.....
+                    $updateward = Ward::where('id',$request->recordid)
+                    ->update(["ward_name" => ucwords($request->wardname),
+                              "ward_type_id" => $request->wardtype, // Make sure to include cabin_type_id
+                              "floor_count" => $request->floor,
+                              "block_id" => $request->block,
+                              "total_occupancy" => $request->occupancy,
+                              "amenities" => $amenities,
+                              "price" => $request->wardprice,
+                              "status" => $request->status,
+                              "narration" => $request->narration,
+                              "created_by" => 1,
+                              "updated_by" => 1,
+                              "updated_at"=>date('Y-m-d H:i:s')]);
+                    if($updateward){
+                        return response()->json(['status'=>true,'message'=>'Ward updated successfully']);
+                    }else{
+                        return response()->json(['status'=>false,'message'=>'Ward could not be updated']);
+                    }
                 }
-               
-                
+            }else{
+                $updateward = Ward::where('id',$request->recordid)
+                    ->update(["ward_name" => ucwords($request->wardname),
+                              "ward_type_id" => $request->wardtype, // Make sure to include cabin_type_id
+                              "floor_count" => $request->floor,
+                              "block_id" => $request->block,
+                              "total_occupancy" => $request->occupancy,
+                              "amenities" => $amenities,
+                              "price" => $request->wardprice,
+                              "status" => $request->status,
+                              "narration" => $request->narration,
+                              "created_by" => 1,
+                              "updated_by" => 1,
+                              "updated_at"=>date('Y-m-d H:i:s')]);
+                    if($updateward){
+                        return response()->json(['status'=>true,'message'=>'Ward updated successfully']);
+                    }else{
+                        return response()->json(['status'=>false,'message'=>'Ward could not be updated']);
+                    }
             }
         }catch (ValidationException $e){
             return response()->json([
@@ -232,25 +258,33 @@ class WardController extends Controller
 
     public function deleteData(string $id)
     {
-        // Find the cabin record by ID
-        $ward = Ward::find($id);
 
-        // Check if the floor record exists
-        if (!$ward) {
-            return response()->json(['message' => 'Ward not found'], 404);
-        }
+        $statusArray = ["Booked","InBed","Discharge InProgress"];
+        $wardexist = Token::where('flag','Ward')->where('type_name_id',$id)->whereIn('status', $statusArray)->get();
+        //dd($cabinexist);
+        if($wardexist->isNotEmpty()){
+            return response()->json(["status"=>false,"message"=>"Sorry!! cannot delete this ward, Patients alloted to the ward"]);
+        }else{
+                // Find the cabin record by ID
+            $ward = Ward::find($id);
 
-        // Attempt to delete the floor record
-        if ($ward->delete()) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Ward Deleted',
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Ward could not be deleted.',
-            ]);
+            // Check if the floor record exists
+            if (!$ward) {
+                return response()->json(['message' => 'Ward not found'], 404);
+            }
+
+            // Attempt to delete the floor record
+            if ($ward->delete()) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Ward Deleted',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Ward could not be deleted.',
+                ]);
+            }
         }
     }
 }

@@ -79,8 +79,8 @@ class RegistrationController extends Controller
         //dd($bednum);
         $beddata = BedAssign::where('bed_no',$bednum)->first();
         $bedname = Bed::where('id',$beddata->bed_name)->value('bed_name');
-        $floor = Floor::where('count',$beddata->floor_count)->value('floor_no');
-        $block = Block::where('id',$beddata->block_id)->value('block_name');
+        $floor = Floor::where('count',$beddata->floor_count)->select('floor_no','count')->first();
+        $block = Block::where('id',$beddata->block_id)->select('block_name','id')->first();
         $idproof = IdProof::where('status','Active')->pluck('id_name','id');
         $amenities = Amenity::where('status','Active')->pluck('amenities','id');
         $amvals = [];
@@ -124,7 +124,10 @@ class RegistrationController extends Controller
         $bedinfo[] = $bedname;
         $bedinfo[] = $amenities;
         $bedinfo[] = $amvals;
-        
+        //dd($bedinfo);
+        //print_r($bedinfo);
+
+        //exit;
         if($bedinfo){
             return response()->json(["message"=>"Bed found","bedinfo"=>$bedinfo]);
         }else{
@@ -260,6 +263,8 @@ class RegistrationController extends Controller
         //dd($request->all()); // Debug all input data
         //dd($request->totalcost);
         //dd($request->recordid);
+        //dd($request->floorcount);
+        //dd($request->blockid);
         try {
             $request->validate([
                 'bedno' => 'required',
@@ -297,6 +302,8 @@ class RegistrationController extends Controller
                             'flag' => $request->flag, // Ensure this is set correctly
                             'category_id' => $request->catid, // Ensure this is set correctly
                             'type_name_id' => $request->typeid, // Ensure this is set correctly
+                            'floor_count' => $request->floorcount,
+                            'block_id' => $request->blockid,
                             'extra_amenity'=>$amenities,
                             'amenity_start_date'=>$amenitydate,
                             'type_price_24hr' => $request->totalcost,
@@ -369,6 +376,8 @@ class RegistrationController extends Controller
                         'flag' => $request->flag, // Ensure this is set correctly
                         'category_id' => $request->catid, // Ensure this is set correctly
                         'type_name_id' => $request->typeid, // Ensure this is set correctly
+                        'floor_count' => $request->floorcount,
+                        'block_id' => $request->blockid,
                         'extra_amenity'=>$amenities,
                         'amenity_start_date'=>$amenitydate,
                         'type_price_24hr' => $request->totalcost,

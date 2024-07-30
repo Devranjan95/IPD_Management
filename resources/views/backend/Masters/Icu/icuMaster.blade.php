@@ -170,7 +170,7 @@
                                                             </a>&nbsp&nbsp
                                                         @endif
                                                         @if (in_array(4, session('actions')))
-                                                            <a href='javascript:void(0)' onclick="deleteData('{{ url('icus/deleteData') }}/{{ $icu->id }}')" title='Delete'>
+                                                            <a href='javascript:void(0)' onclick="deleteData('{{ url('icu/deleteData') }}/{{ $icu->id }}')" title='Delete'>
                                                                 <img src='assets/previous/delete.svg' style='height:23px; width:23px' />
                                                             </a>
                                                         @endif 

@@ -20,6 +20,8 @@ class Token extends Model
         'flag',
         'category_id',
         'type_name_id',
+        'floor_count',
+        'block_id',
         'type_price_24hr',
         'extra_amenity',
         'amenity_start_date',

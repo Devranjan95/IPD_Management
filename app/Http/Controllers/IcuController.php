@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Floor;
 use App\Models\Block;
 use App\Models\Icu;
+use App\Models\Token;
 use App\Models\IcuType;
 use App\Models\Amenity;
 
@@ -165,27 +166,55 @@ class IcuController extends Controller
     
                     }
                 }
-                
-                $updateicu = Icu::where('id',$request->recordid)
-                                    ->update(["icu_name" => ucwords($request->icuname),
-                                              "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
-                                              "floor_count" => $request->floor,
-                                              "block_id" => $request->block,
-                                              "total_occupancy" => $request->occupancy,
-                                              "amenities" => $amenities,
-                                              "price" => $request->icuprice,
-                                              "status" => $request->status,
-                                              "narration" => $request->narration,
-                                              "created_by" => 1,
-                                              "updated_by" => 1,
-                                              "updated_at"=>date('Y-m-d H:i:s')]);
-                if($updateicu){
-                    return response()->json(['status'=>true,'message'=>'ICU updated successfully']);
+
+                if($request->status == "Inactive"){
+                    //dd(1);
+                    $statusArray = ["Booked","InBed","Discharge InProgress"];
+                    $icuexist = Token::where('flag','Icu')->where('type_name_id',$request->recordid)->whereIn('status',$statusArray)->get();
+                    //dd($icuexist);
+                    if($icuexist->isNotEmpty()){
+                        return response()->json(['status' => false,"message"=>"Sorry!! Icu cannot be inactive, Patients alloted to the Icu"]);
+                    }else{
+                        //This is if i want to update any child of icu....
+                        $updateicu = Icu::where('id',$request->recordid)
+                        ->update(["icu_name" => ucwords($request->icuname),
+                                  "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
+                                  "floor_count" => $request->floor,
+                                  "block_id" => $request->block,
+                                  "total_occupancy" => $request->occupancy,
+                                  "amenities" => $amenities,
+                                  "price" => $request->icuprice,
+                                  "status" => $request->status,
+                                  "narration" => $request->narration,
+                                  "created_by" => 1,
+                                  "updated_by" => 1,
+                                  "updated_at"=>date('Y-m-d H:i:s')]);
+                        if($updateicu){
+                            return response()->json(['status'=>true,'message'=>'ICU updated successfully']);
+                        }else{
+                            return response()->json(['status'=>false,'message'=>'ICU could not be updated']);
+                        }
+                    }
                 }else{
-                    return response()->json(['status'=>false,'message'=>'ICU could not be updated']);
-                }
-               
-                
+                    $updateicu = Icu::where('id',$request->recordid)
+                    ->update(["icu_name" => ucwords($request->icuname),
+                              "icu_type_id" => $request->icutype, // Make sure to include cabin_type_id
+                              "floor_count" => $request->floor,
+                              "block_id" => $request->block,
+                              "total_occupancy" => $request->occupancy,
+                              "amenities" => $amenities,
+                              "price" => $request->icuprice,
+                              "status" => $request->status,
+                              "narration" => $request->narration,
+                              "created_by" => 1,
+                              "updated_by" => 1,
+                              "updated_at"=>date('Y-m-d H:i:s')]);
+                    if($updateicu){
+                        return response()->json(['status'=>true,'message'=>'ICU updated successfully']);
+                    }else{
+                        return response()->json(['status'=>false,'message'=>'ICU could not be updated']);
+                    }
+                }   
             }
         }catch (ValidationException $e){
             return response()->json([
@@ -205,25 +234,32 @@ class IcuController extends Controller
 
     public function deleteData(string $id)
     {
+        $statusArray = ["Booked","InBed","Discharge InProgress"];
+        $icuexist = Token::where('flag','Icu')->where('type_name_id',$id)->whereIn('status',$statusArray)->get();
+        //dd($icuexist);
+        if($icuexist->isNotEmpty()){
+            return response()->json(["message"=>"Sorry!! cannot delete icu, Patients alloted to the Icu"]);
+        }else{
+            $icu = Icu::find($id);
+
+            // Check if the floor record exists
+            if (!$icu) {
+                return response()->json(['message' => 'ICU not found'], 404);
+            }
+    
+            // Attempt to delete the floor record
+            if ($icu->delete()) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'ICU Deleted',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'ICU could not be deleted.',
+                ]);
+            }
+        }
         // Find the cabin record by ID
-        $icu = Icu::find($id);
-
-        // Check if the floor record exists
-        if (!$icu) {
-            return response()->json(['message' => 'ICU not found'], 404);
-        }
-
-        // Attempt to delete the floor record
-        if ($icu->delete()) {
-            return response()->json([
-                'status' => true,
-                'message' => 'ICU Deleted',
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'ICU could not be deleted.',
-            ]);
-        }
     }
 }

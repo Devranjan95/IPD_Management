@@ -273,7 +273,7 @@
                   <p class="mb-1 mt-3 fw-semibold">{{Auth::user()->name}}</p>
                   <p class="fw-light text-muted mb-0">{{Auth::user()->email}}</p>
                 </div>
-                <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile <span class="badge badge-pill badge-danger">1</span></a>
+                <a class="dropdown-item" href="{{url('edit.profile')}}"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile <span class="badge badge-pill badge-danger">1</span></a>
                 <!-- <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
                 <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i> Activity</a>
                 <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i> FAQ</a> -->
@@ -360,7 +360,8 @@
                   <span class="menu-title">Discharge</span>
                 </a>
             </li> -->
-
+           @if(in_array(5,session('permissions')) || in_array(6,session('permissions')) || in_array(7,session('permissions')) ||
+              in_array(8,session('permissions')) || in_array(9,session('permissions')))
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#others" aria-expanded="false" aria-controls="ui-basic">
                 
@@ -370,14 +371,27 @@
               </a>
               <div class="collapse" id="others">
                 <ul class="nav flex-column sub-menu">
+                @if (in_array(5, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('patientstatusupdate')}}">Patient Status</a></li>
+                @endif
+                @if (in_array(6, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('discharge')}}">Discharge Form</a></li>
+                @endif
+                @if (in_array(7, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('finaldischarge')}}">Patient Check Out</a></li>
+                @endif
+                @if (in_array(8, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('deathentry')}}">Death Record Entry</a></li>
+                @endif
+                @if (in_array(9, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('birthentry')}}">Birth Record Entry</a></li>
+                @endif
                 </ul>
               </div>
             </li>
+            @endif
+            @if(in_array(10,session('permissions')) || in_array(11,session('permissions')) || in_array(12,session('permissions')) ||
+              in_array(13,session('permissions')) || in_array(14,session('permissions')))
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="ui-basic">
                 
@@ -387,14 +401,25 @@
               </a>
               <div class="collapse" id="reports">
                 <ul class="nav flex-column sub-menu">
+                  @if(in_array(10, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('patientreports')}}">Patient Reports</a></li>
+                  @endif
+                  @if(in_array(11, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('deathreports')}}">Death Reports</a></li>
+                  @endif
+                  @if(in_array(12, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('birthreports')}}">Birth Reports</a></li>
+                  @endif
+                  @if(in_array(13, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('bedreports')}}">Bed Reports</a></li>
+                  @endif
+                  @if(in_array(14, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('dischargereports')}}">Discharge Reports</a></li>
+                  @endif
                 </ul>
               </div>
             </li>
+            @endif
 
             @if (in_array(4, session('permissions')))
               <li class="nav-item">

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('flag');
             $table->string('category_id');
             $table->string('type_name_id');
+            $table->string('floor_count');
+            $table->string('block_id');
             $table->string('type_price_24hr');
             $table->string('extra_amenity')->nullable();
             $table->string('amenity_start_date')->nullable();

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\IcuType;
 use App\Models\Icu;
+use App\Models\Token;
 class IcuTypeController extends Controller
 {
     //
@@ -62,33 +63,38 @@ class IcuTypeController extends Controller
     
                     }
                 }
-                $updateicutype = IcuType::where('id',$request->recordid)
-                                    ->update(["icu_type"=>ucwords($request->icutype),
-                                              "status"=>$request->status,
-                                              "narration"=>$request->narration,
-                                              "updated_by"=>1,
-                                              "updated_at"=>date('Y-m-d H:i:s')]);
-                // if($updateicutype){
-                //     return response()->json(['status'=>true,'message'=>'ICU type updated successfully']);
-                // }else{
-                //     return response()->json(['status'=>false,'message'=>'ICU type could not be updated']);
-                // }
-                if ($updateicutype) {
+                $statusArray = ["Booked","InBed","Discharge InProgress"];
+                $icutypeexist = Token::where('flag','Icu')->where('category_id',$request->recordid)->where('status',$statusArray)->get();
+                if($icutypeexist->isNotEmpty()){
+                    return response()->json(['status' => false,"message"=>"Sorry!! icutype cannot be inactive, Patients alloted to the icutype"]);
+                }else{
+                    $updateicutype = IcuType::where('id',$request->recordid)
+                    ->update(["icu_type"=>ucwords($request->icutype),
+                              "status"=>$request->status,
+                              "narration"=>$request->narration,
+                              "updated_by"=>1,
+                              "updated_at"=>date('Y-m-d H:i:s')]);
+                        // if($updateicutype){
+                        //     return response()->json(['status'=>true,'message'=>'ICU type updated successfully']);
+                        // }else{
+                        //     return response()->json(['status'=>false,'message'=>'ICU type could not be updated']);
+                        // }
+                    if ($updateicutype) {
                     // Update cabin status if necessary
-                    if ($request->status == "Inactive") {
-                        Icu::where("icu_type_id", $request->recordid)->update([
+                        if ($request->status == "Inactive") {
+                            Icu::where("icu_type_id", $request->recordid)->update([
                             "status" => "Inactive"
-                        ]);
-                    } else {
-                        Icu::where("icu_type_id", $request->recordid)->update([
+                            ]);
+                        } else {
+                            Icu::where("icu_type_id", $request->recordid)->update([
                             "status" => "Active"
-                        ]);
+                            ]);
+                        }
+                        return response()->json(['status' => true, 'message' => 'Icutype updated successfully']);
+                    } else {
+                        return response()->json(['status' => false, 'message' => 'Icutype could not be updated'], 500);
                     }
-                    return response()->json(['status' => true, 'message' => 'Icutype updated successfully']);
-                } else {
-                    return response()->json(['status' => false, 'message' => 'Icutype could not be updated'], 500);
-                }
-                
+                }   
             }
         }catch (ValidationException $e){
             return response()->json([
@@ -106,33 +112,39 @@ class IcuTypeController extends Controller
     }
     public function deleteData(string $id)
     {
-        $icu = Icu::where('icu_type_id',$id)->exists();
-        if(!$icu){
-            $icutype = IcuType::find($id);
-
-            // Check if the floor record exists
-            if (!$icutype) {
-                return response()->json(['message' => 'Wardtype not found'], 404);
-            }
-
-            // Attempt to delete the floor record
-            if ($icutype->delete()) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'ICU type Deleted',
-                ]);
+        $statusArray = ["Booked","InBed","Discharge InProgress"];
+        $icutypeexist = Token::where('flag','Icu')->where('category_id',$id)->where('status',$statusArray)->get();
+        if($icutypeexist->isNotEmpty()){
+            return response()->json(["message"=>"Sorry!! cannot delete icutype, Patients alloted to the icutype"]);
+        }else{
+            $icu = Icu::where('icu_type_id',$id)->exists();
+            if(!$icu){
+                $icutype = IcuType::find($id);
+    
+                // Check if the floor record exists
+                if (!$icutype) {
+                    return response()->json(['message' => 'Wardtype not found'], 404);
+                }
+    
+                // Attempt to delete the floor record
+                if ($icutype->delete()) {
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'ICU type Deleted',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'ICU type could not be deleted.',
+                    ]);
+                }
             } else {
+                // Associated records found, cannot delete floor
                 return response()->json([
                     'status' => false,
-                    'message' => 'ICU type could not be deleted.',
+                    'message' => 'Cannot delete icutype. Associated records exist in  icu.',
                 ]);
-            }
-        } else {
-            // Associated records found, cannot delete floor
-            return response()->json([
-                'status' => false,
-                'message' => 'Cannot delete icutype. Associated records exist in  icu.',
-            ]);
+            }  
         }
     }
 }

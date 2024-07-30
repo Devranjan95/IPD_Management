@@ -519,8 +519,10 @@
 function populateModal(bedinfo) {
     // ******************************************************
     let bedDetails = bedinfo[0];
-    let floor = bedinfo[1];
-    let block = bedinfo[2];
+    let floor = bedinfo[1].floor_no;
+    let block = bedinfo[2].block_name;
+    let floorcount = bedinfo[1].count;
+    let blockid = bedinfo[2].id;
     let additionalInfo = bedinfo[3]; // This will be either cabininfo, wardinfo, or icuinfo
     let typeflag = bedinfo[4];
     let regnNos = bedinfo[5];
@@ -624,6 +626,8 @@ function populateModal(bedinfo) {
                             <form enctype="multipart/form-data" name="registrationform" id="registrationform">
                                 <input type="hidden" id="saveurl" value="{{ url('registration/saveData') }}" />
                                 <input type="hidden" id="recordid" name="recordid" value="" />
+                                <input type="hidden" id="floorcount" name="floorcount" value="${floorcount}" />
+                                <input type="hidden" id="blockid" name="blockid" value="${blockid}" />
                                 <input type="hidden" id="bedno" name="bedno" value="${bedDetails.bed_no}" />
                                 <input type="hidden" id="bedname" name="bedname" value="${bedDetails.bed_name}" />
                                 <input type="hidden" id="catid" name="catid" value="${catid}" />

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\Floor;
+use App\Models\Token;
 use App\Models\Block;
 use App\Models\Cabin;
 use App\Models\Ward;
@@ -100,45 +101,54 @@ class FloorController extends Controller
     
                     if ($updatefloor) {
                         if ($request->status == 'Inactive') {
-                            $associatedBlocks = Block::where('floor_count', $request->floorcount)->get();
-                            $associatedCabins = Cabin::where('floor_count', $request->floorcount)->get();
-                            $associatedWards = Ward::where('floor_count', $request->floorcount)->get();
-                            $associatedIcus = Icu::where('floor_count', $request->floorcount)->get();
-    
-                            if ($associatedBlocks->isEmpty() && $associatedCabins->isEmpty() && $associatedWards->isEmpty() && $associatedIcus->isEmpty()) {
-                                DB::commit();
-                                return response()->json(['status' => true, 'message' => 'Floor updated successfully']);
-                            } else {
-                                Block::where('floor_count', $request->floorcount)
-                                    ->update([
-                                        'status' => 'Inactive',
-                                        'updated_by' => 1,
-                                        'updated_at' => now()
-                                    ]);
-    
-                                Cabin::where('floor_count', $request->floorcount)
-                                    ->update([
-                                        'status' => 'Inactive',
-                                        'updated_by' => 1,
-                                        'updated_at' => now()
-                                    ]);
-    
-                                Ward::where('floor_count', $request->floorcount)
-                                    ->update([
-                                        'status' => 'Inactive',
-                                        'updated_by' => 1,
-                                        'updated_at' => now()
-                                    ]);
-    
-                                Icu::where('floor_count', $request->floorcount)
-                                    ->update([
-                                        'status' => 'Inactive',
-                                        'updated_by' => 1,
-                                        'updated_at' => now()
-                                    ]);
-    
-                                DB::commit();
-                                return response()->json(['status' => true, 'message' => 'Floor updated successfully']);
+                            $statusArray = ["Booked","InBed","Discharge InProgress"];
+                            $associatedToken = Token::where('floor_count',$request->floorcount)->whereIn('status',$statusArray)->get();
+                            //dd($associatedToken);
+                            if($associatedToken->isNotEmpty()){
+                                //dd(1);
+                                return response()->json(['status'=>false,"message"=>"Sorry!! Floor cannot be inactive, Patients alloted to the floor"]);
+                            }else{
+
+                                $associatedBlocks = Block::where('floor_count', $request->floorcount)->get();
+                                $associatedCabins = Cabin::where('floor_count', $request->floorcount)->get();
+                                $associatedWards = Ward::where('floor_count', $request->floorcount)->get();
+                                $associatedIcus = Icu::where('floor_count', $request->floorcount)->get();
+        
+                                if ($associatedBlocks->isEmpty() && $associatedCabins->isEmpty() && $associatedWards->isEmpty() && $associatedIcus->isEmpty()) {
+                                    DB::commit();
+                                    return response()->json(['status' => true, 'message' => 'Floor updated successfully']);
+                                } else {
+                                    Block::where('floor_count', $request->floorcount)
+                                        ->update([
+                                            'status' => 'Inactive',
+                                            'updated_by' => 1,
+                                            'updated_at' => now()
+                                        ]);
+        
+                                    Cabin::where('floor_count', $request->floorcount)
+                                        ->update([
+                                            'status' => 'Inactive',
+                                            'updated_by' => 1,
+                                            'updated_at' => now()
+                                        ]);
+        
+                                    Ward::where('floor_count', $request->floorcount)
+                                        ->update([
+                                            'status' => 'Inactive',
+                                            'updated_by' => 1,
+                                            'updated_at' => now()
+                                        ]);
+        
+                                    Icu::where('floor_count', $request->floorcount)
+                                        ->update([
+                                            'status' => 'Inactive',
+                                            'updated_by' => 1,
+                                            'updated_at' => now()
+                                        ]);
+        
+                                    DB::commit();
+                                    return response()->json(['status' => true, 'message' => 'Floor updated successfully']);
+                                }
                             }
                         } else {
                             Block::where('floor_count', $request->floorcount)
@@ -259,42 +269,48 @@ class FloorController extends Controller
     // }
     public function deleteData($id, $count)
 {
-    // Check if there are associated records in Block, Cabin, Ward, and ICU
-    $blocks = Block::where('floor_count', $count)->exists();
-    $cabins = Cabin::where('floor_count', $count)->exists();
-    $wards = Ward::where('floor_count', $count)->exists();
-    $icus = Icu::where('floor_count', $count)->exists();
+    $statusArray = ["Booked","InBed","Discharge InProgress"];
+    $associatedToken = Token::where('floor_count',$count)->whereIn('status',$statusArray)->get();
+    if($associatedToken->isNotEmpty()){
+        return response()->json(['message' => 'Sorry!! cannot delete this floor , Patients alloted in this floor']);
+    }else{
+            // Check if there are associated records in Block, Cabin, Ward, and ICU
+        $blocks = Block::where('floor_count', $count)->exists();
+        $cabins = Cabin::where('floor_count', $count)->exists();
+        $wards = Ward::where('floor_count', $count)->exists();
+        $icus = Icu::where('floor_count', $count)->exists();
 
-    if (!$blocks && !$cabins && !$wards && !$icus) {
-        // No associated records found, proceed with deletion
-        $floor = Floor::find($id);
+        if (!$blocks && !$cabins && !$wards && !$icus) {
+            // No associated records found, proceed with deletion
+            $floor = Floor::find($id);
 
-        if (!$floor) {
-            return response()->json(['message' => 'Floor not found'], 404);
-        }
+            if (!$floor) {
+                return response()->json(['message' => 'Floor not found'], 404);
+            }
 
-        $counterFile = storage_path('app/floorcount.txt');
-        $counter = intval(file_get_contents($counterFile));
+            $counterFile = storage_path('app/floorcount.txt');
+            $counter = intval(file_get_contents($counterFile));
 
-        if ($floor->delete()) {
-            $counter--;
-            file_put_contents($counterFile, $counter);
-            return response()->json([
-                'status' => true,
-                'message' => 'Floor Deleted',
-            ]);
+            if ($floor->delete()) {
+                $counter--;
+                file_put_contents($counterFile, $counter);
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Floor Deleted',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Floor could not be deleted.',
+                ]);
+            }
         } else {
+            // Associated records found, cannot delete floor
             return response()->json([
                 'status' => false,
-                'message' => 'Floor could not be deleted.',
+                'message' => 'Cannot delete floor. Associated records exist in block, cabin, ward, or icu.',
             ]);
         }
-    } else {
-        // Associated records found, cannot delete floor
-        return response()->json([
-            'status' => false,
-            'message' => 'Cannot delete floor. Associated records exist in block, cabin, ward, or icu.',
-        ]);
     }
 }
 

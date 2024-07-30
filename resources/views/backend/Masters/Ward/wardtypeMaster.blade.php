@@ -209,8 +209,8 @@
                             }
                            
                         } else {
-                            $("#success").text(response.message).show();
-                            $("#error").hide();
+                            $("#error").text(response.message).show();
+                            $("#success").hide();
                             setTimeout(function() {
                                 $('#success').slideUp();
                             }, 2000);

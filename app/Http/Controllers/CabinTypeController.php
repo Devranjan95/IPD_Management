@@ -161,9 +161,11 @@ class CabinTypeController extends Controller
 
 
             if($request->status == "Inactive"){
-                $cabintypeexist = Token::where('type',$request->cabintype)->where('status','Booked')->exists();
-                if($cabintypeexist){
-                    return response()->json(["message"=>"Sorry cabintype already in use for a patient cannot  inactive"]);
+                $statusArray = ["Booked","InBed","Discharge InProgress"];
+                $cabintypeexist = Token::where('flag','Cabin')->where('category_id',$request->recordid)->whereIn('status', $statusArray)->get();
+                //dd($cabintypeexist);
+                if($cabintypeexist->isNotEmpty()){
+                    return response()->json(["status"=>false,"message"=>"Sorry!! Cabintype cannot be inactive, Patients alloted to the cabintype"]);
                 }else{
                     // Cabin::where("cabin_type_id", $request->recordid)->update([
                     //     "status" => "Inactive"
@@ -218,33 +220,39 @@ class CabinTypeController extends Controller
     }
     public function deleteData(string $id)
     {
-        $cabin = Cabin::where('cabin_type_id',$id)->exists();
-        if(!$cabin){
-            $cabintype = CabinType::find($id);
-
-            // Check if the floor record exists
-            if (!$cabintype) {
-                return response()->json(['message' => 'Cabintype not found'], 404);
-            }
-
-            // Attempt to delete the floor record
-            if ($cabintype->delete()) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Cabintype Deleted',
-                ]);
+        $statusArray = ["Booked","InBed","Discharge InProgress"];
+        $cabintypeexist = Token::where('flag','Cabin')->where('category_id',$id)->whereIn('status', $statusArray)->get();
+        if($cabintypeexist->isNotEmpty()){
+            return response()->json(["message"=>"Sorry!! cannot delete cabintype, Patients alloted to the cabintype"]);
+        }else{
+            $cabin = Cabin::where('cabin_type_id',$id)->exists();
+            if(!$cabin){
+                $cabintype = CabinType::find($id);
+    
+                // Check if the floor record exists
+                if (!$cabintype) {
+                    return response()->json(['message' => 'Cabintype not found'], 404);
+                }
+    
+                // Attempt to delete the floor record
+                if ($cabintype->delete()) {
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Cabintype Deleted',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Cabintype could not be deleted.',
+                    ]);
+                }
             } else {
+                // Associated records found, cannot delete floor
                 return response()->json([
                     'status' => false,
-                    'message' => 'Cabintype could not be deleted.',
+                    'message' => 'Cannot delete Cabintype. Associated records exist in  cabin',
                 ]);
-            }
-        } else {
-            // Associated records found, cannot delete floor
-            return response()->json([
-                'status' => false,
-                'message' => 'Cannot delete Cabintype. Associated records exist in  cabin',
-            ]);
-        }  
+            } 
+        } 
     }
 }
