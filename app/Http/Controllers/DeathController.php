@@ -66,6 +66,8 @@ class DeathController extends Controller
             $deathRecord->contact_no = $request->contact;
             $deathRecord->adhr_no = $request->adhr;
             $deathRecord->attendant_name = $request->aname;
+            $deathRecord->date_of_addmission = $request->addmissiondate;
+            $deathRecord->time_of_addmission = $request->addmissiontime;
             $deathRecord->date_of_death = $request->deathdate;
             $deathRecord->time_of_death = $request->deathtime;
             $deathRecord->place_of_death = $request->placeofdeath;
@@ -89,7 +91,9 @@ class DeathController extends Controller
             }
     
             $deathRecord->save();
-    
+            Token::where('patient_regn_no',$request->regn)->where('deceased_status','Y')->update([
+                'deceased_status'=>'Y-R'
+            ]);
             return response()->json(['status' => true, 'message' => 'Death record saved successfully.']);
     
         } catch (\Exception $e) {

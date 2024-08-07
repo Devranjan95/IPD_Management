@@ -20,19 +20,14 @@ class BirthRecord extends Model
         'regn',
         'patname',
         'contact',
-        'birthdate',
-        'birthtime',
-        'placeofbirth',
-        'gender',
-        'weight',
-        'length',
+        'addmission_date',
+        'addmission_time',
         'fathername',
         'mothername',
         'fatheradhar',
         'motheradhar',
         'address',
         'maritalstatus',
-        'image_path',
         'issuedby',
     ];
 
@@ -47,4 +42,8 @@ class BirthRecord extends Model
     //     'weight' => 'decimal:2',
     //     'length' => 'decimal:1',
     // ];
+    public function newborn()
+    {
+        return $this->hasMany(NewBorn::class, 'birth_record_id');
+    }
 }

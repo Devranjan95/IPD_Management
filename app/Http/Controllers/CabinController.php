@@ -169,6 +169,9 @@ class CabinController extends Controller
     public function saveCabin(Request $request){
         //dd($request->all());
         try{
+            if(empty($request->amenities)){
+                return response()->json(["status"=>false,"message"=>"!! Please select an amenity"]);
+            }
             $request->validate([
                 'cabinname' => 'required',
                 'cabintype' => 'required',

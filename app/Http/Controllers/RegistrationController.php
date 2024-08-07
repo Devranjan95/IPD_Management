@@ -75,7 +75,9 @@ class RegistrationController extends Controller
 
     public function getBedData($bednum){
         $bednum = str_replace('-', '/', $bednum);
-        $regnNos = Patient::pluck('patient_regn_no','id');
+        $regnNos = Patient::where('deceased_status',null)->pluck('patient_regn_no','id');
+        //dd($regnNos);
+        //$regnNos = Token::where('deceased_status','!=','Y')->pluck('patient_regn_no','id');
         //dd($bednum);
         $beddata = BedAssign::where('bed_no',$bednum)->first();
         $bedname = Bed::where('id',$beddata->bed_name)->value('bed_name');
@@ -284,7 +286,13 @@ class RegistrationController extends Controller
                 if($token){
                     return response()->json(["status"=>false,"message"=>"Sorry this patient is already booked"]);
                 }else{
-                    
+                    if(!empty($request->amenities)){
+                        $amenities = implode(',',$request->amenities);
+                        $amenitydate = Carbon::now()->toDateString();
+                    }else{
+                        $amenities = null;
+                        $amenitydate = null;
+                    }
                     $totalvisit = $patientexist->total_visits + 1;
                     $updatepatientvisit = Patient::where('id', $request->recordid)->update(["total_visits" => $totalvisit]);
         
@@ -383,7 +391,7 @@ class RegistrationController extends Controller
                         'type_price_24hr' => $request->totalcost,
                         'adv_amount'=>$request->advance,
                         'date_of_addmission' => Carbon::now()->toDateString(),
-                        'time_of_addmission' => Carbon::now()->toTimeString(),
+                        'time_of_addmission' => Carbon::now()->format('H:i'),
                         'emergency' => $flag,
                         'treating_type' => $request->treattype,
                         'reffered_from' => $request->reff,
@@ -426,12 +434,15 @@ class RegistrationController extends Controller
         // Replace hyphens back with slashes
         $originalRegn = str_replace('-', '/', $regn);
         $currentDate = Carbon::now()->format('Y-m-d'); // Adjust the date format as needed
-
+        $currentTime = Carbon::now()->format('H:i');
         $info = Token::with('patient')
             ->where('patient_regn_no', $originalRegn)
             ->where('date_of_addmission', $currentDate)
+            ->where('time_of_addmission', $currentTime)
             ->first();
+            //dd($info);
         //print_r($info);exit;
+
         return view("backend.Registration.visitorpass", ['info' => $info]);
     }
 

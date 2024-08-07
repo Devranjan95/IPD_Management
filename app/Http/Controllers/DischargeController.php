@@ -162,6 +162,8 @@ class DischargeController extends Controller
     
             if (empty($clearance)) {
                 return response()->json(["status" => false, "message" => "Error!! Please select clearance"]);
+            }elseif(count($clearance) != 4){
+                return response()->json(["status" => false, "message" => "Error!! Current patient do not have all clearance"]);
             }
             // Validate input data
             $request->validate([

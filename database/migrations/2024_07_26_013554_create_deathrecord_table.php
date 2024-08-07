@@ -20,6 +20,8 @@ class CreateDeathRecordTable extends Migration
             $table->string('contact_no');
             $table->string('adhr_no');
             $table->string('attendant_name');
+            $table->date('date_of_addmission');
+            $table->time('time_of_addmission');
             $table->date('date_of_death');
             $table->time('time_of_death');
             $table->string('place_of_death');

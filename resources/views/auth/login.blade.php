@@ -1,4 +1,8 @@
 <x-guest-layout>
+    <div class="flex justify-center items-center h-screen">
+        <img src="{{asset('assets/previous/patconlogo.svg')}}" alt="" style="width:150px;height:150px">
+    </div>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

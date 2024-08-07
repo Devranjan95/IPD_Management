@@ -39,10 +39,10 @@
                                             <th style="text-align:center">Sl</th>
                                             <th>Regn No</th>
                                             <th>Patient Name</th>
-                                            <th>Patient Contact</th>
+                                            <th style="text-align:center">Patient Contact</th>
                                             <th>Patient Email</th>
-                                            <th>Total visits</th>
-                                            <th>Action</th>
+                                            <th style="text-align:center">Total visits</th>
+                                            <!-- <th>Action</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -51,17 +51,17 @@
                                         @endphp 
                                         @foreach($patientInfos as $patient)
                                             <tr>
-                                                <td>{{$sl++}}</td>
+                                                <td style="text-align:center">{{$sl++}}</td>
                                                 <td>{{$patient->patient_regn_no}}</td>
                                                 <td>{{$patient->patient_name}}</td>
-                                                <td>{{$patient->patient_phone}}</td>
+                                                <td style="text-align:center">{{$patient->patient_phone}}</td>
                                                 @if(isset($patient->patient_email))
                                                     <td>{{$patient->patient_email}}</td>
                                                 @else
                                                     <td>Email not provided</td>
                                                 @endif
-                                                <td>{{$patient->total_visits}}</td>
-                                                <td>See Details</td>
+                                                <td style="text-align:center">{{$patient->total_visits}}</td>
+                                                <!-- <td>See Details</td> -->
                                             </tr>
                                         @endforeach
                                     </tbody>

@@ -35,7 +35,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="floor" class="form-label">Floor<span style="color:red" title="Mandatory">*</span></label>
+                                        <label for="floor" id="fl" class="form-label">Floor<span style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="floor" name="floor" onchange="showBlock(this)">
                                             <option value="" selected disabled>Please select floor</option>
                                             @foreach($floors as $key=>$value)
@@ -44,7 +44,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="block" class="form-label">Block<span style="color:red" title="Mandatory">*</span></label>
+                                        <label for="block" id="bl" class="form-label">Block<span style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="block" name="block"></select>
                                     </div>
                                     <div class="col-md-6">
@@ -425,7 +425,13 @@ function showEdit(id) {
             document.getElementById("wardname").value = data.ward['ward_name'];
             document.getElementById("wardtype").value = data.ward['ward_type_id'];
             document.getElementById("floor").value = data.ward['floor_count'];
+            document.getElementById("floor").disabled = true;
             showBlock($('#floor'), data.ward['block_id']);
+            $('#floor').hide();
+            $('#block').hide();
+            $('#fl').hide();
+            $('#bl').hide();
+            document.getElementById("block").disabled = true;
             document.getElementById("occupancy").value = data.ward['total_occupancy'];
             document.getElementById("wardprice").value = data.ward['price'];
              // Pre-select amenities

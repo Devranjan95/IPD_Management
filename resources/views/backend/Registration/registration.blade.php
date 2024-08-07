@@ -199,7 +199,7 @@
                                                                                                                 <div class="bed-info-card">
                                                                                                                     <!-- Bed info content here -->
                                                                                                                     <p><strong>Bed No:</strong> {{$bed->bed_no}}</p>
-                                                                                                                    <p><strong>Name:</strong> {{$bed->type_name}}</p>
+                                                                                                                    <!-- <p><strong>Name:</strong> {{$bed->type_name}}</p> -->
                                                                                                                     <p><strong>Category:</strong> {{$bed->category}}</p>
                                                                                                                     <p><strong>Price:</strong> ₹{{$bed->bed_price}}</p>
                                                                                                                     <!-- Add more details as needed -->
@@ -663,7 +663,7 @@ function populateModal(bedinfo) {
                                         <input type="text" class="form-control" placeholder="Enter id proof no" id="idproofno" name="idproofno">
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="address" class="form-label">Address</label>
+                                        <label for="address" class="form-label">Address<span style="color:red" title="Mandatory">*</span></label>
                                         <textarea class="form-control" placeholder="Enter address" id="address" name="address"></textarea>
                                     </div>
                                 </div>

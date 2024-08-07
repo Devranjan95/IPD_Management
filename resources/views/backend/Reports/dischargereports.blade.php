@@ -45,7 +45,7 @@
                                             <th>Addmission Time</th>
                                             <th>Discharge Date</th>
                                             <th>Discharge Time</th>
-                                            <th>Action</th>
+                                            <!-- <th>Action</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -69,7 +69,7 @@
                                                 <td>Not available</td>
                                                 <td>Not available</td>
                                                 @endif
-                                                <td>See Details</td>
+                                                <!-- <td>See Details</td> -->
                                             </tr>
                                        @endforeach
                                     </tbody>

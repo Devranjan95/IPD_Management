@@ -4,7 +4,7 @@
 <div class="container-fluid pt-3">
     <div class="row">
         <!-- Left Column with Cards -->
-        <div class="col-md-4">
+        <div class="col-md-4" style="height: 500px; overflow-y: auto;">
             <div class="row">
                 <!-- Total Patients Card -->
                 <div class="col-xl-12 col-md-12 mb-4">
@@ -29,7 +29,7 @@
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total InBed Patients</div>
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total In-Bed Patients</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalInBedPatients }}</div>
                                 </div>
                                 <div class="col-auto">
@@ -94,18 +94,22 @@
         </div>
 
         <!-- Right Column with Graph -->
-        <div class="col-md-7">
+        <div class="col-md-7 offset-md-1" style="height: 520px; overflow-y: auto;">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Patient Distribution</h6>
                 </div>
-                <div class="card-body" style="width:500px;height:500px">
+                <div class="card-body" style="width:100%;height:500px">
                     <canvas id="patientPieChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ********************************** -->
+
+
 @endsection
 @section('scripts')
 <style>
@@ -137,12 +141,85 @@
         font-weight: 700;
     }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
 <script>
     // Data for the pie chart
     const data = {
         labels: [
-            'InBed Patients',
+            'In-Bed Patients',
+            'Deceased Patients',
+            'Born Patients',
+            'Discharged Patients'
+        ],
+        datasets: [{
+            data: [
+                {{ $totalInBedPatients }},
+                {{ $totalDeceased }},
+                {{ $totalBorn }},
+                {{ $totalDischarged }}
+            ],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(255, 206, 86, 0.6)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Config for the pie chart
+    const config = {
+        type: 'pie',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Patient Distribution'
+                },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value * 100 / sum).toFixed(2) + "%";
+                        return percentage;
+                    },
+                    color: '#fff',
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    };
+
+    // Render the pie chart
+    window.onload = function() {
+        const ctx = document.getElementById('patientPieChart').getContext('2d');
+        new Chart(ctx, config);
+    };
+</script>
+
+
+<!-- <script>
+    // Data for the pie chart
+    const data = {
+        labels: [
+            'In-Bed Patients',
             'Deceased Patients',
             'Born Patients',
             'Discharged Patients'
@@ -193,5 +270,5 @@
         const ctx = document.getElementById('patientPieChart').getContext('2d');
         new Chart(ctx, config);
     };
-</script>
+</script> -->
 @endsection

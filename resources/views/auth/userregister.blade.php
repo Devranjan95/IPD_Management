@@ -212,12 +212,47 @@
                 required: true,
                 alphanumeric: true
             },
+            email: {
+                required: true,
+                
+            },
+            password: {
+                required: true,
+               
+            },
+            password_confirmation: {
+                required: true,
+               
+            },
+            role: {
+                required: true,
+               
+            },
+            status: {
+                required: true,
+               
+            }
            
         },
         messages: {
             name: {
-                required: "Role name is required.",
+                required: "User name is required.",
                 alphanumeric: "Must be alphabets or alphanumeric"
+            },
+            email: {
+                required: "Email is required",
+            },
+            password: {
+                required: "Password is required",
+            },
+            password_confirmation: {
+                required: "This field is required",
+            },
+            role: {
+                required: "Please select a role",
+            },
+            status: {
+                required: "Please select a status",
             },
             
         },
@@ -276,7 +311,21 @@
                     }
                 },
                 error: function(xhr) {
-                    $("#error").text("An error occurred: " + xhr.responseText).show();
+                    // $("#error").text("An error occurred: " + xhr).show();
+                    // $("#success").hide();
+                    let errorMessage = "An error occurred";
+                    if (xhr.status === 422) {
+                        // Validation error
+                        const errors = xhr.responseJSON.errors;
+                        errorMessage = Object.values(errors).map(function(messages) {
+                            return messages.join('<br>');
+                        }).join('<br>');
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        // General exception message
+                        errorMessage = xhr.responseJSON.message;
+                    }
+
+                    $("#error").html(errorMessage).show();
                     $("#success").hide();
                 }
             });

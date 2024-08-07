@@ -125,12 +125,12 @@ class BedController extends Controller
     
                     }
                 }
-                $check = BedAssign::where('bed_name',$request->recordid)->exists();
-                $checkinToken = Token::where('bedtype',$request->bedname)->where('status','Booked')->exists();
-                if($checkinToken){
-                    return response()->json(["message"=>"Sorry the bed has been used in registration cannot make it inactive"]);
-                }else{
-                    if(!$check){
+                if($request->status == 'Inactive'){
+                    $check = BedAssign::where('bed_name',$request->recordid)->exists();
+                    $checkinToken = Token::where('bedtype',$request->bedname)->where('status','Booked')->exists();
+                    if($check){
+                        return response()->json(["status"=>false,"message"=>"Sorry bed cannot be inactive, assigned"]);
+                    }else{
                         $updatebed = Bed::where('id',$request->recordid)
                         ->update(["bed_name"=>ucwords($request->bedname),
                                   "bed_category_id"=>$request->bed_category_id,
@@ -144,12 +144,45 @@ class BedController extends Controller
                         }else{
                             return response()->json(['status'=>false,'message'=>'Bed could not be updated']);
                         }
-                    }else{
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'Cannot update status. Bed in use',
-                        ]);
-                    }  
+                    }
+                    // if($checkinToken){
+                    //     return response()->json(["message"=>"Sorry the bed has been used in registration cannot make it inactive"]);
+                    // }else{
+                    //     if(!$check){
+                    //         $updatebed = Bed::where('id',$request->recordid)
+                    //         ->update(["bed_name"=>ucwords($request->bedname),
+                    //                   "bed_category_id"=>$request->bed_category_id,
+                    //                   "no_of_beds"=>$request->no_of_beds,
+                    //                   "status"=>$request->status,
+                    //                   "narration"=>$request->narration,
+                    //                   "updated_by"=>1,
+                    //                   "updated_at"=>date('Y-m-d H:i:s')]);
+                    //         if($updatebed){
+                    //             return response()->json(['status'=>true,'message'=>'Bed updated successfully']);
+                    //         }else{
+                    //             return response()->json(['status'=>false,'message'=>'Bed could not be updated']);
+                    //         }
+                    //     }else{
+                    //         return response()->json([
+                    //             'status' => false,
+                    //             'message' => 'Cannot update status. Bed in use',
+                    //         ]);
+                    //     }  
+                    // }
+                }else{
+                    $updatebed = Bed::where('id',$request->recordid)
+                        ->update(["bed_name"=>ucwords($request->bedname),
+                                  "bed_category_id"=>$request->bed_category_id,
+                                  "no_of_beds"=>$request->no_of_beds,
+                                  "status"=>$request->status,
+                                  "narration"=>$request->narration,
+                                  "updated_by"=>1,
+                                  "updated_at"=>date('Y-m-d H:i:s')]);
+                        if($updatebed){
+                            return response()->json(['status'=>true,'message'=>'Bed updated successfully']);
+                        }else{
+                            return response()->json(['status'=>false,'message'=>'Bed could not be updated']);
+                        }
                 }
             }
         }catch (ValidationException $e){

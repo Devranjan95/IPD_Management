@@ -39,33 +39,37 @@
                                             <th style="text-align:center">Sl</th>
                                             <th>Regn No</th>
                                             <th>Mother's Name</th>
+                                            <th>Addmission Date</th>
+                                            <th>Addmission Time</th>
                                             <th>Birth Date</th>
                                             <th>Birth Time</th>
                                             <th>New Born Image</th>
-                                            <th>Action</th>
+                                            <!-- <th>Action</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
-                                       @php 
+                                       {{--@php --}}
                                             $sl = 1;
-                                       @endphp
-                                       @foreach($birthInfos as $birth)
+                                       {{--@endphp--}}
+                                       {{--@foreach($birthInfos as $birth)-}}
                                             <tr>
                                                 <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$birth->regn}}</td>
-                                                <td>{{$birth->patname}}</td>
-                                                <td>{{ \Carbon\Carbon::parse($birth->birthdate)->format('d/m/Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($birth->birthtime)->format('h:i A') }}</td>
+                                                <td>{{--{{$birth->regn}}--}}</td>
+                                                <td>{{--{{$birth->patname}}--}}</td>
+                                                <td>{{--{{ \Carbon\Carbon::parse($birth->addmission_date)->format('d/m/Y') }}--}}</td>
+                                                <td>{{--{{ \Carbon\Carbon::parse($birth->addmission_time)->format('h:i A') }}--}}</td>
+                                                <td>{{--{{ \Carbon\Carbon::parse($birth->birthdate)->format('d/m/Y') }}--}}</td>
+                                                <td>{{--{{ \Carbon\Carbon::parse($birth->birthtime)->format('h:i A') }}--}}</td>
                                                 <td>
-                                                    @if($birth->image_path)
-                                                        <img src="{{asset($birth->image_path)}}" alt="New Born Image" style="width: 120px;height:120px; display: block; margin: 0 auto;">
-                                                    @else
+                                                    {{--@if($birth->image_path)--}}
+                                                        <img src="{{--{{asset($birth->image_path)}}--}}" alt="New Born Image" style="width: 80px;height:80px; display: block; margin: 0 auto;">
+                                                    {{--@else--}}
                                                         No Image
-                                                    @endif
+                                                    {{--@endif--}}
                                                 </td>
-                                                <td>See Details</td>
+                                                <!-- <td>See Details</td> -->
                                             </tr>
-                                       @endforeach
+                                       {{--@endforeach--}}
                                     </tbody>
                                 </table>
                                 </div>

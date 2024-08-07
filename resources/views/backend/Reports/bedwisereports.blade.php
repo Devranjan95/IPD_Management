@@ -38,9 +38,9 @@
                                         <tr>
                                             <th style="text-align:center">Sl</th>
                                             <th>Bed Name</th>
-                                            <th>Total Beds</th>
-                                            <th>Total Patients</th>
-                                            <th>Action</th>
+                                            <th style="text-align:center">Total Beds</th>
+                                            <th style="text-align:center">Total Patients</th>
+                                            <!-- <th>Action</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -48,11 +48,11 @@
                                             <tr>
                                                 <td style="text-align:center">{{ $index + 1 }}</td>
                                                 <td>{{ $bed['bedname'] }}</td>
-                                                <td>{{ $bed['totalbed'] }}</td>
-                                                <td>{{ $bed['totalPatient'] }}</td> <!-- Assuming 'total' is the total number of patients for now -->
-                                                <td>
+                                                <td style="text-align:center">{{ $bed['totalbed'] }}</td>
+                                                <td style="text-align:center">{{ $bed['totalPatient'] }}</td> <!-- Assuming 'total' is the total number of patients for now -->
+                                                <!-- <td>
                                                     See Details
-                                                </td>
+                                                </td> -->
                                             </tr>
                                         @endforeach
                                     </tbody>

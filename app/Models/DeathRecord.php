@@ -17,6 +17,8 @@ class DeathRecord extends Model
         'contact_no',
         'adhr_no',
         'attendant_name',
+        'date_of_addmission',
+        'time_of_addmission',
         'date_of_death',
         'time_of_death',
         'place_of_death',

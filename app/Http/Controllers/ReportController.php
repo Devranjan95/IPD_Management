@@ -10,14 +10,18 @@ use App\Models\Patient;
 use App\Models\Token;
 use App\Models\Bed;
 use App\Models\BirthRecord;
+use App\Models\NewBorn;
 use App\Models\DeathRecord;
 
 
 class ReportController extends Controller
 {
     public function index(){
-        $birthInfos = BirthRecord::all();
-        return view("backend.Reports.birthreports",["birthInfos"=>$birthInfos]);
+        //$birthInfos = BirthRecord::all();
+        $newborns = NewBorn::all();
+        dd($newborns);
+        return view("backend.Reports.birthreports",["newborns"=>$newborns]);
+        //return view("backend.Reports.birthreports",["birthInfos"=>$birthInfos]);
     }
 
     public function index_death(){

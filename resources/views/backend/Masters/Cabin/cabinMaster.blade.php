@@ -35,7 +35,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="floor" class="form-label">Floor<span style="color:red" title="Mandatory">*</span></label>
+                                        <label for="floor" class="form-label" id="fl">Floor<span id="fls" style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="floor" name="floor" onchange="showBlock(this)">
                                             <option value="" selected disabled>Please select floor</option>
                                             @foreach($floors as $key=>$value)
@@ -44,7 +44,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="block" class="form-label">Block<span style="color:red" title="Mandatory">*</span></label>
+                                        <label for="block" class="form-label" id="bl">Block<span id="bls" style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="block" name="block"></select>
                                     </div>
                                     <div class="col-md-6">
@@ -431,7 +431,13 @@ function showEdit(id) {
             document.getElementById("cabinname").value = data.cabin['cabin_name'];
             document.getElementById("cabintype").value = data.cabin['cabin_type_id'];
             document.getElementById("floor").value = data.cabin['floor_count'];
+            //document.getElementById("floor").disabled = true;
             showBlock($('#floor'), data.cabin['block_id']);
+            //document.getElementById("block").disabled = true;
+            $('#floor').hide();
+            $('#block').hide();
+            $('#fl').hide();
+            $('#bl').hide();
             document.getElementById("occupancy").value = data.cabin['total_occupancy'];
             document.getElementById("cabinprice").value = data.cabin['price'];
              // Pre-select amenities

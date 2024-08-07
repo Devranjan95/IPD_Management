@@ -366,7 +366,7 @@
               <a class="nav-link" data-bs-toggle="collapse" href="#others" aria-expanded="false" aria-controls="ui-basic">
                 
                 <img class="mdi mdi-grid-large menu-icon" src="{{asset('assets/sf/discharge.svg')}}" alt=""  width="30px" height="30px">
-                <span class="menu-title">Others</span>
+                <span class="menu-title">Management</span>
                 <i class="menu-arrow"></i>
               </a>
               <div class="collapse" id="others">
@@ -383,9 +383,9 @@
                 @if (in_array(8, session('permissions')))
                   <li class="nav-item"> <a class="nav-link" href="{{url('deathentry')}}">Death Record Entry</a></li>
                 @endif
-                @if (in_array(9, session('permissions')))
-                  <li class="nav-item"> <a class="nav-link" href="{{url('birthentry')}}">Birth Record Entry</a></li>
-                @endif
+                {{--@if (in_array(9, session('permissions')))--}}
+                  <!-- <li class="nav-item"> <a class="nav-link" href="{{url('birthentry')}}">Birth Record Entry</a></li> -->
+                {{--@endif--}}
                 </ul>
               </div>
             </li>
@@ -492,8 +492,8 @@
           @yield('content')
           <footer class="footer">
             <div class="d-sm-flex justify-content-center justify-content-sm-between">
-              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span>
-              <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2023. All rights reserved.</span>
+              <!-- <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash.</span> -->
+              <span class="float-none float-sm-end d-block mt-1 mt-sm-0 text-center">Copyright © 2024. All rights reserved.</span>
             </div>
           </footer>
         </div>

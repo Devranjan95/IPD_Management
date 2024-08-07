@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('idproof_no')->nullable();
             $table->integer('total_visits');
             $table->text('patient_address');
+            $table->string('deceased_status')->nullable();
             $table->timestamps();
         });
     }

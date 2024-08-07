@@ -35,7 +35,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="floor" class="form-label">Floor<span style="color:red" title="Mandatory">*</span></label>
+                                        <label for="floor" id="fl" class="form-label">Floor<span style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="floor" name="floor" onchange="showBlock(this)">
                                             <option value="" selected disabled>Please select floor</option>
                                             @foreach($floors as $key=>$value)
@@ -44,7 +44,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="block" class="form-label">Block<span style="color:red" title="Mandatory">*</span></label>
+                                        <label for="block" id="bl" class="form-label">Block<span style="color:red" title="Mandatory">*</span></label>
                                         <select class="form-control" id="block" name="block"></select>
                                     </div>
                                     <div class="col-md-6">
@@ -424,7 +424,15 @@ function showEdit(id) {
             document.getElementById("icuname").value = data.icu['icu_name'];
             document.getElementById("icutype").value = data.icu['icu_type_id'];
             document.getElementById("floor").value = data.icu['floor_count'];
+            //document.getElementById("floor").setAttribute('readonly') = true;
+            $('#floor').hide();
+            $('#block').hide();
+            $('#fl').hide();
+            $('#bl').hide();
+           // $('#floor').prop('readonly', true);
             showBlock($('#floor'), data.icu['block_id']);
+            //$('#block').prop('readonly', true);
+            //document.getElementById("block").disabled = true;
             document.getElementById("occupancy").value = data.icu['total_occupancy'];
             document.getElementById("icuprice").value = data.icu['price'];
              // Pre-select amenities

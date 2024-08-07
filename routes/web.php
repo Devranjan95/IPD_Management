@@ -173,7 +173,9 @@ Route::middleware('auth')->group(function () {
         Route::get('patientstatusupdate/',[StatusController::class,'index'])->middleware('check.permission:5');
         Route::post('searchPatient/status',[StatusController::class,'searchPatient'])->middleware('check.permission:5');
         Route::post('updateTokenStatus',[StatusController::class,'updateStatus'])->middleware('check.permission:5');
-        Route::post('updateStatusBorn',[StatusController::class,'updateStatusNewBorn'])->middleware('check.permission:5');
+        Route::get('updateStatusBorn/{id}',[StatusController::class,'updateStatusNewBorn'])->middleware('check.permission:5');
+        Route::post('saveBorn/savedata',[StatusController::class,'saveBirth'])->middleware('check.permission:5');
+        //Route::post('updateStatusBorn',[StatusController::class,'updateStatusNewBorn'])->middleware('check.permission:5');
         Route::post('updateStatusdischargeprocess',[StatusController::class,'updateStatusNewDischargeProcess'])->middleware('check.permission:5');
 
         Route::get('discharge/',[DischargeController::class,'index'])->middleware('check.permission:6');
@@ -188,9 +190,9 @@ Route::middleware('auth')->group(function () {
         Route::post('deathrecord/saveData',[DeathController::class,'saveDeathRecord'])->middleware('check.permission:8');
 
 
-        Route::get('birthentry/',[BirthController::class,'index'])->middleware('check.permission:9');
-        Route::post('birthrecord/searchPatient',[BirthController::class,'searchPatient'])->middleware('check.permission:9');
-        Route::post('birthrecord/saveData',[BirthController::class,'saveBirthRecord'])->middleware('check.permission:9');
+        //Route::get('birthentry/',[BirthController::class,'index'])->middleware('check.permission:9');
+        // Route::post('birthrecord/searchPatient',[BirthController::class,'searchPatient'])->middleware('check.permission:9');
+        //Route::post('birthrecord/saveData',[BirthController::class,'saveBirthRecord'])->middleware('check.permission:9');
 
         Route::get('birthreports/',[ReportController::class,'index'])->middleware('check.permission:12');
         Route::get('deathreports/',[ReportController::class,'index_death'])->middleware('check.permission:11');

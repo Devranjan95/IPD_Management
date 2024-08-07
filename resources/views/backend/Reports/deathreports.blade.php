@@ -39,10 +39,12 @@
                                             <th style="text-align:center">Sl</th>
                                             <th>Regn No</th>
                                             <th>Patient Name</th>
+                                            <th>Addmission Date</th>
+                                            <th>Addmission Time</th>
                                             <th>Death Date</th>
                                             <th>Death Time</th>
                                             <th>Dead Body Image</th>
-                                            <th>Action</th>
+                                            <!-- <th>Action</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -54,16 +56,18 @@
                                                 <td style="text-align:center">{{$sl++}}</td>
                                                 <td>{{$death->patient_regn_no}}</td>
                                                 <td>{{$death->patient_name}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($death->date_of_addmission)->format('d/m/Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($death->time_of_addmission)->format('h:i A') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($death->date_of_death)->format('d/m/Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($death->time_of_death)->format('h:i A') }}</td>
                                                 <td>
                                                     @if($death->image_path)
-                                                        <img src="{{asset($death->image_path)}}" alt="New Born Image" style="width: 120px;height:120px; display: block; margin: 0 auto;">
+                                                        <img src="{{asset($death->image_path)}}" alt="New Born Image" style="width: 80px;height:80px; display: block; margin: 0 auto;">
                                                     @else
                                                         No Image
                                                     @endif
                                                 </td>
-                                                <td>See Details</td>
+                                                <!-- <td>See Details</td> -->
                                             </tr>
                                        @endforeach
                                     </tbody>

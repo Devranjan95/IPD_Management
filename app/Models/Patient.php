@@ -17,7 +17,8 @@ class Patient extends Model
         'idproof',
         'idproof_no',
         'patient_address',
-        'total_visits'
+        'total_visits',
+        'deceased_status'
     ];
 
     public function tokens()
