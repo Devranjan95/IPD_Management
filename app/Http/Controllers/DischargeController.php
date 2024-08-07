@@ -178,7 +178,7 @@ class DischargeController extends Controller
     
             // Retrieve and clean the 'native-select' field
            
-    
+            //dd($request->summary);
             // Create new discharge entry
             $saveDischarge = DischargeInfo::create([
                 'patient_regn_no' => $request->regn,
@@ -203,15 +203,19 @@ class DischargeController extends Controller
                     ]);
     
                 if ($updateDatetoken) {
+                    //dd(1);
                     $tokenVal = Token::where('patient_regn_no', $request->regn)->where('status', 'Discharge InProgress')->first();
                     $price24hrs = $tokenVal->type_price_24hr;
+                    //dd($price24hrs);
                     $dateOfAdmission = $tokenVal->date_of_addmission;
                     $timeOfAdmission = $tokenVal->time_of_addmission;
                     $dateOfDischarge = $tokenVal->date_of_discharge;
                     $timeOfDischarge = $tokenVal->time_of_discharge;
     
                     // Combine date and time strings to create full datetime strings
-                    $admissionDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $dateOfAdmission . ' ' . $timeOfAdmission);
+                    $admissionDateTime = Carbon::createFromFormat('Y-m-d H:i', $dateOfAdmission . ' ' . $timeOfAdmission);
+        
+                    //dd($admissionDateTime);
                     $dischargeDateTime = Carbon::createFromFormat('Y-m-d H:i', $dateOfDischarge . ' ' . $timeOfDischarge);
                     //dd($dischargeDateTime);
                     // Calculate the difference in hours
