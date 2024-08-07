@@ -77,9 +77,16 @@
                                             </button>
                                         </h2>
                                         <div id="collapseCabin" class="accordion-collapse collapse" aria-labelledby="headingCabin" data-bs-parent="#infoAccordion">
+                                            
                                             <div class="accordion-body" style="background:rgb(60,179,113,0.8)">
                                                 <div class="table-responsive">
-                                                    <table class="table table-bordered table-striped">
+                                                    <table class="table table-bordered table-striped" width=100%>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Label</th>
+                                                                <th>Value</th>
+                                                            </tr>
+                                                        </thead>
                                                         <tbody>
                                                             <tr>
                                                                 <th scope="row">Cabin Type:</th>
@@ -108,6 +115,7 @@
                                                     </table>
                                                 </div>
                                             </div>
+                                         
                                         </div>
                                     </div>
                                 @elseif(isset($wardinfo))
@@ -119,7 +127,13 @@
                                         </h2>
                                         <div id="collapseWard" class="accordion-collapse collapse" aria-labelledby="headingWard" data-bs-parent="#infoAccordion">
                                             <div class="accordion-body" style="background:rgb(60,179,113,0.8)">
-                                                <table class="table table-bordered table-striped">
+                                                <table class="table table-bordered table-striped" width=100%>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Label</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                    </thead>
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">Ward Type:</th>
@@ -158,7 +172,13 @@
                                         </h2>
                                         <div id="collapseIcu" class="accordion-collapse collapse" aria-labelledby="headingIcu" data-bs-parent="#infoAccordion">
                                             <div class="accordion-body" style="background:rgb(60,179,113,0.8)">
-                                                <table class="table table-bordered table-striped">
+                                                <table class="table table-bordered table-striped" width=100%>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Label</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                    </thead>
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">ICU Type:</th>
