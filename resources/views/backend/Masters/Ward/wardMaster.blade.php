@@ -425,13 +425,13 @@ function showEdit(id) {
             document.getElementById("wardname").value = data.ward['ward_name'];
             document.getElementById("wardtype").value = data.ward['ward_type_id'];
             document.getElementById("floor").value = data.ward['floor_count'];
-            document.getElementById("floor").disabled = true;
+            
             showBlock($('#floor'), data.ward['block_id']);
             $('#floor').hide();
             $('#block').hide();
             $('#fl').hide();
             $('#bl').hide();
-            document.getElementById("block").disabled = true;
+            
             document.getElementById("occupancy").value = data.ward['total_occupancy'];
             document.getElementById("wardprice").value = data.ward['price'];
              // Pre-select amenities

@@ -317,7 +317,7 @@ class RegistrationController extends Controller
                             'type_price_24hr' => $request->totalcost,
                             'adv_amount'=>$request->advance,
                             'date_of_addmission' => Carbon::now()->toDateString(),
-                            'time_of_addmission' => Carbon::now()->toTimeString(),
+                            'time_of_addmission' => Carbon::now()->format('H:i'),
                             'emergency' => $flag,
                             'treating_type' => $request->treattype,
                             'reffered_from' => $request->reff,
