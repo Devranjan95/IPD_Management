@@ -35,6 +35,8 @@ class Token extends Model
         'date_of_discharge',
         'time_of_discharge',
         'total_stay_hr',
+        'total_price',
+        'total_priceAfterAdvance',
         'discharge_summary',
         'status',
         'deceased_status',

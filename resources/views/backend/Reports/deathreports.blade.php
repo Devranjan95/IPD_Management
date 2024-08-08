@@ -33,7 +33,7 @@
                             </div>
                             <div class='col-lg-12'>
                                 <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
+                                <table id="example" class="table table-hover table-bordered">
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
@@ -43,8 +43,8 @@
                                             <th>Addmission Time</th>
                                             <th>Death Date</th>
                                             <th>Death Time</th>
-                                            <th>Dead Body Image</th>
-                                            <!-- <th>Action</th> -->
+                                            <!-- <th>Dead Body Image</th> -->
+                                            <th>View</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -60,14 +60,18 @@
                                                 <td>{{ \Carbon\Carbon::parse($death->time_of_addmission)->format('h:i A') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($death->date_of_death)->format('d/m/Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($death->time_of_death)->format('h:i A') }}</td>
-                                                <td>
+                                                <!-- <td>
                                                     @if($death->image_path)
                                                         <img src="{{asset($death->image_path)}}" alt="New Born Image" style="width: 80px;height:80px; display: block; margin: 0 auto;">
                                                     @else
                                                         No Image
                                                     @endif
+                                                </td> -->
+                                                <td>
+                                                    <a href="#" class="btn btn-sm btn-success" onclick="callDeath('{{$death->patient_regn_no}}')"> 
+                                                        View Details
+                                                    </a>
                                                 </td>
-                                                <!-- <td>See Details</td> -->
                                             </tr>
                                        @endforeach
                                     </tbody>
@@ -87,6 +91,70 @@
 
 @endsection
 @section('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
+<script>
+var table = new DataTable('#example', {
+    dom: 'lBfrtip',
+    layout: {
+        topStart: {
+            buttons: ['excel', 'pdf', 
+            {
+                    extend: 'print',
+                    text: 'Print',
+                    customize: function (win) {
+                        // Ensure that images are included in the print view
+                        $(win.document.body)
+                            .css('font-size', '10pt')
+                            .prepend(
+                                '<div style="text-align: center; margin-bottom: 20px;"><h2>Death Reports</h2></div>'
+                            );
 
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
 
+                        // Optionally: Adjust image sizes or styles for printing
+                        $(win.document.body).find('img').css({
+                            width: '80px', // Adjust as necessary
+                            height: 'auto'
+                        });
+                    }
+                }
+            ],
+            initComplete: function() {
+                table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+            }
+        }
+    }
+});
+</script>
+<script>
+    function callDeath(regn){
+        regn = regn.replace(/\//g, '-');
+        //alert(regn);
+
+        if (regn) {
+            $.ajax({
+                type: "GET",
+                url: "{{ url('death/record') }}/" + regn,
+                headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+                success: function(response) {
+                    // Redirect to the patient report URL
+                    window.location.href = "{{ url('death/record') }}/" + regn;
+                },
+                error: function() {
+                    alert('Something went wrong');
+                }
+            });
+        }
+    }
+</script>
 @endsection

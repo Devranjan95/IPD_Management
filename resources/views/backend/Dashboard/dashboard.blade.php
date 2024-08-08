@@ -40,39 +40,6 @@
                     </div>
                 </div>
 
-                <!-- Total Deceased Card -->
-                <div class="col-xl-12 col-md-12 mb-4">
-                    <div class="card border-left-danger shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Deceased</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalDeceased }}</div>
-                                </div>
-                                <div class="col-auto">
-                                    <img src="{{asset('assets/previous/dashboard.png')}}" alt="Deceased" style="width: 3rem;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Born Card -->
-                <div class="col-xl-12 col-md-12 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Born</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalBorn }}</div>
-                                </div>
-                                <div class="col-auto">
-                                    <img src="{{asset('assets/previous/dashboard.png')}}" alt="Total Born" style="width: 3rem;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Total Discharged Card -->
                 <div class="col-xl-12 col-md-12 mb-4">
@@ -85,6 +52,40 @@
                                 </div>
                                 <div class="col-auto">
                                     <img src="{{asset('assets/previous/dashboard.png')}}" alt="Discharged" style="width: 3rem;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Born Card -->
+                <div class="col-xl-12 col-md-12 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Birth</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalBorn }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{asset('assets/previous/dashboard.png')}}" alt="Total Born" style="width: 3rem;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Deceased Card -->
+                <div class="col-xl-12 col-md-12 mb-4">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Death</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalDeceased }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <img src="{{asset('assets/previous/dashboard.png')}}" alt="Deceased" style="width: 3rem;">
                                 </div>
                             </div>
                         </div>
@@ -149,28 +150,28 @@
     const data = {
         labels: [
             'In-Bed Patients',
-            'Deceased Patients',
+            'Discharged Patients',
             'Born Patients',
-            'Discharged Patients'
+            'Deaths'   
         ],
         datasets: [{
             data: [
                 {{ $totalInBedPatients }},
-                {{ $totalDeceased }},
+                {{ $totalDischarged }},
                 {{ $totalBorn }},
-                {{ $totalDischarged }}
+                {{ $totalDeceased }}
             ],
             backgroundColor: [
                 'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 99, 132, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
                 'rgba(75, 192, 192, 0.6)',
-                'rgba(255, 206, 86, 0.6)'
+                'rgba(255, 99, 132, 0.6)'
             ],
             borderColor: [
                 'rgba(54, 162, 235, 1)',
-                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)',
                 'rgba(75, 192, 192, 1)',
-                'rgba(255, 206, 86, 1)'
+                'rgba(255, 99, 132, 1)',
             ],
             borderWidth: 1
         }]

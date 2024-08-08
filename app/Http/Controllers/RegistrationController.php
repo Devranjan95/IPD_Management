@@ -435,6 +435,7 @@ class RegistrationController extends Controller
         $originalRegn = str_replace('-', '/', $regn);
         $currentDate = Carbon::now()->format('Y-m-d'); // Adjust the date format as needed
         $currentTime = Carbon::now()->format('H:i');
+        //dd($currentTime);
         $info = Token::with('patient')
             ->where('patient_regn_no', $originalRegn)
             ->where('date_of_addmission', $currentDate)

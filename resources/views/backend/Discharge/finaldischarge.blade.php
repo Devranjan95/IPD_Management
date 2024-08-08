@@ -111,7 +111,7 @@ function populatePatientDetails(patientInfo) {
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>Patient Information</h4>
-                    <button class="btn btn-primary btn-sm" onclick="proceedToCheckout(${patientInfo.id})">Proceed to Checkout</button>
+                   
                 </div>
                 <div class="card-body">
                     <p><strong>Name:</strong> ${patientInfo.patient_name}</p>
@@ -132,6 +132,7 @@ function populatePatientDetails(patientInfo) {
                                 <th>Attendant Name</th>
                                 <th>Bed Number</th>
                                 <th>Status</th>
+                                <th>Checkout</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -144,6 +145,7 @@ function populatePatientDetails(patientInfo) {
                     <td>${token.attendant_name}</td>
                     <td>${token.bednumber}</td>
                     <td>${token.status}</td>
+                    <th> <button class="btn btn-primary btn-sm" onclick="proceedToCheckout(${token.id})">Proceed to Checkout</button></th>
                 </tr>
             `;
         });
@@ -157,6 +159,7 @@ function populatePatientDetails(patientInfo) {
 
 function proceedToCheckout(tokenId) {
     // Implement the logic to update the status to discharged
+    alert(tokenId);
     $.ajax({
         url: "{{url('updateFinalDischarge')}}", // Replace with your actual URL
         type: 'POST',

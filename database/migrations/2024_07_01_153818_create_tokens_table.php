@@ -39,6 +39,7 @@ return new class extends Migration
             $table->text('discharge_summary')->nullable();
             $table->string('total_stay_hr')->nullable();
             $table->string('total_price')->nullable();
+            $table->string('total_priceAfterAdvance')->nullable();
             $table->string('status')->nullable();
             $table->string('deceased_status')->nullable();
             $table->string('maternity_status')->nullable();

@@ -33,19 +33,19 @@
                             </div>
                             <div class='col-lg-12'>
                                 <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
+                                <table id="example" class="table table-hover table-bordered">
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
                                             <th>Regn No</th>
                                             <th>Patient Name</th>
-                                            <th>Patient Contact</th>
-                                            <th>Patient Email</th>
+                                            <th class="text-center">Patient Contact</th>
+                                            <!-- <th>Patient Email</th>
                                             <th>Addmission Date</th>
-                                            <th>Addmission Time</th>
+                                            <th>Addmission Time</th> -->
                                             <th>Discharge Date</th>
                                             <th>Discharge Time</th>
-                                            <!-- <th>Action</th> -->
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -54,14 +54,14 @@
                                                 <td>{{$index + 1}}</td>
                                                 <td>{{$token->patient->patient_regn_no}}</td>
                                                 <td>{{$token->patient->patient_name}}</td>
-                                                <td>{{$token->patient->patient_phone}}</td>
-                                                @if(isset($token->patient->patient_email))
+                                                <td class="text-center">{{$token->patient->patient_phone}}</td>
+                                                <!-- @if(isset($token->patient->patient_email))
                                                     <td>{{$token->patient->patient_email}}</td>
                                                 @else
                                                     <td>Email not provided</td>
-                                                @endif
-                                                <td>{{\Carbon\Carbon::parse($token->date_of_addmission)->format('d/m/Y')}}</td>
-                                                <td>{{\Carbon\Carbon::parse($token->time_of_addmission)->format('h:i A')}}</td>
+                                                @endif -->
+                                                <!-- <td>{{\Carbon\Carbon::parse($token->date_of_addmission)->format('d/m/Y')}}</td>
+                                                <td>{{\Carbon\Carbon::parse($token->time_of_addmission)->format('h:i A')}}</td> -->
                                                 @if(isset($token->date_of_discharge) && isset($token->time_of_discharge))
                                                 <td>{{\Carbon\Carbon::parse($token->date_of_discharge)->format('d/m/Y')}}</td>
                                                 <td>{{\Carbon\Carbon::parse($token->time_of_discharge)->format('h:i A')}}</td>
@@ -69,7 +69,9 @@
                                                 <td>Not available</td>
                                                 <td>Not available</td>
                                                 @endif
-                                                <!-- <td>See Details</td> -->
+                                                <td>
+                                                    <a href="#" class="btn btn-sm btn-success" onclick="getDischargeInfo({{$token->id}})">View Details</a>
+                                                </td>
                                             </tr>
                                        @endforeach
                                     </tbody>
@@ -90,5 +92,38 @@
 @endsection
 @section('scripts')
 
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/dataTables.buttons.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
+<script>
 
+var table = new DataTable('#example', {
+    dom: 'lBfrtip',
+    buttons: [
+         'excel', 'pdf', 'print'
+    ],
+    initComplete: function() {
+        table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+    }
+});
+
+function getDischargeInfo(id){
+    //alert(id);
+    $.ajax({
+        url:"{{url('getdischargePatient')}}/"+id,
+        type:"GET",
+        success:function(response){
+            window.location.href ="{{url('getdischargePatient')}}/"+id;
+        },
+        error:function(){
+            alert('Error!!')
+        }
+    })
+}
+</script>
 @endsection

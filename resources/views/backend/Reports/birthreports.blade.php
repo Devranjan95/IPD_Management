@@ -33,43 +33,43 @@
                             </div>
                             <div class='col-lg-12'>
                                 <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
+                                <table id="example" class="table table-hover table-bordered">
                                     <thead>
                                         <tr>
                                             <th style="text-align:center">Sl</th>
                                             <th>Regn No</th>
                                             <th>Mother's Name</th>
+                                            <th>Father's Name</th>
+                                            <th>Contact</th>
                                             <th>Addmission Date</th>
                                             <th>Addmission Time</th>
-                                            <th>Birth Date</th>
-                                            <th>Birth Time</th>
-                                            <th>New Born Image</th>
-                                            <!-- <th>Action</th> -->
+                                            <!-- <th>Birth Date</th>
+                                            <th>Birth Time</th> -->
+                                            <!-- <th>New Born Image</th> -->
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                       {{--@php --}}
+                                       @php
                                             $sl = 1;
-                                       {{--@endphp--}}
-                                       {{--@foreach($birthInfos as $birth)-}}
+                                       @endphp
+                                       @foreach($birthData as $birth)
                                             <tr>
                                                 <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{--{{$birth->regn}}--}}</td>
-                                                <td>{{--{{$birth->patname}}--}}</td>
-                                                <td>{{--{{ \Carbon\Carbon::parse($birth->addmission_date)->format('d/m/Y') }}--}}</td>
-                                                <td>{{--{{ \Carbon\Carbon::parse($birth->addmission_time)->format('h:i A') }}--}}</td>
-                                                <td>{{--{{ \Carbon\Carbon::parse($birth->birthdate)->format('d/m/Y') }}--}}</td>
-                                                <td>{{--{{ \Carbon\Carbon::parse($birth->birthtime)->format('h:i A') }}--}}</td>
+                                                <td>{{$birth->regn}}</td>
+                                                <td>{{$birth->patname}}</td>
+                                                <td>{{$birth->fathername}}</td>
+                                                <td>{{$birth->contact}}</td>
+                                                <td>{{ \Carbon\Carbon::parse($birth->addmission_date)->format('d/m/Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($birth->addmission_time)->format('h:i A') }}</td>
+                                                <!-- <td>{{--{{ \Carbon\Carbon::parse($birth->birthdate)->format('d/m/Y') }}--}}</td>
+                                                <td>{{--{{ \Carbon\Carbon::parse($birth->birthtime)->format('h:i A') }}--}}</td> -->
+                                                
                                                 <td>
-                                                    {{--@if($birth->image_path)--}}
-                                                        <img src="{{--{{asset($birth->image_path)}}--}}" alt="New Born Image" style="width: 80px;height:80px; display: block; margin: 0 auto;">
-                                                    {{--@else--}}
-                                                        No Image
-                                                    {{--@endif--}}
+                                                    <a href="#" class="btn btn-sm btn-success" onclick = "getNewBorn({{$birth->id}})">View Details</a>
                                                 </td>
-                                                <!-- <td>See Details</td> -->
                                             </tr>
-                                       {{--@endforeach--}}
+                                       @endforeach
                                     </tbody>
                                 </table>
                                 </div>
@@ -88,5 +88,40 @@
 @endsection
 @section('scripts')
 
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/dataTables.buttons.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
+<script>
 
+var table = new DataTable('#example', {
+    dom: 'lBfrtip',
+    buttons: [
+         'excel', 'pdf', 'print'
+    ],
+    initComplete: function() {
+        table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+    }
+});
+
+function getNewBorn(id){
+    //alert(id);
+    $.ajax({
+        url:"{{url('getnewborn')}}/"+id,
+        type:"GET",
+        data:{_token:"{{csrf_token()}}"},
+        success:function(response){
+            //alert(1);
+            window.location.href="{{url('getnewborn')}}/"+id;
+        },
+        error:function(){
+            alert("Error!!");
+        }
+    });
+}
+</script>
 @endsection

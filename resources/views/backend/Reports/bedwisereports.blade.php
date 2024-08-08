@@ -38,9 +38,9 @@
                                         <tr>
                                             <th style="text-align:center">Sl</th>
                                             <th>Bed Name</th>
-                                            <th style="text-align:center">Total Beds</th>
+                                            <th style="text-align:center">Total Beds for Registration</th>
                                             <th style="text-align:center">Total Patients</th>
-                                            <!-- <th>Action</th> -->
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -50,9 +50,9 @@
                                                 <td>{{ $bed['bedname'] }}</td>
                                                 <td style="text-align:center">{{ $bed['totalbed'] }}</td>
                                                 <td style="text-align:center">{{ $bed['totalPatient'] }}</td> <!-- Assuming 'total' is the total number of patients for now -->
-                                                <!-- <td>
-                                                    See Details
-                                                </td> -->
+                                                <td>
+                                                   <a href="#" class="btn btn-sm btn-success" onclick="getBedPatients({{$bed['bedid']}})">View Details</a>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -72,6 +72,17 @@
 
 @endsection
 @section('scripts')
-
+<script>
+    function getBedPatients(id){
+        //alert(id);
+        $.ajax({
+            url:"{{url('getbedwisepatient')}}/"+id,
+            type:"GET",
+            success:function(response){
+                window.location.href = "{{url('getbedwisepatient')}}/"+id;
+            }
+        })
+    }
+</script>
 
 @endsection

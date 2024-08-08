@@ -58,6 +58,7 @@ class DischargeController extends Controller
         $tokeninfo = Token::where('id',$request->tokenId)->first();
         //dd($tokeninfo);
         $tokenUpdate = Token::where('id',$request->tokenId)->update(["status"=>"Discharged"]);
+        
         if($tokenUpdate){
             $bedupdate = BedAssign::where('bed_no',$tokeninfo->bednumber)->update(["status"=>"Vacant"]);
             return response()->json(["status"=>true,"message"=>"Checkout Successful"]);
@@ -225,10 +226,13 @@ class DischargeController extends Controller
                     $totalPrice = number_format($price24hrs * $MultiplyVal,2);
                     $advance = $tokenVal->adv_amount;
                     //dd($totalPrice);
-
+                    $finalPrice = $totalPrice - $advance;
                     $updatePrice = Token::where('patient_regn_no', $request->regn)
                                         ->where('status', 'Discharge InProgress')
-                                        ->update(['total_stay_hr'=>$hoursDifference,'total_price'=>$totalPrice]);
+                                        ->update(['total_stay_hr'=>$hoursDifference,
+                                                    'total_price'=>$totalPrice,
+                                                    'total_priceAfterAdvance'=>$finalPrice,
+                                                    'discharge_summary'=>$request->summary]);
                     if( $updatePrice){
                         return response()->json(["status" => true, "message" => "Ready to discharge"]);
                     }
