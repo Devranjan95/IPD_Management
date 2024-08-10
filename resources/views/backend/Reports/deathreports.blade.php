@@ -33,49 +33,49 @@
                             </div>
                             <div class='col-lg-12'>
                                 <div class="table-responsive">
-                                <table id="example" class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th style="text-align:center">Sl</th>
-                                            <th>Regn No</th>
-                                            <th>Patient Name</th>
-                                            <th>Addmission Date</th>
-                                            <th>Addmission Time</th>
-                                            <th>Death Date</th>
-                                            <th>Death Time</th>
-                                            <!-- <th>Dead Body Image</th> -->
-                                            <th>View</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                       @php 
-                                            $sl = 1;
-                                       @endphp
-                                       @foreach($deathInfos as $death)
+                                    <table id="example" class="table table-hover table-bordered">
+                                        <thead>
                                             <tr>
-                                                <td style="text-align:center">{{$sl++}}</td>
-                                                <td>{{$death->patient_regn_no}}</td>
-                                                <td>{{$death->patient_name}}</td>
-                                                <td>{{ \Carbon\Carbon::parse($death->date_of_addmission)->format('d/m/Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($death->time_of_addmission)->format('h:i A') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($death->date_of_death)->format('d/m/Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($death->time_of_death)->format('h:i A') }}</td>
-                                                <!-- <td>
-                                                    @if($death->image_path)
-                                                        <img src="{{asset($death->image_path)}}" alt="New Born Image" style="width: 80px;height:80px; display: block; margin: 0 auto;">
-                                                    @else
-                                                        No Image
-                                                    @endif
-                                                </td> -->
-                                                <td>
-                                                    <a href="#" class="btn btn-sm btn-success" onclick="callDeath('{{$death->patient_regn_no}}')"> 
-                                                        View Details
-                                                    </a>
-                                                </td>
+                                                <th style="text-align:center">Sl</th>
+                                                <th>Regn No</th>
+                                                <th>Patient Name</th>
+                                                <th>Addmission Date</th>
+                                                <th>Addmission Time</th>
+                                                <th>Death Date</th>
+                                                <th>Death Time</th>
+                                                <!-- <th>Dead Body Image</th> -->
+                                                <th>View</th>
                                             </tr>
-                                       @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        @php 
+                                                $sl = 1;
+                                        @endphp
+                                        @foreach($deathInfos as $death)
+                                                <tr>
+                                                    <td style="text-align:center">{{$sl++}}</td>
+                                                    <td>{{$death->patient_regn_no}}</td>
+                                                    <td>{{$death->patient_name}}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($death->date_of_addmission)->format('d/m/Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($death->time_of_addmission)->format('h:i A') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($death->date_of_death)->format('d/m/Y') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($death->time_of_death)->format('h:i A') }}</td>
+                                                    <!-- <td>
+                                                        @if($death->image_path)
+                                                            <img src="{{asset($death->image_path)}}" alt="New Born Image" style="width: 80px;height:80px; display: block; margin: 0 auto;">
+                                                        @else
+                                                            No Image
+                                                        @endif
+                                                    </td> -->
+                                                    <td>
+                                                        <a href="#" class="btn btn-sm btn-success" onclick="callDeath('{{$death->patient_regn_no}}')"> 
+                                                            View Details
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                                 
                                 <!-- </div> -->
@@ -101,40 +101,127 @@
 <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
 <script>
+// var table = new DataTable('#example', {
+//     dom: 'lBfrtip',
+//     layout: {
+//         topStart: {
+//             buttons: ['excel', 'pdf', 
+//             {
+//                     extend: 'print',
+//                     text: 'Print',
+//                     customize: function (win) {
+//                         // Ensure that images are included in the print view
+//                         $(win.document.body)
+//                             .css('font-size', '10pt')
+//                             .prepend(
+//                                 '<div style="text-align: center; margin-bottom: 20px;"><h2>Death Reports</h2></div>'
+//                             );
+
+//                         $(win.document.body).find('table')
+//                             .addClass('compact')
+//                             .css('font-size', 'inherit');
+
+//                         // Optionally: Adjust image sizes or styles for printing
+//                         $(win.document.body).find('img').css({
+//                             width: '80px', // Adjust as necessary
+//                             height: 'auto'
+//                         });
+//                     }
+//                 }
+//             ],
+//             initComplete: function() {
+//                 table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+//             }
+//         }
+//     }
+// });
+
+// var table = new DataTable('#example', {
+//     dom: 'lBfrtip',
+//     buttons: [
+//         'excel',
+//         {
+//             extend: 'pdf',
+//             text: 'PDF',
+//             orientation: 'landscape',
+//             title: 'Death Reports',
+//             customize: function (doc) {
+//                 doc.content[1].margin = [ 10, 0, 10, 0 ]; // Adjust margins
+//             }
+//         },
+//         {
+//             extend: 'print',
+//             text: 'Print',
+//             customize: function (win) {
+//                 $(win.document.body)
+//                     .css('font-size', '10pt')
+//                     .prepend(
+//                         '<div style="text-align: center; margin-bottom: 20px;"><h2>Death Reports</h2></div>'
+//                     );
+
+//                 $(win.document.body).find('table')
+//                     .addClass('compact')
+//                     .css('font-size', 'inherit');
+
+//                 $(win.document.body).find('img').css({
+//                     width: '80px', // Adjust as necessary
+//                     height: 'auto'
+//                 });
+//             }
+//         }
+//     ],
+//     initComplete: function() {
+//         table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+//     }
+// });
+
+
 var table = new DataTable('#example', {
     dom: 'lBfrtip',
-    layout: {
-        topStart: {
-            buttons: ['excel', 'pdf', 
-            {
-                    extend: 'print',
-                    text: 'Print',
-                    customize: function (win) {
-                        // Ensure that images are included in the print view
-                        $(win.document.body)
-                            .css('font-size', '10pt')
-                            .prepend(
-                                '<div style="text-align: center; margin-bottom: 20px;"><h2>Death Reports</h2></div>'
-                            );
+    buttons: [
+        'excel',
+        {
+            extend: 'pdf',
+            text: 'PDF',
+            orientation: 'landscape',
+            title: 'Death Reports',
+            action: function (e, dt, button, config) {
+                // Open the PDF in a new window instead of downloading directly
+                $.fn.dataTable.ext.buttons.pdfHtml5.action.call(this, e, dt, button, $.extend({}, config, {
+                    download: 'open'
+                }));
+            },
+            customize: function (doc) {
+                doc.content[1].margin = [10, 0, 10, 0]; // Adjust margins
+            }
+        },
+        {
+            extend: 'print',
+            text: 'Print',
+            customize: function (win) {
+                $(win.document.body)
+                    .css('font-size', '10pt')
+                    .prepend(
+                        '<div style="text-align: center; margin-bottom: 20px;"><h2>Death Reports</h2></div>'
+                    );
 
-                        $(win.document.body).find('table')
-                            .addClass('compact')
-                            .css('font-size', 'inherit');
+                $(win.document.body).find('table')
+                    .addClass('compact')
+                    .css('font-size', 'inherit');
 
-                        // Optionally: Adjust image sizes or styles for printing
-                        $(win.document.body).find('img').css({
-                            width: '80px', // Adjust as necessary
-                            height: 'auto'
-                        });
-                    }
-                }
-            ],
-            initComplete: function() {
-                table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+                $(win.document.body).find('img').css({
+                    width: '80px',
+                    height: 'auto'
+                });
             }
         }
+    ],
+    initComplete: function() {
+        table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
     }
 });
+
+
 </script>
 <script>
     function callDeath(regn){

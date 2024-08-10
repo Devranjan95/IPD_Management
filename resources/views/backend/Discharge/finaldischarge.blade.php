@@ -159,7 +159,7 @@ function populatePatientDetails(patientInfo) {
 
 function proceedToCheckout(tokenId) {
     // Implement the logic to update the status to discharged
-    alert(tokenId);
+    //alert(tokenId);
     $.ajax({
         url: "{{url('updateFinalDischarge')}}", // Replace with your actual URL
         type: 'POST',
@@ -171,6 +171,7 @@ function proceedToCheckout(tokenId) {
         success: function(response) {
             if(response.status){
                 alert(response.message);
+                window.location.reload();
             }else{
                 alert(response.message);
             }

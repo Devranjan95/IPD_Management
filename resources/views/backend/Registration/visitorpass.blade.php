@@ -149,10 +149,6 @@
                                     <th>Time of Admission:</th>
                                     <td>{{ $info->time_of_addmission }}</td>
                                 </tr>
-                                <tr>
-                                    <th>Treating Type:</th>
-                                    <td>{{ $info->treating_type }}</td>
-                                </tr>
                             </table>
                         </div>
                     </div>
@@ -189,10 +185,6 @@
                                 <tr>
                                     <th>Time of Admission:</th>
                                     <td>{{ $info->time_of_addmission }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Treating Type:</th>
-                                    <td>{{ $info->treating_type }}</td>
                                 </tr>
                             </table>
                         </div>

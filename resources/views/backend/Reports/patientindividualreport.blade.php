@@ -124,7 +124,22 @@
     $('#example').DataTable({
         dom: 'Blfrtip',
         buttons: [
-             'excel', 'pdf',
+             'excel', 
+             {
+                extend: 'pdf',
+                text: 'PDF',
+                orientation: 'landscape',
+                action: function (e, dt, button, config) {
+                    // Open the PDF in a new window instead of downloading directly
+                    $.fn.dataTable.ext.buttons.pdfHtml5.action.call(this, e, dt, button, $.extend({}, config, {
+                        download: 'open'
+                    }));
+                },
+                customize: function (doc) {
+                    doc.content[1].margin = [10, 0, 10, 0]; // Adjust margins
+                    // Additional customization can be added here if needed
+                }
+            },
             {
                 extend: 'print',
                 text: 'Print',
