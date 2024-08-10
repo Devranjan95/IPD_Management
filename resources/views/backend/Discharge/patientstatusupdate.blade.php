@@ -598,7 +598,7 @@ function populatePatientDetails(patientInfo) {
                     <h4>Patient Information</h4>
                     <button class="btn btn-danger btn-sm" id="markAsDeceasedBtn" ${hasDeceasedToken ? 'disabled' : ''} onclick="updateStatusToDeceased(${firstTokenId})">Mark as Deceased</button>
                     <!--<button class="btn btn-info btn-sm ml-2" id="markAsBornBtn" onclick="updateStatusToBorn(${firstTokenId})">Parturition Successful</button>-->
-                    <button class="btn btn-info btn-sm ml-2" id="markAsBornBtn" ${hasMaternityStatus ? 'disabled' : ''} data-bs-toggle="modal" data-bs-target="#staticBackdrop">Parturition Successful</button>
+                    <button class="btn btn-info btn-sm ml-2" id="markAsBornBtn" ${hasMaternityStatus ? 'disabled' : ''} data-bs-toggle="modal" data-bs-target="#staticBackdrop">Labour Delivery Successful</button>
                     <button class="btn btn-primary btn-sm ml-2" onclick="updateStatusDischargeProcess(${firstTokenId})">Proceed for Discharge</button>
                 </div>
                 <div class="card-body">
