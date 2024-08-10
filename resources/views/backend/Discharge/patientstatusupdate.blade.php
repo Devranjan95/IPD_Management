@@ -83,10 +83,10 @@
                                             <option value="Divorced">Divorced</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <!-- <div class="col-md-3">
                                         <label for="image_path" class="form-label">Upload Image<span style="color:red" title="Mandatory">*</span></label>
                                         <input type="file" class="form-control" id="imgfile" name="imgfile[]" accept=".jpg, .jpeg, .png, .webp, .svg" multiple>
-                                    </div>
+                                    </div> -->
                                     <div class="col-md-3">
                                         <label for="issuedby" class="form-label">Certificate Issued By<span style="color:red" title="Mandatory">*</span></label>
                                         <input type="text" class="form-control" placeholder="Issued By" id="issuedby" name="issuedby">
@@ -754,6 +754,10 @@ function generateNewBornEntries() {
                     <div class="col-md-3">
                         <label for="length_${i}" class="form-label">Length (in cm)<span style="color:red" title="Mandatory">*</span></label>
                         <input type="text" class="form-control" id="length_${i}" name="length_${i}">
+                    </div>
+                     <div class="col-md-3">
+                        <label for="image_path" class="form-label">Upload Image<span style="color:red" title="Mandatory">*</span></label>
+                        <input type="file" class="form-control" id="imgfile_${i}" name="imgfile_${i}" accept=".jpg, .jpeg, .png, .webp, .svg">
                     </div>
                 </div>
             </div>
